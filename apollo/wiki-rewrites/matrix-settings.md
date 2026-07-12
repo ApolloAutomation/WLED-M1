@@ -44,6 +44,7 @@ Open the WLED interface and check under Config to confirm a unit is healthy:
 | AudioReactive type (Config, Usermods) | Generic I2S |
 | AudioReactive pins | SD 10, WS 12, SCK 11 |
 | AudioReactive sync mode | Off |
+| AudioReactive enabled | On |
 
 Setup hotspot: each unit broadcasts an open network named "Apollo M-1-xxxxxx" (the
 same six characters as its network name) until it joins your WiFi. Join it and the
@@ -53,8 +54,9 @@ If you own several units: names are unique per device, so multiple M-1 units coe
 on one network without conflicts.
 
 The AudioReactive values only matter on rev6 boards with the microphone addon.
-Installing the addon needs exactly one settings change (the Enabled checkbox); the
-type and pins above are already set. See the microphone addon page.
+Sound reactivity is on by default, so installing the addon needs no settings at
+all: plug it in and pick an effect marked with the musical note symbol. See the
+microphone addon page.
 
 ### Chaining panels
 

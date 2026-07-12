@@ -17,21 +17,19 @@ printed on the controller PCB.
 
 (keep the existing physical installation steps and photos)
 
-### Turn it on
+### Use it
 
-1. Open the WLED interface, go to Config, then Usermods.
-2. Under AudioReactive, check Enabled and click Save. The device reboots.
+There is no software setup. Sound reactivity is on by default with the microphone
+type (Generic I2S), the pins (SD 10, WS 12, SCK 11), and the sync mode (Off) all
+configured at the factory on firmware 16.0.1 and later.
 
-That is the whole software setup. The microphone type (Generic I2S), the pins
-(SD 10, WS 12, SCK 11), and the sync mode (Off) are already configured at the
-factory on firmware 16.0.1 and later.
-
-To use it, pick any effect marked with the musical note symbol in the effect list.
+Pick any effect marked with the musical note symbol in the effect list and make
+some noise.
 
 ### If sound effects do not react
 
-- Confirm Enabled is checked under Config, Usermods, AudioReactive, and that the
-  device rebooted after saving.
+- Check that Enabled was not turned off under Config, Usermods, AudioReactive
+  (it is on from the factory).
 - Confirm the microphone board is seated fully in its connector.
 - Units running firmware older than 16.0.1: set Type to Generic I2S and the pins to
   SD 10, WS 12, SCK 11 manually, or update the firmware first (settings survive the
