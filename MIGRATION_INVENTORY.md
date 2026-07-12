@@ -12,6 +12,34 @@ The entire Apollo delta over netmindz/WLED-MM (merge-base 315f147d) is one file,
 platformio_override.ini, plus shipped binaries in docs/. Everything below documents the
 effective state that file produces.
 
+## Derivation (session 3, from the shipping repo itself, not notes)
+Commands and verbatim output, run 2026-07-12:
+
+    $ git -C WLED-MM-M1 remote -v
+    mm-parent  /Users/justinapollo/Code/ApolloAutomation/WLED-MM (netmindz/WLED-MM history)
+    origin     https://github.com/ApolloAutomation/WLED-MM-M1.git
+    $ git -C WLED-MM-M1 merge-base HEAD mm-parent/mdev
+    315f147d878a2c0de3e8e6002c26112614f23b45  ("Add build instruction for common environment")
+    $ git -C WLED-MM-M1 diff --stat 315f147d..HEAD
+    .github/workflows/wled-ci.yml               |  91 ----
+    .gitignore                                  |   1 -
+    docs/14.5.1/Apollo_M-1_Firmware_14.5.1.bin  | Bin 0 -> 1737184
+    docs/14.5.1/manifest.json                   |  13 +
+    docs/Rev6_14.5.1/Apollo_M-1_Rev6_14.5.1.bin | Bin 0 -> 1930320
+    docs/Rev6_14.5.1/manifest.json              |  13 +
+    docs/bootloader.bin                         | Bin 0 -> 15104
+    docs/firmware.bin                           | Bin 0 -> 1612656
+    docs/index.html                             | 110 ++++
+    docs/manifest.json                          |  13 +
+    docs/merged-firmware.bin                    | Bin 0 -> 1678192
+    docs/partitions.bin                         | Bin 0 -> 3072
+    platformio_override.ini                     |  45 +
+    13 files changed, 194 insertions(+), 92 deletions(-)
+
+So the complete MM-side Apollo delta is: platformio_override.ini (the firmware config),
+the docs/ ESP Web Tools hosting (shipped binaries and manifests, now the rollback
+archive), a removed CI workflow, and one .gitignore line. No source files were touched.
+
 ## Headline bug root cause
 MM env sets `-D DEFAULT_LED_TYPE=101` (platformio_override.ini:16). In WLED-MM,
 HUB75 type 101 = 32x32 panel (MM bus_manager.cpp:681-714: 101=32x32, 102=64x32,
@@ -24,7 +52,7 @@ This is why the wiki settings page exists.
 
 | Acceptance item | Shipping MM reality | WLED 16.0.1 target |
 |---|---|---|
-| Server description "Apollo LED Matrix" | Compiled SERVERNAME "Apollo M-1" (platformio_override.ini:20); wiki has users change it manually | `-D SERVERNAME='"Apollo LED Matrix"'` -> serverDescription (UP wled00/wled.h:426-430) |
+| Server description | Compiled SERVERNAME "Apollo M-1" (platformio_override.ini:20); old wiki had users change it to "Apollo LED Matrix" | `-D SERVERNAME='"Apollo M-1"'` per Trevor's D4 (session 3) -> serverDescription (UP wled00/wled.h:426-430) |
 | mDNS apollo-led-matrix | Factory default is wled-XXXXXX (MM wled.cpp:763); wiki has users set apollo-led-matrix manually | New WLED_MDNS_PREFIX define + patched fallback in UP wled00/wled.cpp:536 -> apollo-led-matrix-XXXXXX (unique suffix, DECISIONS A1) |
 | LED type Hub75Matrix 64x64 | Type 101 = 32x32 (the bug) | TYPE_HUB75MATRIX_HS = 65 (UP const.h:358) with pins[0..1] = 64,64. Bus "pins" for HUB75 are config params {panelW, panelH, chain, rows, cols} (UP bus_manager.cpp:798-811, bus_manager.h:174). Env: `-D DATA_PINS=64,64,1,1,1`, LED_TYPES=TYPE_HUB75MATRIX_HS (from [hub75] group) + cfg.cpp first-boot fix (see below) |
 | Chain length 1 | bc.pins[0] in MM semantics; default 0/1 | pins[2] = 1 in DATA_PINS. Upstream clamps chain 1..4 (bus_manager.cpp:828) - matches the 4-panel chain product limit |
@@ -33,7 +61,7 @@ This is why the wiki settings page exists.
 | AudioReactive Generic I2S | SR_DMTYPE=1 (platformio_override.ini:34) | Same define upstream (audio_reactive.cpp:771-776, default already 1) |
 | AR pins SD 10 / WS 12 / SCK 11 | I2S_SDPIN=10 I2S_WSPIN=12 I2S_CKPIN=11 MCLK=-1 | Identical defines already present in upstream env esp32s3dev_16MB_opi_hub75 (platformio.ini:891) |
 | AR sync Off | audioSyncEnabled=0 default | Same default upstream (audio_reactive.cpp:77) |
-| AP SSID/pass match MM build | "Apollo M-1" / "" (open AP) | `-D WLED_AP_SSID='"Apollo M-1"'`, `-D WLED_AP_PASS='""'` + WLED_AP_SSID_UNIQUE (deviation per task, DECISIONS A2). Open-AP behavior identical (WiFi.softAP with empty pass) |
+| AP SSID/password | MM build: "Apollo M-1" / "" (open AP) on every unit | `-D WLED_AP_SSID='"Apollo M-1"'` + WLED_AP_SSID_UNIQUE -> "Apollo M-1-xxxxxx"; `-D WLED_AP_PASS='"wled1234"'` per Trevor's D1 (session 3). OTA-upgraded units keep their existing cfg.json AP settings |
 
 ## Pin map (verified byte-identical MM vs upstream)
 
