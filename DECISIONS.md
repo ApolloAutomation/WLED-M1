@@ -200,3 +200,13 @@ the factory image now ships the Pixel Paint module v1.11 by @dedehai
 (DedeHai/WLED-Tools, EUPL-1.2, same license as WLED) plus the pftools.json
 catalog, so pixel paint works out of the box with no install step. Video Lab and
 Font Factory remain one-tap installs inside Pixelforge (not shipped, not asked).
+
+### D18. ANSWERED live (2026-07-12): PixelForge only; legacy tool pages dropped
+Firefox-on-the-same-phone proved the image greying was the WLED Android app's
+file-chooser bug, not firmware: PixelForge is self-contained (own GIF encoder,
+no references to the legacy pages), so the b2 pixart/pxmagic enablement was a
+red herring and Trevor called the old Pixel Magic tool outdated. b5 removes
+WLED_ENABLE_PIXART and WLED_ENABLE_PXMAGIC (leaner app, back to upstream
+defaults); the supported flow is the built-in /pixelforge.htm plus the
+pre-installed Pixel Paint module. App bug report drafted for Trevor to file
+(apollo/WLED_APP_BUG.md); phone workaround is any mobile browser.

@@ -192,18 +192,20 @@ RESULT 2026-07-12: PASS.
 ## Additional checks folded in from the wiki triage
 - [x] PASS 2026-07-12 (Trevor, from his PC against the b2+ firmware): GIFs upload
       and play via the built-in /pxmagic.htm on the device. Pre-fix builds (b1)
-      404 these pages, which presented as greyed-out image/GIF buttons. The
-      device also serves /pixart.htm (pixel paint) built in, replacing whatever
-      external install the old workflow needed. Note for the wiki editor: point
-      the GIF/example pages at the device's own http://<device>/pxmagic.htm.
-      Side-by-side gamma comparison against an MM unit still worthwhile. Phone
-      caveat: if a phone browser greys out on a HOSTED (https) copy of the tool,
-      that is mixed-content blocking, not firmware; the direct http device URL
-      is the supported path.
+      404 these pages. CORRECTED SAME DAY: the working tool is PixelForge
+      (/pixelforge.htm), BUILT INTO upstream 16.0.1 and self-contained; the
+      phone greying was the WLED Android app's file-chooser bug all along
+      (proof: same page works in Firefox on the same Samsung Fold7; bug report
+      drafted in apollo/WLED_APP_BUG.md, workaround = phone browser). Per
+      Trevor, the legacy pxmagic/pixart pages are old and outdated and are NOT
+      shipped (removed again in b5); PixelForge + the pre-installed Pixel Paint
+      module are the supported image/paint path. Wiki editor: point GIF and
+      example pages at http://<device>/pixelforge.htm. Side-by-side gamma
+      comparison against an MM unit still worthwhile.
 - [ ] WizMote pairs using the stock build (ESP-NOW is compiled in upstream; the FAQ
       currently claims a special build is needed and should be corrected if this
       passes). PENDING
-- [x] Covered by the item above: the on-device pxmagic (the tool Pixelforge
-      wraps) pushes images and GIFs correctly on 16.0.1.
+- [x] Covered by the item above: PixelForge pushes images and GIFs correctly
+      on 16.0.1 (PC browser and Android Firefox verified).
 - [ ] The installer still offers the ESPHome firmware path for the M-1 wherever it
       is published today; the WLED entry must not hide it. PENDING
