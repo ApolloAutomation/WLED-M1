@@ -1,0 +1,23 @@
+/*
+ * Apollo M-1 developer secrets template.
+ *
+ * The factory apollo_m1 build ships with no credentials: open setup AP and no
+ * pre-set WiFi. For internal development or bench builds that should join a
+ * network automatically:
+ *
+ *   1. copy this file to wled00/my_config.h   (gitignored, never commit it)
+ *   2. build with the flag -D WLED_USE_MY_CONFIG
+ *      (e.g. add it to build_flags in a private platformio_override.ini env)
+ *
+ * Do not put real credentials in any committed file.
+ */
+
+// WiFi network the bench unit should join
+//#define CLIENT_SSID "your_network_name"
+//#define CLIENT_PASS "your_network_password"
+
+// Password for the "Apollo M-1-xxxxxx" setup hotspot (factory build: open)
+//#define WLED_AP_PASS "choose_an_ap_password"
+
+// OTA update password (factory build: WLED default)
+//#define WLED_OTA_PASS "choose_an_ota_password"
