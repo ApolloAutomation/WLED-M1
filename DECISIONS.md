@@ -177,3 +177,14 @@ WLED-MM shipping posture. Tradeoff accepted deliberately: an unconfigured unit
 on the customer's network. wled1234 no longer appears in the binary; the unique
 SSID per unit (Apollo M-1-xxxxxx) stays. OTA-updated units that saved wled1234
 keep it unless cleared; the demo unit was cleared via the API (ap pskl 0).
+
+### D17. ANSWERED live (2026-07-12): image tools and factory presets pre-installed
+Trevor asked for the image tool, scrolling text, and pixel paint out of the box.
+Implemented: WLED_ENABLE_PIXART + WLED_ENABLE_PXMAGIC serve /pixart.htm (pixel
+paint) and /pxmagic.htm (image upload) on the device (the Pixelforge workflow
+depends on them; WLED-MM had them built in). Factory presets baked into the
+filesystem image, authored on the live unit and downloaded back (format exact):
+1 Scrolling Text ("APOLLO M-1" in Apollo blue, text edits via segment name),
+2 Apollo Blue (solid, the boot look as a tappable preset), 3 Sound Bars (GEQ,
+gives the audio-on default a face; harmless idle bars on rev4 - flag if
+unwanted). Boot remains preset-less solid Apollo blue; presets are one tap away.
