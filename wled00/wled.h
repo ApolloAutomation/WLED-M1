@@ -1035,7 +1035,7 @@ WLED_GLOBAL volatile uint8_t jsonBufferLock _INIT(0);
       apSSID, \
       sizeof(apSSID)-1, \
       PSTR("%s-%s"), \
-      WLED_BRAND, \
+      WLED_AP_SSID, \
       escapedMac.c_str()+6 \
     ); \
   } while(0)

@@ -48,6 +48,9 @@ constexpr size_t  WLED_MAX_USERMOD_PALETTES     = WLED_USERMOD_PALETTE_ID_BASE -
 #define DEFAULT_AP_PASS     "wled1234"
 #define DEFAULT_OTA_PASS    "wledota"
 #define DEFAULT_MDNS_NAME   "x"
+#ifndef WLED_MDNS_PREFIX
+  #define WLED_MDNS_PREFIX  "wled" // prefix for the generated unique hostname: <prefix>-<last 6 MAC hex chars>
+#endif
 
 //increase if you need more
 #ifndef WLED_MAX_WIFI_COUNT
