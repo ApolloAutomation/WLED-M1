@@ -54,7 +54,11 @@ DECISIONS D13 for the DEFAULT_LED_COUNT lesson).
       FACT_CHALLENGES.md, wiki rewrites, installer patch, UPSTREAM_PR.md.
 
 ## Next session, in order
-1. Hardware QA per QA_CHECKLIST.md (single operator, D0 first, order mandatory).
-2. Resolve Trevor's D3 (AudioReactive default) from the D9 measurements.
-3. Open the upstream PR after D2-D4 pass.
-4. Hosting + installer URL flip + wiki updates per SUMMARY "For Trevor".
+1. Remaining hardware QA: D3 FS-reset resilience, D5 current draw, D6 ghosting,
+   D7 driver chip id, D8 WiFi under load, D9 rev4 half, D10 4-panel chain,
+   D11 HA discovery click-through, D12 dump-restore drill (QA_CHECKLIST.md).
+2. Open the upstream PR (D2-D4 have passed; apollo/UPSTREAM_PR.md; human opens it).
+3. Hosting + installer URL flip + wiki updates per SUMMARY "For Trevor".
+4. Decide: restore Trevor's demo unit from baseline/live/m1_factory_16mb.bin or
+   keep it on 16.0.1 (restore command in ROLLBACK.md; restoring also doubles as
+   the D12 drill).
