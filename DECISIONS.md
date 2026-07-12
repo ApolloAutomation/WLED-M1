@@ -1,7 +1,7 @@
 # DECISIONS
 
 Decisions made autonomously during the migration, with rationale. Items under
-"Assumptions to confirm" need Trevor's review.
+"Assumptions to confirm" need Justin's review.
 
 ## Decided
 
@@ -38,14 +38,14 @@ Same reasoning as A1 applied to the AP hotspot SSID. The current shipping build 
 SSID "Apollo M-1" for every unit. Implementation detail recorded in Phase 2/3 notes
 once upstream's WLED_AP_SSID_UNIQUE mechanism was checked. Confirm desired SSID text.
 
-### A3. ANSWERED (session 3, Trevor's D1): AP password is wled1234
-The session-2 build shipped an open AP to match WLED-MM. Trevor decided: use WLED's
+### A3. ANSWERED (session 3, Justin's D1): AP password is wled1234
+The session-2 build shipped an open AP to match WLED-MM. Justin decided: use WLED's
 documented default password wled1234. Applied in [env:apollo_m1]. Logged consequence:
 OTA-upgraded units keep whatever AP configuration their existing cfg.json carries
 (for WLED-MM units that is the open AP); only a full-erase flash gets the password.
 
-### A4. ANSWERED (session 3, Trevor's D4): server description is "Apollo M-1"
-The session-2 build used "Apollo LED Matrix" from the old acceptance table. Trevor
+### A4. ANSWERED (session 3, Justin's D4): server description is "Apollo M-1"
+The session-2 build used "Apollo LED Matrix" from the old acceptance table. Justin
 decided "Apollo M-1". Applied in [env:apollo_m1] and apollo/fs/cfg.json.
 
 ### A5. SUPERSEDED (session 3): canonical repo and branch
@@ -147,7 +147,7 @@ practice because BusHub75Matrix derives its length from panel dimensions, but wr
 Now using -D PIXEL_COUNTS=4096, which cfg.cpp guards with #ifndef and actually honors.
 
 ### D14. ANSWERED live (2026-07-12): factory welcome color is Apollo blue 0x4379AA
-Trevor saw the orange factory boot on hardware and chose Apollo blue #4379AA.
+Justin saw the orange factory boot on hardware and chose Apollo blue #4379AA.
 Implemented via a new #ifndef guard on DEFAULT_COLOR in FX.h (it was unguarded,
 same trap as D13) plus -D DEFAULT_COLOR=0x4379AA in the env. Original proposal
 kept below for the record.
@@ -160,17 +160,17 @@ brown out a 3A supply. Options for something livelier:
      matches stock WLED expectations)
   b) ship preset 1 = a gentle 2D effect at brightness 128 with bootPreset=1
      (one more delta surface, needs gamma-shifted color check on hardware first)
-Trevor picks after seeing option (a) on a real panel in QA.
+Justin picks after seeing option (a) on a real panel in QA.
 
-### D15. ANSWERED live (2026-07-12): AudioReactive defaults to ON (Trevor's D3)
-Trevor decided during the hardware session: -D UM_AUDIOREACTIVE_ENABLE is set, so
+### D15. ANSWERED live (2026-07-12): AudioReactive defaults to ON (Justin's D3)
+Justin decided during the hardware session: -D UM_AUDIOREACTIVE_ENABLE is set, so
 factory units boot with the usermod active on the baked pins (rev6 with mic needs
 zero interaction). The rev4 no-mic cost (CPU, heap, refresh, noise-driven audio
 effects on a floating input) remains a QA D9 measurement item; if it proves
 significant, the fallback is a rev4-specific decision, not a silent revert.
 
 ### D16. ANSWERED live (2026-07-12): setup hotspot is OPEN again (reverses D1)
-After walking the customer flow on hardware, Trevor chose to drop the AP password
+After walking the customer flow on hardware, Justin chose to drop the AP password
 so customers join and start playing with no password step. This restores the
 WLED-MM shipping posture. Tradeoff accepted deliberately: an unconfigured unit
 (or one that loses WiFi) can be configured by anyone in radio range until it is
@@ -179,7 +179,7 @@ SSID per unit (Apollo M-1-xxxxxx) stays. OTA-updated units that saved wled1234
 keep it unless cleared; the demo unit was cleared via the API (ap pskl 0).
 
 ### D17. ANSWERED live (2026-07-12): image tools and factory presets pre-installed
-Trevor asked for the image tool, scrolling text, and pixel paint out of the box.
+Justin asked for the image tool, scrolling text, and pixel paint out of the box.
 Implemented: WLED_ENABLE_PIXART + WLED_ENABLE_PXMAGIC serve /pixart.htm (pixel
 paint) and /pxmagic.htm (image upload) on the device (the Pixelforge workflow
 depends on them; WLED-MM had them built in). Factory presets baked into the
@@ -193,9 +193,9 @@ unwanted). Boot remains preset-less solid Apollo blue; presets are one tap away.
 Pixelforge itself turned out to be BUILT INTO upstream WLED 16.0.1 (served at
 /pixelforge.htm, enabled by default via #ifndef WLED_DISABLE_PIXELFORGE) - the
 Apollo tool was upstreamed. Its image and GIF functions un-greyed once b2 enabled
-the pixart/pxmagic machinery, verified working from Trevor's PC (GIF upload and
+the pixart/pxmagic machinery, verified working from Justin's PC (GIF upload and
 playback). "Installing pixel paint" is Pixelforge's own module system writing
-pixelpaint.htm.gz to the device filesystem. Per Trevor's pre-installed request,
+pixelpaint.htm.gz to the device filesystem. Per Justin's pre-installed request,
 the factory image now ships the Pixel Paint module v1.11 by @dedehai
 (DedeHai/WLED-Tools, EUPL-1.2, same license as WLED) plus the pftools.json
 catalog, so pixel paint works out of the box with no install step. Video Lab and
@@ -205,8 +205,8 @@ Font Factory remain one-tap installs inside Pixelforge (not shipped, not asked).
 Firefox-on-the-same-phone proved the image greying was the WLED Android app's
 file-chooser bug, not firmware: PixelForge is self-contained (own GIF encoder,
 no references to the legacy pages), so the b2 pixart/pxmagic enablement was a
-red herring and Trevor called the old Pixel Magic tool outdated. b5 removes
+red herring and Justin called the old Pixel Magic tool outdated. b5 removes
 WLED_ENABLE_PIXART and WLED_ENABLE_PXMAGIC (leaner app, back to upstream
 defaults); the supported flow is the built-in /pixelforge.htm plus the
-pre-installed Pixel Paint module. App bug report drafted for Trevor to file
+pre-installed Pixel Paint module. App bug report drafted for Justin to file
 (apollo/WLED_APP_BUG.md); phone workaround is any mobile browser.

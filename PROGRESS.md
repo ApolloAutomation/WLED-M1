@@ -33,7 +33,7 @@ DECISIONS D13 for the DEFAULT_LED_COUNT lesson).
 - [x] AUDIT: env rewritten to inherit (DECISIONS D12); code delta 212 -> 209
       lines while absorbing D1/D4; docs grew per TASK.md deliverables (SUMMARY
       has the honest table). DEFAULT_LED_COUNT trap fixed (D13).
-- [x] Trevor's decisions: D1 wled1234 APPLIED, D2 confirmed, D3 OPEN (QA D9),
+- [x] Justin's decisions: D1 wled1234 APPLIED, D2 confirmed, D3 OPEN (QA D9),
       D4 Apollo M-1 APPLIED, D5 one PR stands / ABL PR cancelled.
 - [x] Fact verification: FACT_CHALLENGES.md written. F1 confirmed, F2 prose
       corrected, F3 confirmed (unflag pattern validated against PIO source),
@@ -45,7 +45,7 @@ DECISIONS D13 for the DEFAULT_LED_COUNT lesson).
       OTA slot, zero warnings. Acceptance verified from inside the artifact
       (unpacked LittleFS cfg.json + binary strings + GIF decoder present).
       v16.1 tag still does not exist upstream (rechecked 2026-07-12).
-- [~] Phase D hardware (live session 2026-07-12, Trevor authorizing and observing):
+- [~] Phase D hardware (live session 2026-07-12, Justin authorizing and observing):
       D0/D1/D2/D3/D4 PASS, D9 rev6-half PASS. 13/13 acceptance rows verified over
       HTTP on a factory-fresh boot; both OTA cycles clean; Apollo blue (D14) and
       AR-on (D15) decided live and shipped. Remaining: D3 FS-reset resilience,
@@ -58,7 +58,7 @@ DECISIONS D13 for the DEFAULT_LED_COUNT lesson).
    D7 driver chip id, D8 WiFi under load, D9 rev4 half, D10 4-panel chain,
    D11 HA discovery click-through, D12 dump-restore drill (QA_CHECKLIST.md).
 2. Open the upstream PR (D2-D4 have passed; apollo/UPSTREAM_PR.md; human opens it).
-3. Hosting + installer URL flip + wiki updates per SUMMARY "For Trevor".
-4. Decide: restore Trevor's demo unit from baseline/live/m1_factory_16mb.bin or
+3. Hosting + installer URL flip + wiki updates per SUMMARY "For Justin".
+4. Decide: restore Justin's demo unit from baseline/live/m1_factory_16mb.bin or
    keep it on 16.0.1 (restore command in ROLLBACK.md; restoring also doubles as
    the D12 drill).

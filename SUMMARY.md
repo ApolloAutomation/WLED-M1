@@ -67,7 +67,7 @@ display and their settings. Full-erase install restores all factory defaults.
   const.h beats any -D). Replaced with the guarded PIXEL_COUNTS. Found by reading
   the full build log rather than trusting exit codes.
 
-## Trevor's decisions: applied or queued
+## Justin's decisions: applied or queued
 
 - D1 AP password wled1234: APPLIED (and logged: OTA-upgraded units keep their old
   open-AP config; only full-erase units get the password).
@@ -107,7 +107,7 @@ Genuine findings out of the triage:
 
 ## Hardware-verified versus build-verified
 
-HARDWARE-VERIFIED (live session 2026-07-12, Trevor's mic-equipped demo unit,
+HARDWARE-VERIFIED (live session 2026-07-12, Justin's mic-equipped demo unit,
 results and captures in QA_CHECKLIST.md and baseline/live/):
 - D0/D1: 16 MB dump taken and integrity-proven before any write; unit state
   diffed (wiki-configured type 103; release "mdev_release" bug confirmed live).
@@ -122,7 +122,7 @@ results and captures in QA_CHECKLIST.md and baseline/live/):
   claps); sync off.
 - Two OTA cycles total (MM to 16.0.1, then 16.0.1 to 16.0.1 carrying the live
   decisions below).
-- Live decisions taken by Trevor during the session: factory welcome color is
+- Live decisions taken by Justin during the session: factory welcome color is
   Apollo blue 0x4379AA (D14), AudioReactive defaults ON (D15/D3), both shipped
   and verified on the unit.
 - New support-relevant finding: 16.x rejects cross-subnet OTA by default
@@ -135,7 +135,7 @@ under load (D8), rev4 no-mic measurements (D9 second half), 4-panel chain
 (D10), Home Assistant discovery click-through (D11), dump-restore rollback
 drill (D12).
 
-## For Trevor
+## For Justin
 
 1. Run QA_CHECKLIST.md with a unit on serial and M1_ALLOW_FLASH=1. D0 first.
 2. After D2-D4 pass: open the upstream PR from

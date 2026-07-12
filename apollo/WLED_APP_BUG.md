@@ -4,7 +4,7 @@ Upstream issue: https://github.com/Moustachauve/WLED-Android/issues/141
 ("Cannot Choose file", open since 2026-03-23, reported on Samsung Fold 5 and
 Pixel 7, stalled after a maintainer question).
 
-Trevor: paste the comment below on that issue rather than opening a new one.
+Justin: paste the comment below on that issue rather than opening a new one.
 Our repro adds what the thread is missing: proof the device side is fine, a
 third device model, and a second affected feature (PixelForge uploads, not
 only firmware updates).

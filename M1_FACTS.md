@@ -14,7 +14,7 @@ clean context windows and do not inherit CLAUDE.md or the parent's context.
 
 - Apollo M-1 LED Matrix. Controller: ESP32-S3, 16MB flash, 8MB octal PSRAM.
 - Panel: 64x64 HUB75, P2.5, 4096 pixels. USB-C or WAGO 5V 3A input.
-- Pinout is identical to the MoonHub board. Confirmed by Trevor.
+- Pinout is identical to the MoonHub board. Confirmed by Justin.
 - Two PCB revisions in the field: rev4 (no microphone) and rev6+ (optional mic addon).
 - ESP32-S3 supports HUB75 and audioreactive simultaneously with no known restrictions.
 

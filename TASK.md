@@ -157,7 +157,7 @@ we ship binaries. If it is private, flag it in SUMMARY.md.
 ### A5. If you are blocked
 
 If `find` returns nothing, or a bash command is denied, or the fetch fails: STOP. Write BLOCKED.md
-containing the exact commands Trevor needs to run, then halt.
+containing the exact commands Justin needs to run, then halt.
 
 Do NOT reimplement the migration from scratch. Do NOT "start clean since the old work cannot be
 found." Do NOT open platformio.ini. Rebuilding this work is the single worst outcome available to
@@ -177,7 +177,7 @@ cfg.json inside the built artifact, not by reading source.
 
 ## THE APOLLO DELTA (this is the whole list)
 
-Trevor's priority: preset as many settings as possible so the customer configures NOTHING.
+Justin's priority: preset as many settings as possible so the customer configures NOTHING.
 
 1. HUB75 bus type: Half Scan (65).
 2. Panel width 64, panel height 64.
@@ -211,7 +211,7 @@ That is the list. If you are adding anything else, justify it in DECISIONS.md.
   installing the mic addon should have exactly one toggle left, not five. Reducing the microphone
   wiki page from 5 steps to 2 is the win either way.
 - D4. Server description: "Apollo M-1", not "Apollo LED Matrix".
-- D5. Upstream PRs: prepare fully. Do NOT open them. Trevor will.
+- D5. Upstream PRs: prepare fully. Do NOT open them. Justin will.
 
 ## PHASE B: Wiki triage (this is the real definition of done)
 
@@ -257,7 +257,7 @@ Do not break it. Confirm the installer keeps offering both firmwares.
 ## PHASE D: Hardware QA. SINGLE AGENT ONLY. NO FAN-OUT.
 
 Only if M1_ALLOW_FLASH=1 and a unit is on serial. If it is not set, skip to Phase E and write the
-QA checklist for Trevor to run by hand. The order below is not negotiable. Doing it out of order
+QA checklist for Justin to run by hand. The order below is not negotiable. Doing it out of order
 destroys evidence we cannot recover.
 
 D0. CAPTURE THE FIELD UNIT BEFORE YOU TOUCH IT. One-shot, irreversible. This unit is the only
@@ -336,9 +336,9 @@ Use the panel fault decoder in M1_FACTS.md instead of guessing when something lo
   confirmed) the HUB75 ABL exemption.
 - Installer changes: the installer clone is outside this session's project root. Do not modify it
   beyond the push in Phase A. If Phase E needs installer changes, write them as a patch file in
-  apollo/ and tell Trevor. Do not touch production install.apolloautomation.com.
+  apollo/ and tell Justin. Do not touch production install.apolloautomation.com.
 - Rollback instructions plus archived last-known-good WLED-MM binaries.
-- Follow-up list for Trevor: any wiki, shop, or listing copy referencing WLED-MM or Pixel Magic
+- Follow-up list for Justin: any wiki, shop, or listing copy referencing WLED-MM or Pixel Magic
   that will now be wrong.
 
 ## Standing rules
@@ -349,7 +349,7 @@ password, and OTA password live in a gitignored my_config.h with a my_config.h.e
 alongside. Blocked after 3 real attempts means write it to BLOCKED.md and move on, not stall. Keep
 PROGRESS.md current so a fresh session can resume from it.
 
-Trevor is AFK. Do not stop to ask questions. When you hit an ambiguity, take the conservative
+Justin is AFK. Do not stop to ask questions. When you hit an ambiguity, take the conservative
 option, log it in DECISIONS.md under "Assumptions to confirm", and keep going.
 
 ## Style rules for any user-facing text you draft

@@ -52,7 +52,7 @@ This is why the wiki settings page exists.
 
 | Acceptance item | Shipping MM reality | WLED 16.0.1 target |
 |---|---|---|
-| Server description | Compiled SERVERNAME "Apollo M-1" (platformio_override.ini:20); old wiki had users change it to "Apollo LED Matrix" | `-D SERVERNAME='"Apollo M-1"'` per Trevor's D4 (session 3) -> serverDescription (UP wled00/wled.h:426-430) |
+| Server description | Compiled SERVERNAME "Apollo M-1" (platformio_override.ini:20); old wiki had users change it to "Apollo LED Matrix" | `-D SERVERNAME='"Apollo M-1"'` per Justin's D4 (session 3) -> serverDescription (UP wled00/wled.h:426-430) |
 | mDNS apollo-led-matrix | Factory default is wled-XXXXXX (MM wled.cpp:763); wiki has users set apollo-led-matrix manually | New WLED_MDNS_PREFIX define + patched fallback in UP wled00/wled.cpp:536 -> apollo-led-matrix-XXXXXX (unique suffix, DECISIONS A1) |
 | LED type Hub75Matrix 64x64 | Type 101 = 32x32 (the bug) | TYPE_HUB75MATRIX_HS = 65 (UP const.h:358) with pins[0..1] = 64,64. Bus "pins" for HUB75 are config params {panelW, panelH, chain, rows, cols} (UP bus_manager.cpp:798-811, bus_manager.h:174). Env: `-D DATA_PINS=64,64,1,1,1`, LED_TYPES=TYPE_HUB75MATRIX_HS (from [hub75] group) + cfg.cpp first-boot fix (see below) |
 | Chain length 1 | bc.pins[0] in MM semantics; default 0/1 | pins[2] = 1 in DATA_PINS. Upstream clamps chain 1..4 (bus_manager.cpp:828) - matches the 4-panel chain product limit |
@@ -61,7 +61,7 @@ This is why the wiki settings page exists.
 | AudioReactive Generic I2S | SR_DMTYPE=1 (platformio_override.ini:34) | Same define upstream (audio_reactive.cpp:771-776, default already 1) |
 | AR pins SD 10 / WS 12 / SCK 11 | I2S_SDPIN=10 I2S_WSPIN=12 I2S_CKPIN=11 MCLK=-1 | Identical defines already present in upstream env esp32s3dev_16MB_opi_hub75 (platformio.ini:891) |
 | AR sync Off | audioSyncEnabled=0 default | Same default upstream (audio_reactive.cpp:77) |
-| AP SSID/password | MM build: "Apollo M-1" / "" (open AP) on every unit | `-D WLED_AP_SSID='"Apollo M-1"'` + WLED_AP_SSID_UNIQUE -> "Apollo M-1-xxxxxx"; `-D WLED_AP_PASS='"wled1234"'` per Trevor's D1 (session 3). OTA-upgraded units keep their existing cfg.json AP settings |
+| AP SSID/password | MM build: "Apollo M-1" / "" (open AP) on every unit | `-D WLED_AP_SSID='"Apollo M-1"'` + WLED_AP_SSID_UNIQUE -> "Apollo M-1-xxxxxx"; `-D WLED_AP_PASS='"wled1234"'` per Justin's D1 (session 3). OTA-upgraded units keep their existing cfg.json AP settings |
 
 ## Pin map (verified byte-identical MM vs upstream)
 

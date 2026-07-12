@@ -2,7 +2,7 @@
 
 Status: NOT RUN. No hardware was available in any session so far (M1_ALLOW_FLASH
 unset, no unit on serial, no live unit on the network). Everything below is for
-Trevor or a hardware-enabled session. Results go inline under each item; replace
+Justin or a hardware-enabled session. Results go inline under each item; replace
 "PENDING" with what actually happened.
 
 Artifacts: apollo/out/M-1_full_install.bin and M-1_ota.bin, rebuilt via
@@ -43,7 +43,7 @@ RULES (from TASK.md, non-negotiable):
       HTTP captures (/json/info etc.) still to do once the unit is on the LAN.
 
 ## D1. Diff live capture against the reconstructed baseline
-- [x] DONE 2026-07-12, from the dump's cfg.json. This unit is Trevor's demo unit,
+- [x] DONE 2026-07-12, from the dump's cfg.json. This unit is Justin's demo unit,
       not factory-fresh. Findings, none blocking:
       1. Bus: type 103 (MM Hub75 64x64) with pin [1] = chain 1, len 4096. Matches
          the wiki-configured state; the OTA shim's 103 -> 65 mapping is the exact
@@ -95,7 +95,7 @@ RESULT 2026-07-12: PASS on the real demo unit at 192.168.20.99.
       and keeps 2D. Fix applied via JSON API (matrix mpc 1, one 64x64 panel) +
       reboot; unit then reported 64x64 matrix, full-panel segment 0-64/0-64,
       46 fps, playlist cycling presets.
-- [x] VISUAL (Trevor): full 64x64 panel animating, content sensible. Preset
+- [x] VISUAL (Justin): full 64x64 panel animating, content sensible. Preset
       effects may differ from MM (16.x renumbering) - accepted, dump restores.
 - [x] maxpwr 1500 carried over from the old config as predicted (customer config
       preserved; ABL cannot affect the HUB75 bus, FACT_CHALLENGES FACT 4). The
@@ -119,9 +119,9 @@ RESULT 2026-07-12: PASS.
 ## D4. The real acceptance test: visible light
 RESULT 2026-07-12: PASS.
 - [x] Factory-fresh boot lit the FULL 64x64 panel within seconds, zero
-      configuration (Trevor confirmed visually; the shipping WLED-MM firmware
+      configuration (Justin confirmed visually; the shipping WLED-MM firmware
       would have shown a 32x32 quadrant here). Initially the warm orange default;
-      Trevor chose Apollo blue live and DECISIONS D14 was answered: the factory
+      Justin chose Apollo blue live and DECISIONS D14 was answered: the factory
       welcome color is now 0x4379AA, verified after OTA as boot segment color
       [67,121,170] with effect Solid at brightness 128.
 
@@ -134,7 +134,7 @@ RESULT 2026-07-12: PASS.
   split-band/VLAN networks (like this site: 5G and 2.4G are different subnets)
   will hit this when updating from a browser on another subnet. Add to the wiki
   troubleshooting page and FAQ.
-- AudioReactive default flipped ON live (Trevor's D3 decision, DECISIONS D15):
+- AudioReactive default flipped ON live (Justin's D3 decision, DECISIONS D15):
   -D UM_AUDIOREACTIVE_ENABLE now in the env, artifacts rebuilt. This unit also
   set enabled=true via API since its cfg predated the new default.
 - Both live decisions (blue, AR on) rode an app-only OTA onto the factory unit
@@ -163,10 +163,10 @@ RESULT 2026-07-12: PASS.
 - [ ] Heavy effect running: test WiFi throughput and stability (S3_LCD_DIV_NUM=20
       is inherited as the mitigation). Record ping loss and UI responsiveness. PENDING
 
-## D9. AudioReactive (also resolves Trevor's D3)
+## D9. AudioReactive (also resolves Justin's D3)
 - [x] REV6 HALF: PASS 2026-07-12. Mic-equipped unit, zero manual configuration
       (enabled by default per DECISIONS D15, pins baked): GEQ effect visibly
-      reacts to live sound (Trevor's clap test). Sync mode 0 (off) confirmed in
+      reacts to live sound (Justin's clap test). Sync mode 0 (off) confirmed in
       /json/cfg. Better than the one-toggle goal: it is now a zero-toggle flow.
 - [ ] Rev4 / no mic with the usermod force-enabled: measure CPU load, free heap,
       panel refresh, current draw versus disabled. No crash, display unaffected.
@@ -190,14 +190,14 @@ RESULT 2026-07-12: PASS.
       version strings match the D0 capture). PENDING
 
 ## Additional checks folded in from the wiki triage
-- [x] PASS 2026-07-12 (Trevor, from his PC against the b2+ firmware): GIFs upload
+- [x] PASS 2026-07-12 (Justin, from his PC against the b2+ firmware): GIFs upload
       and play via the built-in /pxmagic.htm on the device. Pre-fix builds (b1)
       404 these pages. CORRECTED SAME DAY: the working tool is PixelForge
       (/pixelforge.htm), BUILT INTO upstream 16.0.1 and self-contained; the
       phone greying was the WLED Android app's file-chooser bug all along
       (proof: same page works in Firefox on the same Samsung Fold7; bug report
       drafted in apollo/WLED_APP_BUG.md, workaround = phone browser). Per
-      Trevor, the legacy pxmagic/pixart pages are old and outdated and are NOT
+      Justin, the legacy pxmagic/pixart pages are old and outdated and are NOT
       shipped (removed again in b5); PixelForge + the pre-installed Pixel Paint
       module are the supported image/paint path. Wiki editor: point GIF and
       example pages at http://<device>/pixelforge.htm. Side-by-side gamma
