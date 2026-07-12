@@ -1,0 +1,48 @@
+Correct the firmware fork name in the installer migration note.
+
+The canonical firmware fork is ApolloAutomation/WLED-M1 (branch m1-wled-update),
+not ApolloAutomation/wled (branch apollo/m1) as a prior session wrote. Apply from
+the installer repo root, branch feat/m1-wled-entry:
+
+    git apply apollo/installer-fixup.patch   (path: copy this file there first)
+or
+    patch -p1 < installer-fixup.patch
+
+--- a/docs/m1-wled-migration.md
++++ b/docs/m1-wled-migration.md
+@@ -11,21 +11,21 @@ The registry validator requires live URLs, so the entry ships in this state firs
+ ## Planned switch (after the 16.0.1 firmware is released)
+
+ The M-1 firmware is moving from the WLED-MM fork to upstream WLED 16.0.1, built from
+-ApolloAutomation/wled (branch apollo/m1, environment apollo_m1). One firmware serves
++ApolloAutomation/WLED-M1 (branch m1-wled-update, environment apollo_m1). One firmware serves
+ rev4 and rev6, so the Rev4/Rev6 split collapses to a single Standard variant:
+
+ ```json
+-"repo": "ApolloAutomation/wled",
+-"githubPagesInstaller": "https://apolloautomation.github.io/wled/",
++"repo": "ApolloAutomation/WLED-M1",
++"githubPagesInstaller": "https://apolloautomation.github.io/WLED-M1/",
+ "firmware": {
+   "stable": {
+-    "Standard": "https://apolloautomation.github.io/wled/manifest.json"
++    "Standard": "https://apolloautomation.github.io/WLED-M1/manifest.json"
+   }
+ }
+ ```
+
+ The manifest content is prepared in the firmware repository at
+-apollo/installer/manifest.json (see that repo, branch apollo/m1):
++apollo/installer/manifest.json (see that repo, branch m1-wled-update):
+
+ - chipFamily ESP32-S3
+ - single part: M-1_full_install.bin at offset 0 (bootloader + partition table +
+@@ -36,7 +36,7 @@ apollo/installer/manifest.json (see that repo, branch apollo/m1):
+   requires the erase option for this device.
+
+ Hosting for the new manifest and binary is not set up yet (GitHub Pages on the
+-ApolloAutomation/wled fork, or any static host). Do not switch the URLs until they
++ApolloAutomation/WLED-M1 fork, or any static host). Do not switch the URLs until they
+ are live; scripts/validate_registry.py will catch dead links.
+
+ Customers on WLED-MM keep working: OTA from WLED-MM 14.5.1 to the 16.0.1 app-only

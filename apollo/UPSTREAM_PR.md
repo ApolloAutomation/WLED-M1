@@ -1,7 +1,7 @@
 # Upstream PR draft (prepared, NOT opened)
 
-Branch: hub75-first-boot-defaults (local worktree ../WLED-upstream-pr, single commit
-42c58077 off upstream/main c7d41a8e). Target: Aircoookie/WLED main.
+Branch: hub75-first-boot-defaults (single commit 42c58077 off upstream main c7d41a8e,
+pushed to ApolloAutomation/WLED-M1). Target: Aircoookie/WLED main.
 
 Note on scope: the original plan was an APOLLO_M1_PINOUT bus_manager.cpp block, but
 the Apollo M-1 pinout already exists upstream as MOONHUB_S3_PINOUT with identical
@@ -60,7 +60,8 @@ mainline to boot it zero-config.
   This session was build-only; do not submit the PR with untested claims.
 
 ## How to open it later
-Push the branch to a fork of Aircoookie/WLED (NOT to the ApolloAutomation product
-fork if you want a clean contributor namespace) and open the PR against main. Do not
+The branch is already pushed to ApolloAutomation/WLED-M1, which GitHub knows as a
+fork of wled/WLED, so the PR can be opened directly from
+ApolloAutomation/WLED-M1:hub75-first-boot-defaults against wled/WLED main. Do not
 open it from automation; a maintainer conversation about define naming
 (DEFAULT_PANEL_* vs WLED_*) is likely and worth having a human in the loop for.

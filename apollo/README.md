@@ -7,7 +7,7 @@ tree itself.
 - fs/cfg.json - known-good factory configuration. Mirrors the compile-time defaults of
   the apollo_m1 environment: one HUB75 half-scan bus (type 65) as a single 64x64 panel,
   chain length 1, 2D matrix 1x 64x64, brightness limiter off, server description
-  "Apollo LED Matrix". Keys follow wled00/cfg.cpp serializeConfig() for WLED 16.0.1.
+  "Apollo M-1". Keys follow wled00/cfg.cpp serializeConfig() for WLED 16.0.1.
   Fields deliberately omitted (mDNS name, AP settings, usermod settings) fall back to
   the compile-time defaults, which include the per-unit unique hostname and AP SSID.
 - fs/presets.json - empty preset file, identical to what the firmware creates itself.

@@ -1,5 +1,10 @@
 # BLOCKED
 
+Status update, session 3 (2026-07-12): B3 is RESOLVED (GitHub auth now works from
+the terminal; m1-wled-update, hub75-first-boot-defaults, and the installer branch
+are pushed). B1 and B2 remain open and now both funnel into QA_CHECKLIST.md: the
+live-device capture became QA item D0 and the flash verification became D2-D12.
+
 ## B1. Live-device baseline capture (Phase 0)
 Goal: curl /json/info, /json/state, /json/cfg, presets.json, cfg.json from a live M-1
 running WLED-MM into baseline/.
