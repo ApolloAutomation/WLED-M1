@@ -188,3 +188,15 @@ filesystem image, authored on the live unit and downloaded back (format exact):
 2 Apollo Blue (solid, the boot look as a tappable preset), 3 Sound Bars (GEQ,
 gives the audio-on default a face; harmless idle bars on rev4 - flag if
 unwanted). Boot remains preset-less solid Apollo blue; presets are one tap away.
+
+### D17 addendum (2026-07-12, correcting the picture)
+Pixelforge itself turned out to be BUILT INTO upstream WLED 16.0.1 (served at
+/pixelforge.htm, enabled by default via #ifndef WLED_DISABLE_PIXELFORGE) - the
+Apollo tool was upstreamed. Its image and GIF functions un-greyed once b2 enabled
+the pixart/pxmagic machinery, verified working from Trevor's PC (GIF upload and
+playback). "Installing pixel paint" is Pixelforge's own module system writing
+pixelpaint.htm.gz to the device filesystem. Per Trevor's pre-installed request,
+the factory image now ships the Pixel Paint module v1.11 by @dedehai
+(DedeHai/WLED-Tools, EUPL-1.2, same license as WLED) plus the pftools.json
+catalog, so pixel paint works out of the box with no install step. Video Lab and
+Font Factory remain one-tap installs inside Pixelforge (not shipped, not asked).
