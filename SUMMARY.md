@@ -107,12 +107,33 @@ Genuine findings out of the triage:
 
 ## Hardware-verified versus build-verified
 
-Hardware-verified: NOTHING. No session has had a device.
-Build-verified: everything in the "What the firmware now does" section, the OTA
-shim logic (code-level only), and the artifact contents.
-The full hardware protocol is QA_CHECKLIST.md in TASK.md's D0-D12 order, with the
-one-shot flash-dump warning at the top. D0 (capture the field unit, 16 MB dump)
-remains the first and irreversible step.
+HARDWARE-VERIFIED (live session 2026-07-12, Trevor's mic-equipped demo unit,
+results and captures in QA_CHECKLIST.md and baseline/live/):
+- D0/D1: 16 MB dump taken and integrity-proven before any write; unit state
+  diffed (wiki-configured type 103; release "mdev_release" bug confirmed live).
+- D2 OTA from shipping WLED-MM: PASS. Filesystem mounted, WiFi/settings/presets/
+  GIFs survived, migration shim produced type 65 pin [64,64,1,1,1]. The
+  pre-existing fictional 4-panel matrix was dropped by upstream's bounds check
+  (already broken on MM; corrected via API).
+- D3 factory install: PASS, 13 of 13 acceptance rows over HTTP on a zero-config
+  boot; unique mDNS hostname and AP name matched the MAC-derived prediction.
+- D4 visible light: PASS. Full 64x64 lit within seconds, no configuration.
+- D9 rev6 half: PASS. AudioReactive works with zero touches (GEQ reacts to
+  claps); sync off.
+- Two OTA cycles total (MM to 16.0.1, then 16.0.1 to 16.0.1 carrying the live
+  decisions below).
+- Live decisions taken by Trevor during the session: factory welcome color is
+  Apollo blue 0x4379AA (D14), AudioReactive defaults ON (D15/D3), both shipped
+  and verified on the unit.
+- New support-relevant finding: 16.x rejects cross-subnet OTA by default
+  (otaSameSubnet); WLED-MM did not. Documented for the wiki.
+
+STILL PENDING ON HARDWARE (parts or instruments needed): filesystem-erase
+resilience via the 10 s button (exercises the compile-default path), current
+draw at full white (D5), ghosting (D6), driver chip identification (D7), WiFi
+under load (D8), rev4 no-mic measurements (D9 second half), 4-panel chain
+(D10), Home Assistant discovery click-through (D11), dump-restore rollback
+drill (D12).
 
 ## For Trevor
 

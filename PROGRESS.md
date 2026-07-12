@@ -45,8 +45,11 @@ DECISIONS D13 for the DEFAULT_LED_COUNT lesson).
       OTA slot, zero warnings. Acceptance verified from inside the artifact
       (unpacked LittleFS cfg.json + binary strings + GIF decoder present).
       v16.1 tag still does not exist upstream (rechecked 2026-07-12).
-- [ ] Phase D hardware: NOT RUN (M1_ALLOW_FLASH unset, no device). QA_CHECKLIST.md
-      is in strict D0-D12 order; D0 flash dump is one-shot and comes first.
+- [~] Phase D hardware (live session 2026-07-12, Trevor authorizing and observing):
+      D0/D1/D2/D3/D4 PASS, D9 rev6-half PASS. 13/13 acceptance rows verified over
+      HTTP on a factory-fresh boot; both OTA cycles clean; Apollo blue (D14) and
+      AR-on (D15) decided live and shipped. Remaining: D3 FS-reset resilience,
+      D5-D8, D9 rev4 half, D10-D12 (parts/instruments). See QA_CHECKLIST.md.
 - [x] Phase E wrap-up: this file, SUMMARY.md, QA_CHECKLIST.md, WIKI_TRIAGE.md,
       FACT_CHALLENGES.md, wiki rewrites, installer patch, UPSTREAM_PR.md.
 

@@ -164,11 +164,13 @@ RESULT 2026-07-12: PASS.
       is inherited as the mitigation). Record ping loss and UI responsiveness. PENDING
 
 ## D9. AudioReactive (also resolves Trevor's D3)
-- [ ] Rev6 with mic addon: enable in Usermods (should be ONE toggle, no pin entry),
-      reboot, audio effect responds to sound, sync Off. PENDING
-- [ ] Rev4 / no mic, usermod force-enabled: measure CPU load, free heap, panel
-      refresh, current draw versus disabled. No crash, display unaffected. Record
-      numbers, then recommend the enabled-by-default answer for D3. PENDING
+- [x] REV6 HALF: PASS 2026-07-12. Mic-equipped unit, zero manual configuration
+      (enabled by default per DECISIONS D15, pins baked): GEQ effect visibly
+      reacts to live sound (Trevor's clap test). Sync mode 0 (off) confirmed in
+      /json/cfg. Better than the one-toggle goal: it is now a zero-toggle flow.
+- [ ] Rev4 / no mic with the usermod force-enabled: measure CPU load, free heap,
+      panel refresh, current draw versus disabled. No crash, display unaffected.
+      Needs a rev4 board; still the open half of this item. PENDING
 
 ## D10. Four-panel chain at 256x64
 - [ ] Chain 4 panels, set LED Preferences pins to [64,64,4,1,4] and 2D config to
