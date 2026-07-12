@@ -1,0 +1,33 @@
+{
+  "rev": [1, 0],
+  "vid": 2605010,
+  "id": { "name": "Apollo LED Matrix" },
+  "hw": {
+    "led": {
+      "total": 4096,
+      "maxpwr": 0,
+      "matrix": {
+        "mpc": 1,
+        "panels": [
+          { "b": false, "r": false, "v": false, "s": false, "x": 0, "y": 0, "h": 64, "w": 64 }
+        ]
+      },
+      "ins": [
+        {
+          "start": 0,
+          "len": 4096,
+          "pin": [64, 64, 1, 1, 1],
+          "order": 0,
+          "rev": false,
+          "skip": 0,
+          "type": 65,
+          "ref": false,
+          "rgbwm": 0,
+          "freq": 0,
+          "maxpwr": 0,
+          "ledma": 0
+        }
+      ]
+    }
+  }
+}
