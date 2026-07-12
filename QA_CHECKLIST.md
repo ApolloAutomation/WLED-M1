@@ -190,12 +190,20 @@ RESULT 2026-07-12: PASS.
       version strings match the D0 capture). PENDING
 
 ## Additional checks folded in from the wiki triage
-- [ ] A GIF renders via the image playback path (GIF decoder is confirmed present
-      in the built binary; three wiki example pages depend on it). Compare colors
-      against an MM unit; 16.x gamma differs. PENDING
+- [x] PASS 2026-07-12 (Trevor, from his PC against the b2+ firmware): GIFs upload
+      and play via the built-in /pxmagic.htm on the device. Pre-fix builds (b1)
+      404 these pages, which presented as greyed-out image/GIF buttons. The
+      device also serves /pixart.htm (pixel paint) built in, replacing whatever
+      external install the old workflow needed. Note for the wiki editor: point
+      the GIF/example pages at the device's own http://<device>/pxmagic.htm.
+      Side-by-side gamma comparison against an MM unit still worthwhile. Phone
+      caveat: if a phone browser greys out on a HOSTED (https) copy of the tool,
+      that is mixed-content blocking, not firmware; the direct http device URL
+      is the supported path.
 - [ ] WizMote pairs using the stock build (ESP-NOW is compiled in upstream; the FAQ
       currently claims a special build is needed and should be corrected if this
       passes). PENDING
-- [ ] Pixelforge (Pixel Magic successor) pushes a 64x64 image correctly. PENDING
+- [x] Covered by the item above: the on-device pxmagic (the tool Pixelforge
+      wraps) pushes images and GIFs correctly on 16.0.1.
 - [ ] The installer still offers the ESPHome firmware path for the M-1 wherever it
       is published today; the WLED entry must not hide it. PENDING
