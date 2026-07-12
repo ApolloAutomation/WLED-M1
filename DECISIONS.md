@@ -168,3 +168,12 @@ factory units boot with the usermod active on the baked pins (rev6 with mic need
 zero interaction). The rev4 no-mic cost (CPU, heap, refresh, noise-driven audio
 effects on a floating input) remains a QA D9 measurement item; if it proves
 significant, the fallback is a rev4-specific decision, not a silent revert.
+
+### D16. ANSWERED live (2026-07-12): setup hotspot is OPEN again (reverses D1)
+After walking the customer flow on hardware, Trevor chose to drop the AP password
+so customers join and start playing with no password step. This restores the
+WLED-MM shipping posture. Tradeoff accepted deliberately: an unconfigured unit
+(or one that loses WiFi) can be configured by anyone in radio range until it is
+on the customer's network. wled1234 no longer appears in the binary; the unique
+SSID per unit (Apollo M-1-xxxxxx) stays. OTA-updated units that saved wled1234
+keep it unless cleared; the demo unit was cleared via the API (ap pskl 0).

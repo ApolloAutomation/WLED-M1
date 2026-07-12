@@ -45,8 +45,9 @@ Open the WLED interface and check under Config to confirm a unit is healthy:
 | AudioReactive pins | SD 10, WS 12, SCK 11 |
 | AudioReactive sync mode | Off |
 
-Setup hotspot: each unit broadcasts "Apollo M-1-xxxxxx" (the same six characters as
-its network name) with password wled1234 until it joins your WiFi.
+Setup hotspot: each unit broadcasts an open network named "Apollo M-1-xxxxxx" (the
+same six characters as its network name) until it joins your WiFi. Join it and the
+setup page is at http://4.3.2.1.
 
 If you own several units: names are unique per device, so multiple M-1 units coexist
 on one network without conflicts.
