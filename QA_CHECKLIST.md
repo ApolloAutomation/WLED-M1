@@ -71,20 +71,35 @@ RULES (from TASK.md, non-negotiable):
          mklittlefs-built factory image (superblock 64) is also compatible.
 
 ## D2. OTA path FIRST (highest risk, touches existing customers)
-With the unit still on WLED-MM and its real cfg.json intact:
-- [ ] Upload M-1_ota.bin via the WLED update page. PENDING
-- [ ] Panel still lights at 64x64 (not dark, not a 32x32 quadrant). PENDING
-- [ ] /json/cfg shows the migration shim result: bus type 65, pin [64,64,c,1,c]
-      (from old type 103; a unit that was still on the never-configured type-101
-      32x32 default will correctly come up 32x32; that case is full-install
-      territory, record which case this unit was). PENDING
-- [ ] cfg.json got re-saved in 16.x format (vid updated). PENDING
-- [ ] Settings, mDNS name, WiFi survived. Note: AP config also survives, so an
-      MM-upgraded unit keeps its open AP (DECISIONS A3); maxpwr carries over
-      likewise (ABL cannot affect the HUB75 bus either way, FACT_CHALLENGES
-      FACT 4, but the UI checkbox may read on if the old config had 1500). PENDING
-- [ ] If it fails: restore the D0 dump (esptool write_flash 0 m1_factory_16mb.bin),
-      fix, repeat. Do not proceed until this passes. PENDING
+RESULT 2026-07-12: PASS on the real demo unit at 192.168.20.99.
+- [x] Live pre-OTA HTTP baseline captured first (baseline/live/json_*.json).
+      On-hardware confirmations of two source-derived predictions: /json/info
+      reported release "mdev_release" (DECISIONS D10, the self-cancelled release
+      name) and product "MoonModules"; the running MM firmware presented the
+      fictional 4-panel 256x64 matrix (leds.count 16384) over the 1-panel bus.
+- [x] M-1_ota.bin uploaded through the OLD firmware's /update endpoint ("Update
+      successful!"). Unit back on WiFi within seconds of reboot.
+- [x] Filesystem MOUNTED, nothing wiped: fs usage identical before/after
+      (3960/10354 KB), WiFi + all settings + presets.json + 37 GIF files intact.
+      The name_max false alarm (D1 item 8) is hereby hardware-proven safe.
+- [x] Migration shim verified in /json/cfg: ins[0] became type 65,
+      pin [64,64,1,1,1], len 4096; cfg re-saved in 16.x format (vid 2605010).
+      /json/info: ver 16.0.1, release Apollo_M-1, repo ApolloAutomation/WLED-M1.
+- [x] mDNS name kept (wled-2f5f7c - saved value survives, unique-prefix logic only
+      applies to fresh units, as designed). AudioReactive survived enabled with
+      pins [10,12,11], type Generic I2S.
+- [x] EXPECTED CASUALTY, recorded: the pre-existing fictional 4-panel matrix was
+      dropped by upstream's 2D bounds check (256x64 canvas > 4096-px bus) and the
+      unit fell back to 1D. This config was already broken on MM; a correctly
+      configured customer unit (1 panel 64x64 = 4096 px) passes the bounds check
+      and keeps 2D. Fix applied via JSON API (matrix mpc 1, one 64x64 panel) +
+      reboot; unit then reported 64x64 matrix, full-panel segment 0-64/0-64,
+      46 fps, playlist cycling presets.
+- [x] VISUAL (Trevor): full 64x64 panel animating, content sensible. Preset
+      effects may differ from MM (16.x renumbering) - accepted, dump restores.
+- [x] maxpwr 1500 carried over from the old config as predicted (customer config
+      preserved; ABL cannot affect the HUB75 bus, FACT_CHALLENGES FACT 4). The
+      migrated BUS entry got maxpwr 0 from the shim path.
 
 ## D3. Full-install path
 - [ ] esptool erase_flash, write M-1_full_install.bin at 0x0, power on with a 64x64
