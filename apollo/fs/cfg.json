@@ -1,7 +1,12 @@
 {
-  "rev": [1, 0],
+  "rev": [
+    1,
+    0
+  ],
   "vid": 2605010,
-  "id": { "name": "Apollo LED Matrix" },
+  "id": {
+    "name": "Apollo M-1"
+  },
   "hw": {
     "led": {
       "total": 4096,
@@ -9,14 +14,29 @@
       "matrix": {
         "mpc": 1,
         "panels": [
-          { "b": false, "r": false, "v": false, "s": false, "x": 0, "y": 0, "h": 64, "w": 64 }
+          {
+            "b": false,
+            "r": false,
+            "v": false,
+            "s": false,
+            "x": 0,
+            "y": 0,
+            "h": 64,
+            "w": 64
+          }
         ]
       },
       "ins": [
         {
           "start": 0,
           "len": 4096,
-          "pin": [64, 64, 1, 1, 1],
+          "pin": [
+            64,
+            64,
+            1,
+            1,
+            1
+          ],
           "order": 0,
           "rev": false,
           "skip": 0,

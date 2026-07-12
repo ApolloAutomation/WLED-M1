@@ -38,25 +38,21 @@ Same reasoning as A1 applied to the AP hotspot SSID. The current shipping build 
 SSID "Apollo M-1" for every unit. Implementation detail recorded in Phase 2/3 notes
 once upstream's WLED_AP_SSID_UNIQUE mechanism was checked. Confirm desired SSID text.
 
-### A3. AP password stays empty (open AP) to match shipping behavior
-The shipping WLED-MM build sets WLED_AP_PASS="" which produces an OPEN access point.
-The task's acceptance table says AP SSID/password must match the current WLED-MM build,
-so the new build keeps the open AP. Tradeoff: anyone nearby can configure an
-unconfigured M-1. Upstream default would be a password-protected AP. Flagging because
-this is a security posture choice that should be a deliberate product decision.
+### A3. ANSWERED (session 3, Trevor's D1): AP password is wled1234
+The session-2 build shipped an open AP to match WLED-MM. Trevor decided: use WLED's
+documented default password wled1234. Applied in [env:apollo_m1]. Logged consequence:
+OTA-upgraded units keep whatever AP configuration their existing cfg.json carries
+(for WLED-MM units that is the open AP); only a full-erase flash gets the password.
 
-### A4. Server description "Apollo LED Matrix" (acceptance table) vs "Apollo M-1"
-(current compiled default)
-Today the firmware compiles SERVERNAME "Apollo M-1" and the wiki has customers manually
-change the description to "Apollo LED Matrix". The acceptance table is the spec, so the
-new build compiles SERVERNAME "Apollo LED Matrix". If you prefer "Apollo M-1", it is a
-one-line change in the apollo_m1 env.
+### A4. ANSWERED (session 3, Trevor's D4): server description is "Apollo M-1"
+The session-2 build used "Apollo LED Matrix" from the old acceptance table. Trevor
+decided "Apollo M-1". Applied in [env:apollo_m1] and apollo/fs/cfg.json.
 
-### A5. Working branch naming
-You said you created an "add m1 to wled" branch, but the ApolloAutomation/wled fork on
-GitHub has only "main" (nothing else was pushed). The task spec names the branch
-apollo/m1, so work proceeds on local branch apollo/m1 (created at v16.0.1) and pushes
-to the fork under that name. If you want it named differently, rename at push time.
+### A5. SUPERSEDED (session 3): canonical repo and branch
+Canonical fork is ApolloAutomation/WLED-M1 (a prior session note guessed "wled"; the
+old ApolloAutomation/wled clone is retired, read-only). Working branch is
+m1-wled-update, pushed. The prepared upstream PR branch hub75-first-boot-defaults is
+pushed to the same fork.
 
 ### D4. No APOLLO_M1_PINOUT block; the pinout is already upstream
 The task planned a new #elif in bus_manager.cpp modeled on the Seengreat block. Not
@@ -124,3 +120,43 @@ One firmware serves both revisions, so disabled-by-default is the conservative c
 Flip = one define (-D UM_AUDIOREACTIVE_ENABLE) or one line in the shipped cfg.json.
 
 (Sections below are appended as later phases hit decision points.)
+
+## Session 3 decisions (2026-07-11)
+
+### D11. Branch consolidation used a pointer move, not merge or rebase
+m1-wled-update sat at upstream main tip c7d41a8e with zero unique commits.
+`git merge --ff-only prior/apollo/m1` refused (diverged), and a literal rebase would
+have replayed the 622 upstream commits between v16.0.1 and main onto the Apollo work.
+TASK.md A4's own semantics create the working branch AT the prior work, so the branch
+pointer was reset to prior/apollo/m1 (nothing lost: zero unique commits, verified
+before the move) and M1_FACTS.md committed on top.
+
+### D12. [env:apollo_m1] rewritten to inherit, not restate (the audit)
+The env now expands ${env:esp32s3dev_16MB_opi_hub75.build_flags} and unflags the
+inherited release name (the waveshare pattern from upstream main). Deleted as
+duplication: MOONHUB_S3_PINOUT, LEDPIN/BTNPIN/RLYPIN/IRPIN/AUDIOPIN, SR_DMTYPE and
+all I2S pin defines, and the four flag-group references; all of them arrive from the
+parent env. What remains is pure Apollo delta: identity strings, AP/mDNS uniqueness,
+factory 64x64 defaults, ABL off, PIXEL_COUNTS, and the WLED-MM migration shim.
+
+### D13. DEFAULT_LED_COUNT define was silently ineffective; replaced with PIXEL_COUNTS
+const.h defines DEFAULT_LED_COUNT (and DEFAULT_LED_TYPE) unguarded, so the compiler
+redefines any -D value back to the header default (warning only visible in full build
+logs). The prior session's -D DEFAULT_LED_COUNT=4096 never took effect; harmless in
+practice because BusHub75Matrix derives its length from panel dimensions, but wrong.
+Now using -D PIXEL_COUNTS=4096, which cfg.cpp guards with #ifndef and actually honors.
+
+### D14. Boot visual (Apollo delta item 7): proposal, not a decision
+Current factory boot state: power on, Solid effect, warm orange 0xFFAA00, brightness
+128, full 64x64 segment. That is visible light within a couple of seconds and cannot
+brown out a 3A supply. Options for something livelier:
+  a) keep Solid orange (recommended until hardware QA: zero risk, proof of life,
+     matches stock WLED expectations)
+  b) ship preset 1 = a gentle 2D effect at brightness 128 with bootPreset=1
+     (one more delta surface, needs gamma-shifted color check on hardware first)
+Trevor picks after seeing option (a) on a real panel in QA.
+
+### D15. AudioReactive enabled-by-default stays OPEN (Trevor's D3)
+Requires hardware measurement (CPU, heap, refresh, current, rev4 no-mic behavior)
+before a recommendation. The build keeps it compiled and disabled; pins, type, and
+sync-off are baked, so a rev6 mic install is one toggle.
