@@ -32,3 +32,6 @@ wled-update.sh
 /wled00/html_*.h
 /wled00/js_*.h
 /apollo/out/
+baseline/live/*.bin
+baseline/live/gifs/
+baseline/live/wsec.json

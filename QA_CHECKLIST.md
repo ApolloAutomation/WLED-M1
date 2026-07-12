@@ -27,14 +27,48 @@ RULES (from TASK.md, non-negotiable):
     curl -s http://$M1_IP/presets.json > baseline/live/presets.json
     curl -s http://$M1_IP/cfg.json     > baseline/live/cfg.json
     esptool.py --port <port> read_flash 0 0x1000000 baseline/live/m1_factory_16mb.bin
-- [ ] Dump is exactly 16,777,216 bytes. PENDING
-- [ ] JSON captures committed; dump stored outside git, path noted here. PENDING
+- [x] DONE 2026-07-12. Dump is exactly 16,777,216 bytes, taken as 16x1MB chunks over
+      the S3 native USB-Serial/JTAG (/dev/cu.usbmodem1101; single 16MB reads abort
+      with serial-stream corruption on this port, chunking works). Verified: image
+      magic 0xE9 at 0x0, partition table at 0x8000, littlefs superblock at 0x610000,
+      plus a 64KB spot re-read compared byte-identical. SHA-256
+      84706b9df02f690b34d06060c7308b038a06d929967b1f2001ec9baf4c55b60d.
+      Stored at baseline/live/m1_factory_16mb.bin (gitignored, NOT in git).
+- [x] Captures committed: cfg.json (WiFi SSID value redacted for the public repo)
+      and presets.json, both extracted FROM THE DUMP's littlefs (the unit was not
+      reachable over HTTP; filesystem extraction replaces the curl captures and is
+      strictly more authoritative). 37 customer GIFs also present, kept locally
+      (baseline/live/gifs/, gitignored). wsec.json exists on the unit and was
+      deliberately NOT extracted into git; the dump preserves it.
+      HTTP captures (/json/info etc.) still to do once the unit is on the LAN.
 
 ## D1. Diff live capture against the reconstructed baseline
-- [ ] Compare baseline/live/cfg.json to baseline/README.md expectations (MM defaults:
-      type 101 or wiki-configured 103, maxpwr 1500 or 0, SERVERNAME Apollo M-1,
-      open AP, release "mdev_release" per DECISIONS D10). Every mismatch is an
-      assumption we got wrong; list them ALL here before flashing anything. PENDING
+- [x] DONE 2026-07-12, from the dump's cfg.json. This unit is Trevor's demo unit,
+      not factory-fresh. Findings, none blocking:
+      1. Bus: type 103 (MM Hub75 64x64) with pin [1] = chain 1, len 4096. Matches
+         the wiki-configured state; the OTA shim's 103 -> 65 mapping is the exact
+         case this unit exercises.
+      2. SURPRISE: 2D matrix config says FOUR panels (256x64, mpc 4, mph 4) over a
+         single-panel bus. Leftover from a chaining experiment; a real-world messy
+         config. Post-OTA behavior on this mismatch must be observed and recorded,
+         and judged against what the unit shows on MM today, not against perfection.
+      3. mdns "wled-2f5f7c" (factory MAC default; the wiki rename was never done),
+         name "Apollo M-1" (matches D4), ap.ssid "Apollo M-1".
+      4. AudioReactive: enabled=true, Generic I2S, pins [10,12,11] - a mic-equipped
+         unit, and the pins match the acceptance table exactly.
+      5. maxpwr 1500 (ABL never unchecked on this unit; harmless for HUB75, FACT 4).
+      6. Boot preset 23 of 32 presets (GIF-heavy, MM effect indices; post-OTA some
+         presets will select different effects because 16.x renumbered - expected,
+         reversible via dump restore).
+      7. um config for Autosave/Animartrix/AutoPlaylist present; those usermods do
+         not exist in the 16.0.1 build, their config blocks become inert.
+      8. FALSE ALARM investigated and cleared: the FS superblock carries
+         name_max=255 while every toolchain sdkconfig says 64. Resolution:
+         esp_littlefs leaves lfs name_max at the littlefs default (255) for both
+         format and mount regardless of CONFIG_LITTLEFS_OBJ_NAME_LEN; the unit
+         itself (built with a 64-config toolchain) created and mounts this FS.
+         Only the HOST mklittlefs tool refuses it. OTA mount is compatible; our
+         mklittlefs-built factory image (superblock 64) is also compatible.
 
 ## D2. OTA path FIRST (highest risk, touches existing customers)
 With the unit still on WLED-MM and its real cfg.json intact:
