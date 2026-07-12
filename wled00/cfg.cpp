@@ -211,6 +211,19 @@ bool deserializeConfig(JsonObject doc, bool fromFS) {
     // cannot call strip.deserializeLedmap()/strip.setUpMatrix() here due to already locked JSON buffer
     //if (!fromFS) doInit2D = true; // if called at boot (fromFS==true), WLED::beginStrip() will take care of setting up matrix
   }
+  #if defined(DEFAULT_PANEL_WIDTH) && defined(DEFAULT_PANEL_HEIGHT)
+  else if (fromFS && hw_led["ins"].isNull()) {
+    // fresh install (no LED config at all): seed a single default panel so
+    // fixed-geometry outputs (e.g. HUB75) boot as a correctly sized 2D matrix
+    // without user configuration; never applied once any LED config exists
+    strip.isMatrix = true;
+    strip.panel.clear();
+    WS2812FX::Panel p;
+    p.width  = DEFAULT_PANEL_WIDTH;
+    p.height = DEFAULT_PANEL_HEIGHT;
+    strip.panel.push_back(p);
+  }
+  #endif
   #endif
 
   DEBUG_PRINTF_P(PSTR("Heap before buses: %d\n"), getFreeHeapSize());
@@ -282,6 +295,9 @@ bool deserializeConfig(JsonObject doc, bool fromFS) {
       // Assign all pins first so we can check for conflicts on this bus
       for (unsigned j = 0; j < busPins && j < OUTPUT_MAX_PINS; j++) defPin[j] = defDataPins[pinsIndex + j];
 
+      // HUB75 pin slots hold config values (panel width/height, chain, rows, cols),
+      // not GPIOs - GPIO sanitization must not rewrite them (same carve-out as validatePinsAndTypes())
+      if (!Bus::isHub75(dataType))
       for (unsigned j = 0; j < busPins && j < OUTPUT_MAX_PINS; j++) {
         bool validPin = true;
         // When booting without config (1st boot) we need to make sure GPIOs defined for LED output don't clash with hardware
