@@ -146,7 +146,13 @@ logs). The prior session's -D DEFAULT_LED_COUNT=4096 never took effect; harmless
 practice because BusHub75Matrix derives its length from panel dimensions, but wrong.
 Now using -D PIXEL_COUNTS=4096, which cfg.cpp guards with #ifndef and actually honors.
 
-### D14. Boot visual (Apollo delta item 7): proposal, not a decision
+### D14. ANSWERED live (2026-07-12): factory welcome color is Apollo blue 0x4379AA
+Trevor saw the orange factory boot on hardware and chose Apollo blue #4379AA.
+Implemented via a new #ifndef guard on DEFAULT_COLOR in FX.h (it was unguarded,
+same trap as D13) plus -D DEFAULT_COLOR=0x4379AA in the env. Original proposal
+kept below for the record.
+
+### D14-old. Boot visual (Apollo delta item 7): proposal, superseded
 Current factory boot state: power on, Solid effect, warm orange 0xFFAA00, brightness
 128, full 64x64 segment. That is visible light within a couple of seconds and cannot
 brown out a 3A supply. Options for something livelier:
@@ -156,7 +162,9 @@ brown out a 3A supply. Options for something livelier:
      (one more delta surface, needs gamma-shifted color check on hardware first)
 Trevor picks after seeing option (a) on a real panel in QA.
 
-### D15. AudioReactive enabled-by-default stays OPEN (Trevor's D3)
-Requires hardware measurement (CPU, heap, refresh, current, rev4 no-mic behavior)
-before a recommendation. The build keeps it compiled and disabled; pins, type, and
-sync-off are baked, so a rev6 mic install is one toggle.
+### D15. ANSWERED live (2026-07-12): AudioReactive defaults to ON (Trevor's D3)
+Trevor decided during the hardware session: -D UM_AUDIOREACTIVE_ENABLE is set, so
+factory units boot with the usermod active on the baked pins (rev6 with mic needs
+zero interaction). The rev4 no-mic cost (CPU, heap, refresh, noise-driven audio
+effects on a floating input) remains a QA D9 measurement item; if it proves
+significant, the fallback is a rev4-specific decision, not a silent revert.
