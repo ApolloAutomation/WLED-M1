@@ -247,6 +247,26 @@ bool deserializeConfig(JsonObject doc, bool fromFS) {
       uint16_t start = elm["start"] | 0;
       if (length==0 || start + length > MAX_LEDS) continue; // zero length or we reached max. number of LEDs, just stop
       uint8_t ledType = elm["type"] | TYPE_WS2812_RGB;
+      #ifdef WLED_MM_HUB75_MIGRATION
+      // Migrate HUB75 bus entries written by WLED-MM 0.14.x, where types 100-110
+      // encode the panel size and pin[0] holds the chain length, to the 16.x
+      // layout (TYPE_HUB75MATRIX_HS with slots panelW,panelH,chain,rows,cols).
+      // Needed so devices OTA-updated from WLED-MM keep a working display.
+      if (ledType >= 100 && ledType <= 110) {
+        unsigned chain = constrain((int)pins[0], 1, 4);
+        unsigned w = 64, h = 64;               // fallback: closest safe match
+        switch (ledType) {
+          case 101: w =  32; h = 32; break;
+          case 102: w =  64; h = 32; break;
+          case 103: w =  64; h = 64; break;
+          case 104: w = 128; h = 64; break;
+        }
+        ledType = TYPE_HUB75MATRIX_HS;
+        pins[0] = w; pins[1] = h; pins[2] = chain; pins[3] = 1; pins[4] = chain;
+        length = w * h * chain;
+        needsSave = true;                      // rewrite cfg.json in 16.x format
+      }
+      #endif
       bool reversed = elm["rev"];
       bool refresh = elm["ref"] | false;
       uint16_t freqkHz = elm[F("freq")] | 0;  // will be in kHz for DotStar and Hz for PWM
