@@ -20,3 +20,16 @@ release (QA checklist item).
 ## B2. Hardware flash verification (Phase 6)
 M1_ALLOW_FLASH is not set and no device is on a serial port. Per the operating rules,
 stopping at artifacts plus a hardware QA checklist.
+
+## B3. Pushing branches to GitHub
+Tried three times (sandboxed and unsandboxed): git push over https fails with
+"could not read Username for https://github.com" because this machine has no git
+credential helper configured and no SSH keys in ~/.ssh (gh CLI is not installed
+either). All work is committed locally. To publish, run from a terminal where your
+GitHub auth works:
+  cd /Users/justinapollo/Code/ApolloAutomation/WLED
+  git push -u origin apollo/m1
+  git push origin hub75-first-boot-defaults
+  cd /Users/justinapollo/Code/ApolloAutomation/installer
+  git push -u origin feat/m1-wled-entry
+None of these touch any main branch.
