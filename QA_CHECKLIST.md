@@ -102,23 +102,44 @@ RESULT 2026-07-12: PASS on the real demo unit at 192.168.20.99.
       migrated BUS entry got maxpwr 0 from the shim path.
 
 ## D3. Full-install path
-- [ ] esptool erase_flash, write M-1_full_install.bin at 0x0, power on with a 64x64
-      panel, ZERO configuration. PENDING
-- [ ] Verify every Apollo delta item via /json/cfg and /json/info:
-      type 65, pin [64,64,1,1,1], len 4096, chain READS as 1 in LED Preferences,
-      2D matrix mpc 1 panel 64x64, maxpwr 0 (limiter unchecked in UI),
-      name Apollo M-1, mDNS apollo-led-matrix-xxxxxx, AP Apollo M-1-xxxxxx with
-      password wled1234, AudioReactive Generic I2S SD 10 WS 12 SCK 11 sync Off
-      and disabled, ver 16.0.1, release Apollo_M-1, product Apollo M-1. PENDING
-- [ ] Filesystem-erase resilience: button hold 10 s (FS format), reboot; all values
-      above must return via the compile-time defaults path (this exercises the
-      cfg.cpp patches instead of the shipped cfg.json). PENDING
+RESULT 2026-07-12: PASS.
+- [x] erase_flash (7.9 s) + write_flash 0x0 M-1_full_install.bin (41.5 s, hash
+      verified by esptool) over the S3 native USB port. Powered with the 64x64
+      panel, zero configuration.
+- [x] Acceptance table verified live over HTTP, 13 of 13 rows (capture committed
+      as baseline/live/factory_boot_json_cfg.json / _info.json): type 65,
+      pin [64,64,1,1,1], len 4096 (chain reads as 1), matrix 1x 64x64, maxpwr 0,
+      name Apollo M-1, mdns apollo-led-matrix-2f5f7c (resolved over real mDNS),
+      AP "Apollo M-1-2f5f7c" pskl 8 (wled1234, no longer open), AR Generic I2S
+      pins [10,12,11] sync 0, ver 16.0.1, release Apollo_M-1.
+- [x] mDNS/AP unique suffix matched the MAC-derived prediction (2f5f7c) exactly.
+- [ ] Filesystem-erase resilience (10 s button hold; exercises the cfg.cpp
+      compile-default path instead of the shipped cfg.json). STILL PENDING.
 
 ## D4. The real acceptance test: visible light
-- [ ] Factory unit, powered on, unconfigured: VISIBLE LIGHT across the full 64x64
-      panel within a few seconds (factory default is Solid warm orange at
-      brightness 128, DECISIONS D14). Photograph it. If the panel is dark, that is
-      a release blocker regardless of what /json/cfg says. PENDING
+RESULT 2026-07-12: PASS.
+- [x] Factory-fresh boot lit the FULL 64x64 panel within seconds, zero
+      configuration (Trevor confirmed visually; the shipping WLED-MM firmware
+      would have shown a 32x32 quadrant here). Initially the warm orange default;
+      Trevor chose Apollo blue live and DECISIONS D14 was answered: the factory
+      welcome color is now 0x4379AA, verified after OTA as boot segment color
+      [67,121,170] with effect Solid at brightness 128.
+
+## D-extra. Findings from the live session (2026-07-12)
+- OTA CROSS-SUBNET GATE (support-relevant): upstream 16.x rejects /update from a
+  different subnet by default (HTTP 401 "Client is not on local subnet",
+  otaSameSubnet, cfg key ota."same-subnet"). WLED-MM had no such gate, which is
+  why the MM-side OTA worked cross-subnet and the 16.0.1-side one required
+  temporarily clearing the flag (restored to true afterward). Customers on
+  split-band/VLAN networks (like this site: 5G and 2.4G are different subnets)
+  will hit this when updating from a browser on another subnet. Add to the wiki
+  troubleshooting page and FAQ.
+- AudioReactive default flipped ON live (Trevor's D3 decision, DECISIONS D15):
+  -D UM_AUDIOREACTIVE_ENABLE now in the env, artifacts rebuilt. This unit also
+  set enabled=true via API since its cfg predated the new default.
+- Both live decisions (blue, AR on) rode an app-only OTA onto the factory unit
+  with settings intact: second successful OTA cycle on 16.0.1 (first was
+  MM -> 16.0.1; this one 16.0.1 -> 16.0.1).
 
 ## D5. Current draw, limiter off
 - [ ] Full white, brightness 255, stock 3A USB-C supply: measure amps. No brownout,
