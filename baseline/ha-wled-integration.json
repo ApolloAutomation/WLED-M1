@@ -1,0 +1,11 @@
+{
+  "note": "Home Assistant WLED integration entry found during Phase 0 device discovery, 2026-07-11. Not an M-1 (entities are named 'The Belle Permanent Lights'). Recorded for completeness.",
+  "entry_id": "01KBBSVAB230290YMEZDMZPT4B",
+  "domain": "wled",
+  "title": "WLED",
+  "source": "zeroconf",
+  "state": "setup_retry",
+  "reason": "Invalid response from WLED API: Error occurred while communicating with WLED device at 192.168.20.30",
+  "host": "192.168.20.30",
+  "options": { "keep_master_light": false }
+}

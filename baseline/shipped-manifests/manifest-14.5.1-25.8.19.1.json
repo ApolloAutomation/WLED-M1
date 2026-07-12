@@ -1,0 +1,13 @@
+{
+  "name": "Apollo M-1",
+  "version": "25.8.19.1",
+  "home_assistant_domain": "wled",
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        { "path": "Apollo_M-1_Firmware_14.5.1.bin", "offset": 0 }
+      ]
+    }
+  ]
+}
