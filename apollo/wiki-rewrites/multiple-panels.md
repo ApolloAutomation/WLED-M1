@@ -96,6 +96,23 @@ Text, effects, and images now treat the square as one 128x128 canvas. Content
 crosses all four seams cleanly, including letters that straddle the horizontal
 middle.
 
+## How big can it go?
+
+Four panels per M-1 (16,384 pixels) is the maximum, in any arrangement that
+multiplies to four or fewer: 1x2, 1x3, 1x4, 2x2, or 2x1. This is not an
+artificial cap. The display driver must keep its frame memory in the fastest
+part of the chip's RAM, and four 64x64 panels already use most of it; the
+panel hardware also refreshes more slowly as the chain grows, so longer
+chains would visibly flicker; and eight panels of bright content would need
+a 25-amp power supply.
+
+For bigger installations, use more M-1s - one per group of up to four
+panels. Each unit keeps full image quality and speed, and WLED's built-in
+sync makes multiple units play the same effect together (turn on Sync in
+each unit's settings). For true video walls where every unit shows its own
+slice of one big picture, software like xLights or LedFx can drive each M-1
+as a tile of the wall over the network.
+
 ### Playing a GIF across the grid
 
 1. Upload a GIF to the device filesystem (PixelForge at `http://<device>/pixelforge.htm`,
