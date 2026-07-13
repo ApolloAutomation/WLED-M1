@@ -110,3 +110,57 @@ Single-operator rule is in force: no agents may touch the serial port or device 
 platformio_override.ini (bench env) is GITIGNORED by design - its contents are
 documented above. Everything else from tonight is committed after each fix; if
 this file exists but fixes are missing from git log, check the working tree.
+
+## ADDENDUM (late session, after direct-drive bypass build 36ea8972 + factory reflash)
+
+### THE WORKING CHAIN RECIPE on this firmware (customer-facing, wiki-ready)
+1. LED settings (UI or API): HUB75 (Half Scan), Panel 64x64, No. of Panels 4,
+   rows x cols = 1 x 4. Save, REBOOT. (Slots = pin [64,64,4,1,4].)
+2. 2D Configuration: FOUR panels of 64x64 at X offsets 0/64/128/192, Y 0.
+   NEVER one 256x64 panel: per-panel dims are 8-bit upstream (255 max, field
+   goes red). WLED-MM's cure was "one 256x64 panel"; the upstream equivalent
+   is four 64s. KEY MIGRATION DOC ITEM for chaining customers.
+3. TRAP: the 2D settings page saves WHATEVER layout it currently shows. If it
+   shows a stale 1-panel 64x64 layout and the user hits Save, the canvas
+   collapses to 64x64 and content tiles 4x squashed on the 256 bus (photo in
+   chat; identical intermediate state existed on MM). Re-push 4-panel matrix.
+
+### Verified on glass tonight (direct-drive path, all four panels)
+- Solid fills: perfect across the chain, cold-boot stable.
+- DNA (2D fx): ONE wide helix across all four panels per Justin - mapping is
+  substantially CORRECT. (Scrolling text = his definitive test, pending below.)
+- Rainbow "per-panel" report RESOLVED as 1D-expansion semantics, not a bug:
+  m12=0 fine hue rows, m12=1 row-bars (vertical, north-south). Justin confirms
+  rainbow was never horizontal on MM either. Consider default m12 choice for
+  factory presets only; no code change.
+- 2D settings preview labels hardware panels 3|2|1|0 RIGHT to LEFT (panel 0 =
+  first chained = controller end = far right). Reading-order verdict comes
+  from scrolling text.
+- fps: 28-30 solid, ~15 on heavy 2D at 256x64. Heap ~23K free steady.
+- LED memory gauge: 180224/196608 B = 91 percent, UI warns stability/lag.
+  PRIME SUSPECT for the scrolling-text wedge (render loop hung + WiFi drop,
+  watchdog off). LEVER READY: -D MAX_LED_MEMORY=(256*1024) or similar in
+  apollo_m1 (S3+PSRAM afford it; default 192K in const.h). Not yet applied.
+- Power: Justin states the rig runs full white on 4 panels fine (power module
+  in line). Ladder measurement optional.
+
+### Device state at addendum time
+Factory b6 image (has factory presets + pixelpaint) + WiFi reprovisioned +
+chain-4 config live (256x64, count 16384). Justin's "mypaint" saved on device.
+Production artifacts + Desktop bundle already at b6 (single-panel customers
+unaffected; chain fixes included).
+
+### Next actions queue
+1. Scrolling text across 256x64 (definitive mapping + reading-order + the
+   hang repro). If it wedges: power-cycle, apply MAX_LED_MEMORY bump, rebuild
+   dbg+prod, OTA, retest.
+2. Lock config; have Justin walk the UI once to confirm both pages now show
+   the four-panel truth (and Save is then harmless).
+3. WiFi-under-load test; optional current readings.
+4. Wiki multiple-panels rewrite from the recipe above + LED-memory warning
+   note + 1D-expansion explainer. QA_CHECKLIST D10 results block.
+5. 2x2 wish (Justin): needs the virtual path (rows=2) which is still the
+   scrambled one - future session; direct path only covers 1xN today.
+6. Upstream findings list now: >= MAX_LEDS boundary, cfg total=0 div-by-zero,
+   2D width cap 255 (should be 256+), virtual-path 1xN geometry scramble
+   (repro'd, bypassed in fork), tight MAX_LED_MEMORY for HS chains.
