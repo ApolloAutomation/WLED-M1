@@ -375,3 +375,15 @@ DEFINITIVE TEST IS CLOSED. The historic "panel order MIRRORED" observation
 retires with the panel-major scramble that produced it. Reading-order doc
 answer for the wiki: cable the controller to the RIGHT end of the row (as
 the M-1 demo rig is built) and text reads naturally; no 2D flags needed.
+
+## SESSION 2, PART 3 (2026-07-12 23:35+): 2x2 GRID EXPERIMENT
+- Config applied and verified on flash: pins [64,64,4,2,2], 2D ONE 128x128
+  panel (mpc1). Boot clean: canvas 128x128, virtual path active, fps 30,
+  heap 72K/63K - the uint16-panel + one-panel-ledmap recipe carries over.
+- Quadrant probe (4 corner boxes + F + center cross) on the STILL-1x4 row:
+  Justin's 23:44 photo matches the host-sim prediction on every element,
+  including the split cross halves at the 1/2 and 3/4 seams. The legacy
+  VirtualMatrixPanel serpentine math is CORRECT on hardware.
+- Physical re-rack instructions issued: top row = chain panels 2,3 upright;
+  bottom row = panels 1,0 rotated 180; cabling unchanged (controller into
+  bottom-right). Awaiting on-glass grid verdict, then 128x128 text.
