@@ -2098,6 +2098,8 @@ bool WS2812FX::deserializeMap(unsigned n) {
 
   d_free(customMappingTable);
   customMappingTable = static_cast<uint16_t*>(d_malloc(sizeof(uint16_t)*getLengthTotal())); // prefer DRAM for speed
+  // fall back to PSRAM on large configurations (see setUpMatrix); slower but correct
+  if (!customMappingTable) customMappingTable = static_cast<uint16_t*>(p_malloc(sizeof(uint16_t)*getLengthTotal()));
 
   if (customMappingTable) {
     DEBUG_PRINTF_P(PSTR("ledmap allocated: %uB\n"), sizeof(uint16_t)*getLengthTotal());

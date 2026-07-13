@@ -35,7 +35,10 @@ void WS2812FX::setUpMatrix() {
     }
 
     // safety check
-    if (Segment::maxWidth * Segment::maxHeight > MAX_LEDS || Segment::maxWidth > 255 || Segment::maxHeight > 255 || Segment::maxWidth <= 1 || Segment::maxHeight <= 1) {
+    // dimension cap: a 256-wide matrix has max coordinate index 255, which still fits
+    // 8-bit coordinate storage, so the limit belongs at 256, not 255. The Apollo M-1
+    // 4-panel chain is exactly 256x64 (and shipped working on WLED-MM at that size).
+    if (Segment::maxWidth * Segment::maxHeight > MAX_LEDS || Segment::maxWidth > 256 || Segment::maxHeight > 256 || Segment::maxWidth <= 1 || Segment::maxHeight <= 1) {
       DEBUG_PRINTLN(F("2D Bounds error."));
       isMatrix = false;
       Segment::maxWidth = _length;
@@ -53,6 +56,10 @@ void WS2812FX::setUpMatrix() {
     // and the product will include at least all leds in matrix
     // if actual LEDs are more, getLengthTotal() will return correct number of LEDs
     customMappingTable = static_cast<uint16_t*>(d_malloc(sizeof(uint16_t)*getLengthTotal())); // prefer to not use SPI RAM
+    // large panel chains (e.g. 4x 64x64 HUB75 = 16384 px = 32KB map) can exceed free
+    // internal RAM once the display driver has allocated its buffers; fall back to
+    // PSRAM rather than silently dropping the whole 2D configuration
+    if (!customMappingTable) customMappingTable = static_cast<uint16_t*>(p_malloc(sizeof(uint16_t)*getLengthTotal()));
 
     if (customMappingTable) {
       customMappingSize = getLengthTotal();
