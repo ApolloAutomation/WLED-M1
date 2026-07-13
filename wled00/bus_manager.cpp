@@ -858,6 +858,10 @@ BusHub75Matrix::BusHub75Matrix(const BusConfig &bc) : Bus(bc.type, bc.start, bc.
     else mxconfig.setPixelColorDepthBits(8);
   } else mxconfig.setPixelColorDepthBits(8);
 #endif
+  // note: do NOT port WLED-MM's S3 depth-reduction table (4-bit at 16384 px) to this lib:
+  // measured on the M-1 4-panel chain it REGRESSED fps (plasma 8->5, DNA 17->12) and heap
+  // (-7K) - MM's table was tuned for the softhack007 lib fork, whose bitplane/refresh math
+  // differs from this upstream driver (QA D10 session 2, 2026-07-13).
 
 
 //  HUB75_I2S_CFG::i2s_pins _pins={R1_PIN, G1_PIN, B1_PIN, R2_PIN, G2_PIN, B2_PIN, A_PIN, B_PIN, C_PIN, D_PIN, E_PIN, LAT_PIN, OE_PIN, CLK_PIN};

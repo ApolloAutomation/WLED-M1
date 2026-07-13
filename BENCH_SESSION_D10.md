@@ -449,3 +449,44 @@ fast path in blendSegment; PIXEL_COLOR_DEPTH_BITS 8->6 frees ~32K DRAM to
 move _ledBuffer back to DRAM (banding trade-off; test single + chain).
 Realistic current envelope: text 31 / DNA 17 / sparse GIF 18 / full-frame
 GIF 8 fps. Matching MM's 60 needs pipeline surgery, not flags.
+
+### THE 60FPS ANSWER (2026-07-13 ~01:30, 4-agent trace of WLED-MM-M1 + 2 bench experiments)
+Justin confirmed old-firmware GIFs were uploaded to the device (on-device
+playback), so the streaming hypothesis is dead. Full MM code trace findings:
+- MM's GIF path: decoded per-frame from an OPEN FS file (4KB decoder buffer,
+  NO RAM cache) - file I/O was never the bottleneck, consistent with our
+  PSRAM-cache null result.
+- MM per-pixel path (FASTPATH build) is ONE inlined IRAM write-through
+  chain: gif callback -> Segment::setPixelColorXY gateway (_isSimpleSegment
+  precomputed check) -> setPixelColorXY_fast (skips the segment canvas
+  entirely for GIF: ledsrgb never allocated) -> strip fast XY (ledmap) ->
+  bus staging compare + dirty bit. Then show() = dirty-only DMA repaint.
+  NO COMPOSITOR. ABL pixel pass EXCLUDED for HUB75 (EXCLUDE_FROM_ABL).
+  Gamma = gamma8 LUT at decode + gamma32 on 3 seg colors per FRAME.
+- Upstream 16.x: effect -> segment pixels canvas (PSRAM) -> blendSegment
+  full-canvas compositor (per-pixel: clip check, push offsets, reverse,
+  opacity, mirror variants) -> frame buffer -> bus staging -> dirty flush.
+  The compositor alone measures 66ms at 16K px - more than MM's entire
+  frame at 60fps (16ms).
+- Identical in BOTH: shadow CRGB bus buffer in PSRAM (ps_calloc under
+  WLED_USE_PSRAM_JSON - our PSRAM move MATCHES shipping MM), dirty-bit
+  scheme (16.x inherited it from MM), NO_CIE1931, qio_opi, 240MHz.
+- MM extras we ported or tested, with honest results:
+  * -O2 speed flags: PORTED, zero LED fps change (memory-bound), kept for
+    FFT + parity.
+  * 4-bit panel depth at 16K px: TESTED, REGRESSION on our stock lib
+    (plasma 8->5, DNA 17->12, heap -7K), REVERTED with a warning comment in
+    bus_manager.cpp. MM's depth table belongs to the softhack007 lib fork.
+  * WLEDMM_FASTPATH gateway + 120fps budget: MM-specific architecture, not
+    portable as flags - this IS the 60fps mechanism, together with no
+    compositor.
+- VERDICT: the fps gap is upstream 16.x's compositor architecture, full
+  stop. Paths to close it, in effort order: (1) accept current envelope for
+  launch (text 31 / DNA 17 / sparse GIF 18 / full-frame GIF 8); (2) swap to
+  the softhack007 HUB75 lib fork (original plan step 3 - unlocks their
+  depth table + S3_LCD_DIV_NUM=20 wifi fix, medium risk); (3) build a
+  write-through fast path for single simple opaque segments in 16.x,
+  MM's _isSimpleSegment gateway is the blueprint (the real fix, upstream-
+  shaped, next session+). Old-firmware live monitoring no longer needed -
+  the repos answered everything; a factory-dump reflash (D12 drill) remains
+  available for empirical A/B if ever wanted.
