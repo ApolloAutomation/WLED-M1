@@ -191,7 +191,11 @@ RESULT 2026-07-12: PASS.
       mid-frame ("static shredded fragments") and dropping WiFi. After moving
       the buffer to PSRAM: 72K free / 64K contiguous, 160s multi-segment soak
       clean, text ran 2min+ with zero heap movement, fx stable at 122.
-      Glass verdict on scroll direction/reading order: PENDING (Justin).
+      GLASS PASS 2026-07-12 23:31 (Justin, photo + video): "APOLLO M-1 FOUR
+      PANEL CHAIN" renders as one continuous readable line across all four
+      panels, correct orientation (no mirror flag needed with this cabling:
+      controller far right), seams invisible, scroll smooth. D10 definitive
+      test CLOSED.
 - [x] WiFi under load at 256x64 while Scrolling Text renders: 40/40 pings,
       0.0% loss, 9.7ms avg (idle baseline 6.0ms). PASS.
 - [ ] 2x2 grid (Justin wants it): needs the virtual path; legacy

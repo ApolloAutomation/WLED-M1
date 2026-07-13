@@ -366,3 +366,12 @@ panel-major signature, kept for the upstream report.
 apollo_m1_dbg + uint16-panel fix OTA'd; flash cfg: bus 65 [64,64,4,1,4],
 matrix mpc1 ONE 256x64 panel, same-subnet true. Scrolling Text left running.
 Prod artifacts rebuilt AFTER this fix (see git log). FS untouched.
+
+### GLASS PASS (2026-07-12 23:31, Justin's photo + video)
+"APOLLO M-1 FOUR PANEL CHAIN" = ONE continuous readable line across all four
+panels, correct reading order with the controller cabled far right (no
+mirror/rightStart flag needed), clean seams, smooth scroll. THE D10
+DEFINITIVE TEST IS CLOSED. The historic "panel order MIRRORED" observation
+retires with the panel-major scramble that produced it. Reading-order doc
+answer for the wiki: cable the controller to the RIGHT end of the row (as
+the M-1 demo rig is built) and text reads naturally; no 2D flags needed.
