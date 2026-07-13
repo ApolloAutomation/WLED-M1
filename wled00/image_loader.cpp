@@ -11,23 +11,48 @@
 
 static File file;
 static char lastFilename[WLED_MAX_SEGNAME_LEN+2] = "/"; // enough space for "/" + seg.name + '\0'
-static GifDecoder<320,320,12,true> decoder;  // this creates the basic object; parameter lzwMaxBits is not used; decoder.alloc() always allocated "everything else" = 24Kb 
+static GifDecoder<320,320,12,true> decoder;  // this creates the basic object; parameter lzwMaxBits is not used; decoder.alloc() always allocated "everything else" = 24Kb
 static bool gifDecodeFailed = false;
 static unsigned long lastFrameDisplayTime = 0, currentFrameDelay = 0;
 
+// the decoder re-reads the file for every frame; streaming from LittleFS costs tens of
+// ms per frame at 16k px, dwarfing the LZW decode itself. When PSRAM has room, read the
+// file once into a cache and serve the decoder from memory (falls back to streaming).
+static uint8_t *gifFileCache = nullptr;
+static size_t   gifCacheSize = 0;
+static size_t   gifCachePos  = 0;
+#define GIF_CACHE_MAX_SIZE (4*1024*1024) // do not cache pathological files
+
+static void freeGifCache(void) {
+  if (gifFileCache) { p_free(gifFileCache); gifFileCache = nullptr; }
+  gifCacheSize = gifCachePos = 0;
+}
+
 bool fileSeekCallback(unsigned long position) {
+  if (gifFileCache) {
+    if (position > gifCacheSize) return false;
+    gifCachePos = position;
+    return true;
+  }
   return file.seek(position);
 }
 
 unsigned long filePositionCallback(void) {
+  if (gifFileCache) return gifCachePos;
   return file.position();
 }
 
 int fileReadCallback(void) {
+  if (gifFileCache) return (gifCachePos < gifCacheSize) ? gifFileCache[gifCachePos++] : -1;
   return file.read();
 }
 
 int fileReadBlockCallback(void * buffer, int numberOfBytes) {
+  if (gifFileCache) {
+    int n = min((size_t)numberOfBytes, gifCacheSize - gifCachePos);
+    if (n > 0) { memcpy(buffer, gifFileCache + gifCachePos, n); gifCachePos += n; }
+    return n;
+  }
   #ifdef CONFIG_IDF_TARGET_ESP32C3
   unsigned t0 = millis();
   while (strip.isUpdating() && (millis() - t0 < 150)) yield(); // be nice, but not too nice. Waits up to 150ms to avoid glitches
@@ -36,14 +61,35 @@ int fileReadBlockCallback(void * buffer, int numberOfBytes) {
 }
 
 int fileSizeCallback(void) {
+  if (gifFileCache) return gifCacheSize;
   return file.size();
 }
 
-bool openGif(const char *filename) {  // side-effect: updates "file"
+bool openGif(const char *filename) {  // side-effect: updates "file" (and the PSRAM cache when available)
   file = WLED_FS.open(filename, "r");
   DEBUG_PRINTF_P(PSTR("opening GIF file %s\n"), filename);
 
   if (!file) return false;
+
+  freeGifCache();
+  #ifdef BOARD_HAS_PSRAM
+  size_t fsize = file.size();
+  // only cache when it genuinely lands in PSRAM: p_malloc falls back to DRAM, which must stay free
+  if (fsize > 0 && fsize <= GIF_CACHE_MAX_SIZE && psramFound() && ESP.getFreePsram() > fsize + 512*1024) {
+    gifFileCache = static_cast<uint8_t*>(p_malloc(fsize));
+    if (gifFileCache) {
+      size_t got = file.read(gifFileCache, fsize);
+      if (got == fsize) {
+        gifCacheSize = fsize;
+        file.close(); // decoder is served from the cache from here on
+        DEBUG_PRINTF_P(PSTR("GIF cached in PSRAM (%u bytes)\n"), (unsigned)fsize);
+      } else {
+        freeGifCache(); // short read: fall back to streaming from the (re-seeked) file
+        file.seek(0);
+      }
+    }
+  }
+  #endif
   return true;
 }
 
@@ -72,6 +118,11 @@ void updateScreenCallback(void) {
 // callbacks to draw a pixel at (x,y) without scaling: used if GIF size matches (virtual)segment size (faster) works for 1D and 2D segments
 void drawPixelCallbackNoScale(int16_t x, int16_t y, uint8_t red, uint8_t green, uint8_t blue) {
   activeSeg->setPixelColor(y * gifWidth + x, red, green, blue);
+}
+
+// exact-fit 2D segments skip the 1D-index expansion (div+mod per pixel adds up at 16k px)
+void drawPixelCallbackNoScale2D(int16_t x, int16_t y, uint8_t red, uint8_t green, uint8_t blue) {
+  activeSeg->setPixelColorXY(x, y, red, green, blue);
 }
 
 void drawPixelCallback1D(int16_t x, int16_t y, uint8_t red, uint8_t green, uint8_t blue) {
@@ -188,6 +239,8 @@ byte renderImageToSegment(Segment &seg) {
       if (activeSeg->vWidth() != gifWidth || activeSeg->vHeight() != gifHeight) {
         decoder.setDrawPixelCallback(drawPixelCallback2D);        // use 2D callback with scaling
         //DEBUG_PRINTLN(F("scaling image"));
+      } else {
+        decoder.setDrawPixelCallback(drawPixelCallbackNoScale2D); // exact fit: write XY directly
       }
     } else {
       int totalImgPix = (int)gifWidth * gifHeight;
@@ -201,7 +254,7 @@ byte renderImageToSegment(Segment &seg) {
   }
 
   if (gifDecodeFailed) return IMAGE_ERROR_PREV;
-  if (!file) { gifDecodeFailed = true; return IMAGE_ERROR_FILE_MISSING; }
+  if (!file && !gifFileCache) { gifDecodeFailed = true; return IMAGE_ERROR_FILE_MISSING; } // cache mode closes the file
   //if (!decoder) { gifDecodeFailed = true; return IMAGE_ERROR_DECODER_ALLOC; }
 
   // speed 0 = half speed, 128 = normal, 255 = full FX FPS
@@ -230,6 +283,7 @@ void endImagePlayback(Segment *seg) {
   DEBUG_PRINTLN(F("Image playback end called"));
   if (!activeSeg || activeSeg != seg) return;
   if (file) file.close();
+  freeGifCache();
   decoder.dealloc();
   gifDecodeFailed = false;
   activeSeg = nullptr;

@@ -58,8 +58,12 @@ scrolling text, and Pixel Paint content all span the four panels continuously.
   That is expected on current firmware and does not cause instability.
 - Frame rate at 16,384 pixels (either 256x64 or 128x128) is about 30 fps for
   most content and about 15 fps for the heaviest 2D effects, compared to 44 fps
-  on the single built-in panel. GIF playback runs slower (about 7 fps) because
-  each frame is decoded on the fly.
+  on the single built-in panel.
+- GIF playback speed depends on how much of the image changes per frame:
+  typical pixel-art animations (a sprite moving on a steady background) run
+  15-25 fps; worst-case GIFs where every pixel changes every frame (plasma,
+  full-screen noise) run about 8 fps. The panels themselves are refreshed by
+  hardware at all times, so lower rates mean slower motion, never flicker.
 - Chains longer than four panels are not supported.
 
 ## 2x2 grid (128x128 square display)

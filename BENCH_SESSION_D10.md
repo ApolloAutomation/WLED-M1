@@ -403,3 +403,23 @@ the M-1 demo rig is built) and text reads naturally; no 2D flags needed.
 - Saved: preset 4 "Plasma 2x2" (factory presets 1-3 untouched). 2x2 config
   on flash (pins [64,64,4,2,2], 2D one 128x128 panel).
 - Wiki: multiple-panels.md now includes the full 2x2 recipe + GIF how-to.
+
+### GIF-path optimization + performance model (2026-07-13 ~00:30)
+- image_loader.cpp changes: (1) whole GIF file cached in PSRAM at open when
+  room allows (kills per-frame LittleFS streaming; falls back to streaming),
+  (2) exact-fit 2D GIFs draw via setPixelColorXY instead of the 1D-index
+  expansion. Guarded for non-PSRAM builds (p_malloc aliases).
+- Honest measurements on 128x128 (debug console "Slow strip/effects" lines):
+  full-frame-change GIF (plasma) 7 -> 8 fps; effect stage 47ms, downstream
+  blend+bus+DMA-pack 66ms. Sparse-change GIF (bounce.gif, ~300 px/frame):
+  18 fps. Text ~31 fps (sparse). Conclusion: throughput scales with CHANGED
+  pixels/frame through the 16.x per-pixel blend pipeline; that pipeline has
+  no single-opaque-segment fast path (verified in blendSegment source) -
+  that is the real upstream optimization target, out of bench scope.
+- FS now holds plasma.gif (762KB, worst-case demo) and bounce.gif (7KB,
+  sparse demo). Preset 4 "Plasma 2x2" restored as live state.
+- Tool pages verified serving on the 2x2 config: /pixelforge.htm 200,
+  /pixelpaint.htm 200, /edit 200. Scrolling Text glass-verified on both
+  chain setups. Pixel Paint caveat: paints the LIVE canvas; presets painted
+  on a different canvas (old "mypaint") need repainting after geometry
+  changes.
