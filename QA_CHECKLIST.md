@@ -175,8 +175,10 @@ RESULT 2026-07-12: PASS.
 ## D10. Four-panel chain at 256x64
 - [x] PASS 2026-07-12/13 (live bench, Justin + assistant; full narrative in
       BENCH_SESSION_D10.md). Recipe that works: LED prefs pins [64,64,4,1,4]
-      type 65 (HS), 2D config FOUR 64x64 panels at x 0/64/128/192 (never one
-      256-wide panel; per-panel dims are 8-bit in the UI), save, reboot.
+      type 65 (HS), 2D config ONE 256x64 panel at 0,0 (REVISED session 2
+      part 2: the four-64s layout produces a panel-major ledmap the HUB75
+      bus renders scrambled - glass photos decoded it; Panel dims widened
+      to uint16 to allow 256), save, reboot.
       Verified on glass: solid fills, DNA and organic 2D effects span all four
       panels continuously across seams. fps ~30 solid/text, ~15 heavy 2D.
       Six firmware bugs found and fixed to get here (MAX_LEDS >= boundary,

@@ -114,12 +114,15 @@ this file exists but fixes are missing from git log, check the working tree.
 ## ADDENDUM (late session, after direct-drive bypass build 36ea8972 + factory reflash)
 
 ### THE WORKING CHAIN RECIPE on this firmware (customer-facing, wiki-ready)
+### STEP 2 SUPERSEDED 2026-07-12 SESSION 2 PART 2 - SEE BELOW. Correct 2D
+### config is ONE 256x64 panel (exactly like WLED-MM), enabled by the
+### Panel uint16 fix. "Four 64s" produces a panel-major ledmap that the
+### HUB75 bus renders scrambled (glass-proven, photo-decoded).
 1. LED settings (UI or API): HUB75 (Half Scan), Panel 64x64, No. of Panels 4,
    rows x cols = 1 x 4. Save, REBOOT. (Slots = pin [64,64,4,1,4].)
-2. 2D Configuration: FOUR panels of 64x64 at X offsets 0/64/128/192, Y 0.
-   NEVER one 256x64 panel: per-panel dims are 8-bit upstream (255 max, field
-   goes red). WLED-MM's cure was "one 256x64 panel"; the upstream equivalent
-   is four 64s. KEY MIGRATION DOC ITEM for chaining customers.
+2. [SUPERSEDED - DO NOT USE] 2D Configuration: FOUR panels of 64x64 at X
+   offsets 0/64/128/192, Y 0. (Old rationale: per-panel dims were 8-bit.
+   That was the actual BUG, now fixed - dims widened to uint16.)
 3. TRAP: the 2D settings page saves WHATEVER layout it currently shows. If it
    shows a stale 1-panel 64x64 layout and the user hits Save, the canvas
    collapses to 64x64 and content tiles 4x squashed on the 256 bus (photo in
@@ -304,3 +307,62 @@ panels at x 0/64/128/192, mpc 4), poll raw /cfg.json, reboot.
    upstream conversation - it silently eats user config).
 7. getLastActiveSegmentId size_t underflow: mainseg POST on empty strip =
    LoadProhibited panic (one-line fix, clean repro, backtrace on file).
+
+## SESSION 2, PART 2 (2026-07-12 ~23:00): JUSTIN'S PHOTOS DECODE THE LAST SCRAMBLE
+
+### What the glass showed (probe frame photo, 23:03)
+F repeated on ALL FOUR panels (squashed), red x=100 line repeated on all four
+at local x=36, the 256-wide green y=40 line FOLDED into four 64px rows
+stacked 16px apart on the leftmost panel, white (250,60) dot at leftmost
+panel bottom. Every element fits ONE mapping exactly:
+   glass = customMappingTable is PANEL-MAJOR, HUB75 bus blit is ROW-MAJOR.
+
+### Root cause (source-proven)
+- setUpMatrix (FX_2Dfcn.cpp ~107-120) numbers pixels consecutively PER PANEL:
+  four 64x64 panels in a row -> table[y*256+x] = (x/64)*4096 + y*64 + x%64.
+- BusHub75Matrix show() blits strip index i -> (i%256, i/256): ROW-MAJOR.
+- The ONLY 2D config whose ledmap is identity (matching the bus) is ONE
+  256x64 panel - EXACTLY WLED-MM's documented cure. It was impossible on
+  upstream because Panel.width/height are uint8_t (256 wraps to 0, bounds
+  error kills the matrix). THAT is the real "8-bit panel dims" issue; the
+  red UI field was just its shadow.
+- FIX: FX.h Panel width/height -> uint16_t. One 256x64 panel now configures,
+  survives cfg round-trip (verified in raw /cfg.json), ledmap is identity.
+- This ALSO re-explains the ENTIRE historic pre-bypass scramble: "staircase
+  stepping down 16px per 64px of x, 16px dashes every 64px, mirrored" is the
+  panel-major signature (it lives ABOVE the bus layer, so it hit virtual and
+  direct modes identically; the direct-drive bypass never actually fixed it -
+  organic DNA just hid it, and the QS-residue theory from part 1 is retired).
+  The virtual layer was innocent all along (host-sim already proved identity).
+
+### New recipe (wiki-ready, replaces the superseded step 2)
+1. LED prefs: HUB75 HS, pins [64,64,4,1,4]. Save, reboot.
+2. 2D config: ONE panel, 256x64, offsets 0,0 (via API/cfg.json; the settings
+   UI number field may still visually clamp at 255 - JS only, note for wiki
+   or a later UI tweak).
+3. Reboot after any matrix/bus change (S3 cannot re-init HUB75 live).
+If text/content is MIRRORED on glass: set the single panel's "r" (rightStart)
+flag true instead of re-cabling - no code change needed.
+
+### Verified tonight on the new config (engine side)
+fx 122 stable, fps 30-31, heap flat 72104/64500, serial clean, 45s+ soak.
+GLASS VERDICT PENDING JUSTIN: text should now read as ONE continuous line
+scrolling right-to-left across all four panels, no bands, no repeats.
+Old split-text video frame archived (scratchpad video_frame1.png): four
+glyph fragments spaced exactly 64px = one per panel + folded band = the
+panel-major signature, kept for the upstream report.
+
+### Upstream findings ledger: item 8 (and 5 rewritten again)
+5. (final form) Historic 1xN "virtual-path scramble" = panel-major ledmap vs
+   row-major HUB75 bus, NOT the virtual layer (host-sim: identity; glass
+   photos + source: panel-major). Direct-drive bypass kept for simplicity
+   but was never the fix.
+8. Panel.width/height uint8_t forbids >255 panels, blocking the only correct
+   2D config for HUB75 chains (one WxH panel). Widen to uint16_t. Combined
+   with 5: either HUB75 bus should translate panel-major indices, or docs
+   must mandate the one-big-panel 2D config for HUB75 chains.
+
+### Device state at end of part 2
+apollo_m1_dbg + uint16-panel fix OTA'd; flash cfg: bus 65 [64,64,4,1,4],
+matrix mpc1 ONE 256x64 panel, same-subnet true. Scrolling Text left running.
+Prod artifacts rebuilt AFTER this fix (see git log). FS untouched.

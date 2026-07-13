@@ -975,8 +975,8 @@ class WS2812FX {
     struct Panel {
       uint16_t xOffset; // x offset relative to the top left of matrix in LEDs
       uint16_t yOffset; // y offset relative to the top left of matrix in LEDs
-      uint8_t  width;   // width of the panel
-      uint8_t  height;  // height of the panel
+      uint16_t width;   // width of the panel; 16-bit so a HUB75 chain can be one wide panel (4x64=256 wraps to 0 in 8 bits)
+      uint16_t height;  // height of the panel
       union {
         uint8_t options;
         struct {
