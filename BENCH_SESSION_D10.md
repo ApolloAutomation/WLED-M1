@@ -248,17 +248,32 @@ from flash (bus line survives; it is a different path). RULE: before ANY
 exists; if not, REBOOT FIRST. Recovery: re-push the matrix block (four 64x64
 panels at x 0/64/128/192, mpc 4), poll raw /cfg.json, reboot.
 
-### 2x2 groundwork (Justin wants 2x2; virtual path still suspect)
+### 2x2 groundwork (Justin wants 2x2) - HOST SIM DONE, path looks viable
 - The build compiles the LEGACY ESP32-VirtualMatrixPanel-I2S-DMA.h (seen in
   build warnings), not the _T template header.
-- getCoords for 1x4 TOP_RIGHT_DOWN is mathematically IDENTITY (row 0 even
-  branch), yet glass showed the 16-px staircase pre-bypass - paradox not yet
-  resolved; suspects: Adafruit_GFX _width bounds check (non-NO_GFX branch),
-  rotation state. FOUR_SCAN remap is QS-only, not the HS culprit.
-- NEXT STEP (desk-safe): extract getCoords into a host-side simulation, run
-  1x4 + 2x2 cases, find the discrepancy BEFORE touching device config.
-- 2x2 physical caveat: legacy chain math assumes row-2 panels are mounted
-  180 degrees ROTATED (serpentine). Customer doc item.
+- HOST SIMULATION (scratchpad virtual_sim.py, full port of getCoords incl.
+  FOUR_SCAN): 1x4 TOP_RIGHT_DOWN is IDENTITY over the entire 256x64 canvas.
+  PROVEN. The pre-bypass staircase CANNOT have come from this math with a
+  type-65 bus. Revised suspect for the historic scramble: type-66 (QS)
+  residue during that test - QS reshapes mxconfig to 128x32 AND applies
+  FOUR_SCAN_64PX_HIGH, whose remap = per-64px x-displacement + 8/16-row
+  y-swizzle = exactly the observed staircase + dashes. (Same night the flash
+  was later found holding type 66 "WRONG, revert to 65".) The direct-drive
+  bypass stays: fewer layers, field-proven architecture.
+- 2x2 SIM RESULT (rows=2, cols=2, canvas 128x128): mapping is BIJECTIVE.
+  Canvas top row -> chain panels 2,3 upright; canvas bottom row -> panels
+  1,0 x-reversed AND y-inverted (= physically mounted 180 deg rotated).
+  Cabling for customers: controller into BOTTOM-RIGHT panel, chain runs left
+  along the bottom row (both bottom panels upside down), then up to top-left,
+  then right along the top row. Config: pins [64,64,4,2,2], 2D four 64x64
+  panels at (0,0)(64,0)(0,64)(64,64), canvas 128x128.
+  Decent odds 2x2 works as-is on a cleanly-typed 65 bus; bench-verify with
+  the F-probe segments before content tests.
+- Upstream lib quirks found by inspection (four-scan path, QS-only, report
+  to mrfaptastic lib): (1) FOUR_SCAN_64PX_HIGH y-swizzle line has a C
+  precedence bug - '(y & 0b11000) ^ 0b11000 + (y & 0b11100111)' parses as
+  'a ^ (b + c)', braces missing around the XOR; (2) un-braced else with two
+  indented statements right below it (32PX branch) - works but lies.
 - S3 cannot teardown the HUB75 driver at runtime (cleanup() sets
   ERR_REBOOT_NEEDED, deleting display crashes) - the "always reboot after bus
   changes" rule is structural, not superstition.
@@ -280,7 +295,10 @@ panels at x 0/64/128/192, mpc 4), poll raw /cfg.json, reboot.
 2. cfg.cpp maMax div-by-zero boot loop (total saved as 0).
 3. 2D width cap rejects exactly-256 (should be > 256).
 4. Ledmap 32KB alloc needs PSRAM fallback at 16K pixels.
-5. Virtual-path 1xN geometry scramble (bypassed in fork; host-sim pending).
+5. Virtual-path 1xN scramble: host-sim PROVES legacy getCoords is identity
+   for 1xN/type-65; historic staircase re-attributed to QS(66) residue +
+   FOUR_SCAN remap. Downgraded from upstream bug to config-trap documentation
+   (plus the two four-scan lib quirks below).
 6. HUB75 _ledBuffer PREFER_DRAM starves heap at chain sizes -> watchdog
    destroys segments (PREFER_PSRAM fixes; watchdog itself is also worth an
    upstream conversation - it silently eats user config).
