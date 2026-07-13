@@ -202,8 +202,21 @@ RESULT 2026-07-12: PASS.
       ESP32-VirtualMatrixPanel-I2S-DMA.h confirmed as the compiled header.
       Plan: host-side simulation of getCoords first (desk-safe), then bench.
       Physical caveat: row-2 panels must be mounted 180 degrees rotated. PENDING
-- [ ] Contamination check (Justin's Tier-1): factory-erase, flash rebuilt
-      M-1_full_install.bin, verify single-panel 64x64 defaults untouched. PENDING
+- [x] Contamination check (Justin's Tier-1): PASS 2026-07-13 ~02:00. Full
+      erase, flashed M-1_full_install.bin (embedded app sha 88df8239...,
+      matches HEAD -Os build), virgin boot verified: Apollo Dog greets on
+      the built-in panel (new factory boot preset), customer AP flow works
+      (Justin provisioned WiFi by phone), single-panel defaults exact
+      (4096 px, bus [64,64,1,1,1] type 65, matrix mpc1 64x64, 43 fps,
+      154K heap), all 4 factory presets cycle correctly incl. AudioReactive
+      Sound Bars, PixelForge/PixelPaint/edit serve, zero chain residue,
+      zero panics, uptime monotonic.
+      AND IT CAUGHT A SHIPPING-BLOCKER: the first artifact (with the -O2
+      speed flags) crash-looped the virgin boot (800+ panics, null deref in
+      UsermodManager::onStateChange from beginStrip) while OTA boots onto
+      existing config had always worked. Bisected on hardware via app-only
+      reflash over the preserved virgin FS; -Os build boots clean. Speed
+      flags removed permanently (they measured zero LED benefit anyway).
 
 ## D11. Home Assistant
 - [ ] Native WLED integration discovers the fresh unit (zeroconf), entity name

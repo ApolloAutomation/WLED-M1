@@ -490,3 +490,27 @@ playback), so the streaming hypothesis is dead. Full MM code trace findings:
   shaped, next session+). Old-firmware live monitoring no longer needed -
   the repos answered everything; a factory-dump reflash (D12 drill) remains
   available for empirical A/B if ever wanted.
+
+## SESSION 3 (2026-07-13 ~01:00-02:00): DOG LOGO SHIPPED + CONTAMINATION CHECK PASS
+- Factory first-boot now shows the Apollo dog logo: apollo_dog.gif (64x64 on
+  Apollo blue, generated from Downloads/"Apollo OG Dog Logo.png"), factory
+  preset 4 "Apollo Dog" (Image fx), cfg def={ps:4,on:true,bri:128}.
+  Approved on glass by Justin (2x2 preview, then virgin single-panel boot).
+- CONTAMINATION CHECK: PASS, second attempt - the FIRST attempt caught a
+  real shipping-blocker. The -O2 production build crash-looped the VIRGIN
+  boot (LoadProhibited 0x0, UsermodManager::onStateChange via beginStrip
+  colorUpdated, 800+ loops) though every OTA boot onto existing config had
+  worked all night. Bisected by flashing an -Os app over the preserved
+  virgin FS (app0 @0x10000, FS @0x610000 untouched): -Os boots clean.
+  Speed flags removed permanently (commit 2d00934f); root-cause suspicion
+  (aggressive IPA vs dynarray usermod-registry post-link script) parked in
+  the findings ledger. LESSON: OTA-boot testing can NEVER substitute for
+  the virgin-boot gate.
+- Final verification on the shipping artifact (sha 88df8239... embedded ==
+  HEAD build): dog on glass at power-on, customer AP flow (phone) works,
+  single-panel factory exact (43fps/154K heap - matches baseline), presets
+  1-4 all cycle, tool pages 200, no residue, no panics.
+- DEVICE END STATE: factory-fresh customer image + Justin's WiFi, showing
+  the dog (preset 4). The 2x2 demo rig config/presets/GIFs are GONE (as
+  designed); recipe to rebuild is in the wiki page, plasma/bounce/dog GIFs
+  in scratchpad + apollo/fs.
