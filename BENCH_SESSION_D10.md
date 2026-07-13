@@ -423,3 +423,29 @@ the M-1 demo rig is built) and text reads naturally; no 2D flags needed.
   chain setups. Pixel Paint caveat: paints the LIVE canvas; presets painted
   on a different canvas (old "mypaint") need repainting after geometry
   changes.
+
+### The 60fps question: MM comparison + honest -O2 negative result (2026-07-13 ~00:50)
+Justin recalls very smooth (60fps-ish) GIFs on the factory MM firmware.
+Investigated WLED-MM-M1 repo. MCU/PSRAM/flash config is IDENTICAL to ours
+(same lilygo-t7-s3, qio_opi, 240MHz). The differences are software:
+1. MM ships [Speed_Flags] = -O2 + speed set, -Os removed. ADOPTED into
+   apollo_m1 verbatim. MEASURED RESULT ON LED PIPELINE: ZERO (plasma 8,
+   bounce 18, text 31, DNA 17 fps - identical to -Os). The 16.x pixel
+   pipeline is MEMORY-LATENCY-BOUND (multi-pass over PSRAM buffers), not
+   compute-bound. Kept anyway: field-proven config, helps AudioReactive FFT
+   (compute-bound), binary 1.26->1.49MB (47% of slot).
+   TRAP FOUND ON THE WAY: apollo_m1_dbg's build_unflags REPLACES (not
+   merges) apollo_m1's, so the dbg env silently kept -Os on the first try -
+   idedata showed "-O2 ... -Os" with last-wins. Override file fixed; verify
+   with `pio run -t idedata` when touching optimization flags.
+2. MM WLEDMM_FASTPATH: 120fps frame budget + leaner per-pixel paths
+   (upstream has no equivalent).
+3. MM 0.14 pipeline made ~2 memory passes per frame; upstream 16.x makes ~5
+   (effect->segment pixels PSRAM->blendSegment->_ledBuffer PSRAM->DMA pack).
+4. MM ran buffers in DRAM and set MIN_HEAP_SIZE=6144 (!) - the speed came
+   partly from gambling the heap floor we watched destroy segments at 15K.
+FUTURE OPTIMIZATION CANDIDATES (findings report item): single-opaque-segment
+fast path in blendSegment; PIXEL_COLOR_DEPTH_BITS 8->6 frees ~32K DRAM to
+move _ledBuffer back to DRAM (banding trade-off; test single + chain).
+Realistic current envelope: text 31 / DNA 17 / sparse GIF 18 / full-frame
+GIF 8 fps. Matching MM's 60 needs pipeline surgery, not flags.
