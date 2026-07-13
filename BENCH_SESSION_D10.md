@@ -164,3 +164,26 @@ unaffected; chain fixes included).
 6. Upstream findings list now: >= MAX_LEDS boundary, cfg total=0 div-by-zero,
    2D width cap 255 (should be 256+), virtual-path 1xN geometry scramble
    (repro'd, bypassed in fork), tight MAX_LED_MEMORY for HS chains.
+
+### FINAL late-night status (context handoff point)
+- WORKING on the 4x1 chain (256x64, direct drive): solid fills, DNA and organic
+  2D effects (one wide helix confirmed by Justin), rainbow (1D semantics),
+  Pixel Paint content once canvas is right. Cold-boot stable. This is a USABLE
+  display state; DNA left running.
+- NOT WORKING: Scrolling Text on 256x64 = STATIC shredded letter fragments in
+  two horizontal bands, does not animate. Engine keeps running (fps ~32), no
+  alloc error on the WLED_DEBUG console (capture was silent; early-boot capture
+  gap does not apply here - this was live). Suspects for next session, in
+  order: (1) effect/segment data ceiling for 256-wide text (find 16.x name of
+  the segment-data cap; the LED-memory gauge already reads 91 percent red),
+  (2) high-frequency content revealing a residual row/subrow interleave that
+  organic effects hide - decisive probe: STATIC single letter drawn via
+  segment i-ranges at known coords, compare glass vs canvas, (3) the earlier
+  multi-seg/dark-glass wedge - possibly same root.
+- Earlier bold-edge test in direct mode showed "panels off": likely the same
+  text-class failure (thin static content), NOT power - solid frames work.
+- Next-session order: static-letter probe -> find+raise segment-data and
+  MAX_LED_MEMORY ceilings in apollo_m1 -> retest text -> if interleave
+  persists, swap HUB75 lib to WLED-MM's softhack007 fork (field-proven with
+  these panels) and retest -> then WiFi-under-load, wiki chaining rewrite,
+  QA_CHECKLIST D10 block, upstream findings report.
