@@ -387,3 +387,19 @@ the M-1 demo rig is built) and text reads naturally; no 2D flags needed.
 - Physical re-rack instructions issued: top row = chain panels 2,3 upright;
   bottom row = panels 1,0 rotated 180; cabling unchanged (controller into
   bottom-right). Awaiting on-glass grid verdict, then 128x128 text.
+
+### 2x2 GLASS PASS (2026-07-13 ~00:00, Justin's photos)
+- Re-racked grid: quadrant boxes upright in all four corners, F readable,
+  center cross joined -> serpentine mapping correct on glass.
+- Scrolling text on 128x128: letters cross the horizontal mid-seam INTACT
+  (top half on upright panels, bottom half on 180-rotated panels) and the
+  vertical seam cleanly. 31 fps, heap flat. 2x2 GRID WORKS.
+- GIF playback: generated 48-frame seamless-loop 128x128 rainbow plasma
+  (scratchpad plasma.gif, 762KB), uploaded to FS via /upload, played with
+  the Image effect (fx 53, segment name = filename). Fills all four panels,
+  seams invisible. Effective ~7 fps (CPU-bound LZW decode + 16K px/frame
+  pipeline) - GIF-path optimization is a known follow-up, NOT a regression
+  (chain fps unchanged before/after the PSRAM fix: 28-30 then, 30-31 now).
+- Saved: preset 4 "Plasma 2x2" (factory presets 1-3 untouched). 2x2 config
+  on flash (pins [64,64,4,2,2], 2D one 128x128 panel).
+- Wiki: multiple-panels.md now includes the full 2x2 recipe + GIF how-to.

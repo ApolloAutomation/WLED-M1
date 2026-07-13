@@ -1,11 +1,10 @@
 # Draft replacement: /products/m1/setup/m1-multiple-panels/
 
-Editor note (not part of the page): rewritten 2026-07-12 from the D10 bench session.
-The old page's guidance predates firmware 16.0.1 and the chain fixes. Everything
-below was verified on glass on a four-panel rig (photos in the QA record). Requires
-an M-1 build that includes the D10 chain fixes (any build after b6; check the
-firmware date on the info page). Grid layouts (2x2) are not yet supported on this
-page's firmware - do not fold the old grid speculation back in.
+Editor note (not part of the page): rewritten 2026-07-12 from the D10 bench session;
+2x2 grid section added 2026-07-13 after it passed on glass (probe + seam-straddling
+scrolling text + GIF playback, photos in the QA record). Everything below was
+verified on hardware. Requires an M-1 build that includes the D10 chain fixes
+(any build after b6; check the firmware date on the info page).
 
 ---
 
@@ -57,7 +56,48 @@ scrolling text, and Pixel Paint content all span the four panels continuously.
 
 - The LED memory gauge on the LED Preferences page reads high with four panels.
   That is expected on current firmware and does not cause instability.
-- Frame rate at 256x64 is about 30 fps for most content and about 15 fps for the
-  heaviest 2D effects, compared to 44 fps on the single built-in panel.
-- Chains longer than four panels and grid arrangements (for example 2x2) are not
-  supported yet. The 2x2 layout is under active work.
+- Frame rate at 16,384 pixels (either 256x64 or 128x128) is about 30 fps for
+  most content and about 15 fps for the heaviest 2D effects, compared to 44 fps
+  on the single built-in panel. GIF playback runs slower (about 7 fps) because
+  each frame is decoded on the fly.
+- Chains longer than four panels are not supported.
+
+## 2x2 grid (128x128 square display)
+
+The same four panels can be arranged as a square instead of a row. The pixel
+count is identical; only the arrangement and two settings change.
+
+### Physical arrangement (facing the screens)
+
+The chain order does not change - the same cables stay in the same ports. Take
+the row and stack it:
+
+- **Top row, mounted upright**: the 3rd panel from the controller goes top-left,
+  the 4th (last) panel goes top-right.
+- **Bottom row, each rotated 180 degrees in place** (spin it like a steering
+  wheel - do not flip it face-to-back): the 2nd panel goes bottom-left, the 1st
+  panel (the one cabled to the controller) goes bottom-right.
+
+The cable path ends up as a serpentine: controller into the bottom-right panel,
+along the bottom row, up, then along the top row. The bottom panels are upside
+down on purpose - the firmware knows and draws them correctly.
+
+### Settings (two steps, one reboot each)
+
+1. **LED Preferences**: HUB75 Half Scan, panel size 64x64, number of panels 4,
+   arrangement **2 rows x 2 columns**. Save, reboot.
+2. **2D Configuration**: **one panel of 128x128** at offset 0,0. Save, reboot.
+
+Text, effects, and images now treat the square as one 128x128 canvas. Content
+crosses all four seams cleanly, including letters that straddle the horizontal
+middle.
+
+### Playing a GIF across the grid
+
+1. Upload a GIF to the device filesystem (PixelForge at `http://<device>/pixelforge.htm`,
+   or `http://<device>/edit`). A GIF sized 128x128 plays pixel-perfect; other
+   sizes are scaled.
+2. Set the segment name to the exact filename (for example `plasma.gif`).
+3. Select the **Image** effect.
+4. To keep it: save the state as a preset. To start it at power-on, set that
+   preset as the boot preset in LED Preferences.
