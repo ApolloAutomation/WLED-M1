@@ -187,3 +187,102 @@ unaffected; chain fixes included).
   persists, swap HUB75 lib to WLED-MM's softhack007 fork (field-proven with
   these panels) and retest -> then WiFi-under-load, wiki chaining rewrite,
   QA_CHECKLIST D10 block, upstream findings report.
+
+## SESSION 2 ADDENDUM (2026-07-12 late night): TEXT BUG KILLED - it was heap, not mapping
+
+### Correction to "device state" above
+The unit was running the FACTORY B6 image, not apollo_m1_dbg (proof: panic
+dump ELF sha 5f0470d5... == .pio/build/apollo_m1/firmware.bin app descriptor;
+/json/info lacked the WLED_DEBUG-only maxalloc field). That is why the last
+session's console capture was "silent": b6 has no WLED_DEBUG and no CDC
+console. ALSO: plain `cat` on /dev/cu.usbmodem1101 only ever shows ROM boot +
+panic text (USB-Serial-JTAG); HWCDC app output needs DTR asserted - use
+scratchpad serial_logger.py pattern (pyserial, ser.dtr=True). With the real
+dbg build + DTR the console works and streams "Slow strip 31/23" pacing lines.
+
+### Root cause of the Scrolling Text freeze (and the WiFi drop, and more)
+- BusHub75Matrix allocates a 48KB shadow buffer (16384 px * CRGB) with
+  BFRALLOC_PREFER_DRAM (bus_manager.cpp ~1053). At bus-init heap is still
+  large, so it lands in DRAM, leaving ~23K free / <14K contiguous at 256x64.
+- wled.cpp:185-211 heap watchdog needs MIN_HEAP_SIZE (15K) CONTIGUOUS heap:
+  after 15 consecutive low seconds it purges segments and forces ALL segments
+  to FX_MODE_STATIC (= text freezes mid-frame as "static shredded fragments",
+  engine keeps rendering at ~30fps); at 30s it resets segments; at 45s it
+  DESTROYS AND RE-CREATES the strip and sets forceReconnect (= the WiFi drop).
+  Reproduced tonight WITHOUT text: 7 static solid segments were nuked to
+  seg:[] + error:8 within ~90s on the old firmware.
+- MAX_SEGMENT_DATA (FX.h, the 16.x segment-data ceiling name) is COMPILED OUT
+  on PSRAM builds (#ifndef BOARD_HAS_PSRAM in FX_fcn.cpp) - raising it is a
+  no-op for the M-1. The ceiling that matters is MAX_LED_MEMORY: if the bus
+  memory estimate exceeds it (+1K) at re-init the bus is built as a
+  PLACEHOLDER = dark panels (FX_fcn.cpp ~1264). We sat at 180224/197632.
+- BONUS CRASH FOUND (repro + backtrace): WS2812FX::getLastActiveSegmentId
+  does `for (size_t i = _segments.size() - 1; ...)` - with ZERO segments
+  (i.e., right after the watchdog nuke) the unsigned wraps and any
+  /json/state POST containing "mainseg" (the web UI sends it!) LoadProhibited-
+  panics the device. Watchdog nuke -> next UI click -> reboot. Likely the old
+  "multi-seg/dark-glass wedge" and maybe the earlier crash-loop too.
+
+### Fixes applied (all in m1-wled-update)
+1. bus_manager.cpp: _ledBuffer BFRALLOC_PREFER_DRAM -> BFRALLOC_PREFER_PSRAM.
+   The allocator heuristic keeps small (single-panel) buffers in DRAM, spills
+   big chain buffers to PSRAM. Result on glass build: freeheap 23K -> 72K,
+   contiguous 64.5K (4.5x the watchdog line).
+2. FX_fcn.cpp: getLastActiveSegmentId underflow guard (loop from size()).
+3. platformio.ini apollo_m1: -D MAX_LED_MEMORY=262144 (placeholder-drop margin).
+
+### Verified after OTA of the real dbg build
+- 160s soak, 7 static segments: nsegs stable, error none, heap flat 71860.
+- Scrolling Text 256x64 (43-char string, forced horizontal): 2min+, fx stays
+  122, heap flat, fps 30-31, console clean (only "Slow strip" pacing lines).
+  GLASS VERDICT PENDING JUSTIN (readability, direction, seams).
+- WiFi under load during text: 40/40 pings, 0.0% loss, avg 9.7ms.
+- mainseg POST on populated strip: fine (fix in build; empty-strip case now safe).
+
+### NEW TRAP (cost us the matrix config tonight - recovered)
+After ANY watchdog strip-nuke, the RAM config is DEGRADED (matrix gone from
+RAM). ANY /json/cfg POST then saves that degraded state to flash - tonight an
+innocent {"ota":{"same-subnet":false}} unflag-for-OTA wiped hw.led.matrix
+from flash (bus line survives; it is a different path). RULE: before ANY
+/json/cfg POST, check /json/state has nsegs>0 AND /json/info leds.matrix
+exists; if not, REBOOT FIRST. Recovery: re-push the matrix block (four 64x64
+panels at x 0/64/128/192, mpc 4), poll raw /cfg.json, reboot.
+
+### 2x2 groundwork (Justin wants 2x2; virtual path still suspect)
+- The build compiles the LEGACY ESP32-VirtualMatrixPanel-I2S-DMA.h (seen in
+  build warnings), not the _T template header.
+- getCoords for 1x4 TOP_RIGHT_DOWN is mathematically IDENTITY (row 0 even
+  branch), yet glass showed the 16-px staircase pre-bypass - paradox not yet
+  resolved; suspects: Adafruit_GFX _width bounds check (non-NO_GFX branch),
+  rotation state. FOUR_SCAN remap is QS-only, not the HS culprit.
+- NEXT STEP (desk-safe): extract getCoords into a host-side simulation, run
+  1x4 + 2x2 cases, find the discrepancy BEFORE touching device config.
+- 2x2 physical caveat: legacy chain math assumes row-2 panels are mounted
+  180 degrees ROTATED (serpentine). Customer doc item.
+- S3 cannot teardown the HUB75 driver at runtime (cleanup() sets
+  ERR_REBOOT_NEEDED, deleting display crashes) - the "always reboot after bus
+  changes" rule is structural, not superstition.
+
+### Device state at end of session 2
+- Firmware: apollo_m1_dbg WITH tonight's 3 fixes, OTA'd (first build that is
+  actually the dbg env on this unit). Factory b6 on-disk artifacts are STALE
+  (pre-fix) until rebuilt.
+- Config on flash: verified via raw /cfg.json - bus type 65 pin [64,64,4,1,4]
+  len 16384, matrix mpc4 four panels x 0/64/128/192, ota.same-subnet TRUE
+  (restored after the OTA dance).
+- Scrolling Text left RUNNING on glass for Justin's verdict ("APOLLO M-1 FOUR
+  PANEL CHAIN TEST 0123456789", amber, sx=140).
+- FS: factory b6 presets + Justin's "mypaint" still on the unit (OTA does not
+  touch FS).
+
+### Upstream findings ledger (for the report, now 7)
+1. MAX_LEDS boundary uses >= (exactly-4-panel chains rejected).
+2. cfg.cpp maMax div-by-zero boot loop (total saved as 0).
+3. 2D width cap rejects exactly-256 (should be > 256).
+4. Ledmap 32KB alloc needs PSRAM fallback at 16K pixels.
+5. Virtual-path 1xN geometry scramble (bypassed in fork; host-sim pending).
+6. HUB75 _ledBuffer PREFER_DRAM starves heap at chain sizes -> watchdog
+   destroys segments (PREFER_PSRAM fixes; watchdog itself is also worth an
+   upstream conversation - it silently eats user config).
+7. getLastActiveSegmentId size_t underflow: mainseg POST on empty strip =
+   LoadProhibited panic (one-line fix, clean repro, backtrace on file).

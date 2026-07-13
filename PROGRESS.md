@@ -54,8 +54,13 @@ DECISIONS D13 for the DEFAULT_LED_COUNT lesson).
       FACT_CHALLENGES.md, wiki rewrites, installer patch, UPSTREAM_PR.md.
 
 ## Next session, in order
+0. D10 4-panel chain: PASSED 2026-07-12/13 (BENCH_SESSION_D10.md session-2
+   addendum; scrolling-text root cause was DRAM starvation, fixed via PSRAM
+   buffer + 2 more bugs). Open D10 tails: Justin's glass verdict on text,
+   2x2 host-sim then bench, contamination check, prod artifact rebuild.
 1. Remaining hardware QA: D3 FS-reset resilience, D5 current draw, D6 ghosting,
-   D7 driver chip id, D8 WiFi under load, D9 rev4 half, D10 4-panel chain,
+   D7 driver chip id, D8 WiFi under load (PASSED at 256x64 during text render:
+   0% loss / 9.7ms avg), D9 rev4 half,
    D11 HA discovery click-through, D12 dump-restore drill (QA_CHECKLIST.md).
 2. Open the upstream PR (D2-D4 have passed; apollo/UPSTREAM_PR.md; human opens it).
 3. Hosting + installer URL flip + wiki updates per SUMMARY "For Justin".

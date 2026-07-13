@@ -1837,8 +1837,8 @@ void WS2812FX::setMainSegmentId(unsigned n) {
 }
 
 uint8_t WS2812FX::getLastActiveSegmentId() const {
-  for (size_t i = _segments.size() -1; i > 0; i--) {
-    if (_segments[i].isActive()) return i;
+  for (size_t i = _segments.size(); i > 1; i--) { // no "size()-1": with zero segments the unsigned counter wraps and reads wild memory
+    if (_segments[i-1].isActive()) return i-1;
   }
   return 0;
 }

@@ -173,9 +173,31 @@ RESULT 2026-07-12: PASS.
       Needs a rev4 board; still the open half of this item. PENDING
 
 ## D10. Four-panel chain at 256x64
-- [ ] Chain 4 panels, set LED Preferences pins to [64,64,4,1,4] and 2D config to
-      four panels in a row. Full 256x64 lights, effects span correctly, note the
-      frame rate and any color banding (driver reduces bit depth at this size). PENDING
+- [x] PASS 2026-07-12/13 (live bench, Justin + assistant; full narrative in
+      BENCH_SESSION_D10.md). Recipe that works: LED prefs pins [64,64,4,1,4]
+      type 65 (HS), 2D config FOUR 64x64 panels at x 0/64/128/192 (never one
+      256-wide panel; per-panel dims are 8-bit in the UI), save, reboot.
+      Verified on glass: solid fills, DNA and organic 2D effects span all four
+      panels continuously across seams. fps ~30 solid/text, ~15 heavy 2D.
+      Six firmware bugs found and fixed to get here (MAX_LEDS >= boundary,
+      cfg div-by-zero boot loop, 2D width cap 255->256, ledmap PSRAM fallback,
+      HUB75 _ledBuffer DRAM starvation, getLastActiveSegmentId underflow crash)
+      plus MAX_LED_MEMORY raised 192K->256K; see DECISIONS + BENCH file.
+- [x] Scrolling Text regression root-caused and fixed same session: 48KB HUB75
+      shadow buffer in DRAM left ~23K free heap; the wled.cpp low-heap watchdog
+      (needs 15K contiguous) force-reset segments after 15/30/45s, freezing text
+      mid-frame ("static shredded fragments") and dropping WiFi. After moving
+      the buffer to PSRAM: 72K free / 64K contiguous, 160s multi-segment soak
+      clean, text ran 2min+ with zero heap movement, fx stable at 122.
+      Glass verdict on scroll direction/reading order: PENDING (Justin).
+- [x] WiFi under load at 256x64 while Scrolling Text renders: 40/40 pings,
+      0.0% loss, 9.7ms avg (idle baseline 6.0ms). PASS.
+- [ ] 2x2 grid (Justin wants it): needs the virtual path; legacy
+      ESP32-VirtualMatrixPanel-I2S-DMA.h confirmed as the compiled header.
+      Plan: host-side simulation of getCoords first (desk-safe), then bench.
+      Physical caveat: row-2 panels must be mounted 180 degrees rotated. PENDING
+- [ ] Contamination check (Justin's Tier-1): factory-erase, flash rebuilt
+      M-1_full_install.bin, verify single-panel 64x64 defaults untouched. PENDING
 
 ## D11. Home Assistant
 - [ ] Native WLED integration discovers the fresh unit (zeroconf), entity name

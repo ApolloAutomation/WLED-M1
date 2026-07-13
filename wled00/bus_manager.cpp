@@ -1049,8 +1049,11 @@ BusHub75Matrix::BusHub75Matrix(const BusConfig &bc) : Bus(bc.type, bc.start, bc.
     }
     setBitArray(_ledsDirty, _len, false);             // reset dirty bits
 
-    // create LEDs buffer (initialized to BLACK), prefer DRAM if enough heap is available (faster in case global _pixels buffer is in PSRAM as not both will fit the cache)
-    _ledBuffer = static_cast<CRGB*>(allocate_buffer(_len * sizeof(CRGB), BFRALLOC_PREFER_DRAM | BFRALLOC_CLEAR));
+    // create LEDs buffer (initialized to BLACK). PREFER_PSRAM keeps small (single-panel) buffers
+    // in DRAM when heap is plentiful but spills large chain buffers (4x 64x64 = 48KB) to PSRAM:
+    // with PREFER_DRAM a long chain starves internal heap and trips the low-heap watchdog in
+    // wled.cpp, which force-resets all segments (verified on a 256x64 chain, BENCH_SESSION_D10.md)
+    _ledBuffer = static_cast<CRGB*>(allocate_buffer(_len * sizeof(CRGB), BFRALLOC_PREFER_PSRAM | BFRALLOC_CLEAR));
   }
 
   PANEL_CHAIN_TYPE chainType = CHAIN_NONE; // default for quarter-scan panels that do not use chaining
