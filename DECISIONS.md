@@ -210,3 +210,14 @@ WLED_ENABLE_PIXART and WLED_ENABLE_PXMAGIC (leaner app, back to upstream
 defaults); the supported flow is the built-in /pixelforge.htm plus the
 pre-installed Pixel Paint module. App bug report drafted for Justin to file
 (apollo/WLED_APP_BUG.md); phone workaround is any mobile browser.
+
+### D19. ANSWERED live (2026-07-13): factory first boot shows the animated Apollo dog
+Justin asked for the original Apollo dog logo as the first thing new users see,
+then directed the animation through three takes on glass: static (approved),
+bob+tongue (rejected: "dont like the motion"), stationary with blink + ear
+flicks (approved), plus a nose sniff-sniff (final, "YES!"). Ships as
+apollo/fs/apollo_dog.gif (64x64 on Apollo blue 0x4379AA, 19KB, 3.87s
+mostly-idle loop), factory preset 4 "Apollo Dog" (Image effect), and cfg
+def={ps:4,on:true,bri:128}. Replaces the D14 solid-color welcome: same
+"fixed content until the user configures" pattern, and it demonstrates GIF
+playback out of the box. Supersedes D14.

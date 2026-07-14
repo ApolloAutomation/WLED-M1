@@ -1,8 +1,11 @@
-# SUMMARY: Apollo M-1 migration to upstream WLED (through session 3)
+# SUMMARY: Apollo M-1 migration to upstream WLED (through the D10 bench sessions)
 
-Updated 2026-07-12, session 3. Canonical repo: ApolloAutomation/WLED-M1, branch
-m1-wled-update, pushed. Nothing has touched hardware in any session; the split
-between hardware-verified and build-verified is exact and appears below.
+Updated 2026-07-14. Canonical repo: ApolloAutomation/WLED-M1, branch
+m1-wled-update, pushed through 32cda73d. Two live hardware campaigns are now
+complete: the first live session (2026-07-12, OTA + factory-install QA) and
+the D10 bench sessions (2026-07-12/13, panel chains + ship-readiness; full
+narrative in BENCH_SESSION_D10.md). The firmware is SHIP-READY: the
+contamination check passed on the exact artifact in apollo/out/.
 
 ## The audit numbers first (TASK.md asked for before and after)
 
@@ -10,147 +13,122 @@ Delta against the v16.0.1 base tag:
 
 | | files | insertions | deletions |
 |---|---|---|---|
-| Before (session 2 end) | 29 | 1163 | 2 |
-| After (session 3), total | 36 | 2327 | 2 |
-| After, CODE ONLY | 11 | 209 | 2 |
-| Before, CODE ONLY | 11 | 212 | 2 |
+| Session 3 end, total | 36 | 2327 | 2 |
+| After D10 sessions, total | 56 | 3410 | 14 |
+| After D10 sessions, wled00 + platformio.ini only | 10 | 168 | 14 |
 
 Reading those honestly:
-- The code delta was already small and got slightly smaller (212 to 209) while
-  ABSORBING the session-3 additions (AP password, product string comments). The
-  audit deleted every duplicated line: [env:apollo_m1] no longer restates the
-  pinout define, the five aux pin defines, the five I2S mic defines, or the four
-  flag-group references; it now expands the parent env's build_flags and unflags
-  only the inherited release name (the exact pattern upstream main uses for the
-  waveshare env).
-- The TOTAL delta grew because TASK.md itself demands documentation files:
-  M1_FACTS.md (committed per instructions), FACT_CHALLENGES.md, WIKI_TRIAGE.md
-  (13-page triage), the D0-D12 QA checklist, and three wiki page rewrites. Docs,
-  not firmware. The firmware surface that fights future upstream rebases is the
-  209-line code column: 36 lines in wled00/cfg.cpp, 2 one-line patches (wled.cpp
-  mDNS prefix, wled.h AP SSID), 3 lines in const.h, a 29-line env, and the
-  apollo/ factory-image tooling.
+- The wled00+env code surface (the part that fights upstream rebases) is 168
+  added lines across 10 files: cfg.cpp 42, image_loader.cpp 60 (GIF PSRAM
+  cache + fast 2D draw), platformio.ini 33 (env), bus_manager.cpp 19 (chain
+  direct-drive + PSRAM shadow buffer), FX_2Dfcn.cpp 9 (256 cap + ledmap
+  fallback), FX.h 6 (Panel uint16 + guard), FX_fcn.cpp 6 (underflow fix),
+  const.h 3, one-liners in wled.cpp/wled.h. Six of those changes are
+  customer-facing bug fixes found on hardware; each has a repro in
+  BENCH_SESSION_D10.md and an upstream writeup in apollo/UPSTREAM_FINDINGS.md.
+- The TOTAL delta growth is documentation and factory assets: the bench
+  narrative, the findings report, the multiple-panels wiki rewrite, QA
+  results, and the animated dog GIF + presets in apollo/fs/.
 
-## What the firmware now does (build-verified, values read from inside the built artifact)
+## What the firmware now does (hardware-verified on a factory-erased unit)
 
 Factory boot, zero configuration: HUB75 Half Scan (type 65), one 64x64 panel,
-chain length 1 (reads as 1 in the UI), 2D matrix 1x 64x64, brightness limiter off,
-Solid warm orange at brightness 128 on the full-panel segment, server description
-"Apollo M-1", mDNS apollo-led-matrix-xxxxxx, setup AP "Apollo M-1-xxxxxx" password
-wled1234, AudioReactive compiled/disabled with Generic I2S SD 10 WS 12 SCK 11 sync
-Off, ver 16.0.1, release Apollo_M-1, product Apollo M-1.
+2D matrix 1x 64x64, brightness limiter off, and the ANIMATED APOLLO DOG
+(D19) greeting at brightness 128 - a 64x64 GIF on Apollo blue 0x4379AA that
+blinks, flicks its ears, and sniffs on a mostly-idle 3.9 s loop, played by
+the built-in Image effect from factory preset 4. Server description
+"Apollo M-1", mDNS apollo-led-matrix-xxxxxx, OPEN setup AP "Apollo M-1"
+(D16, join-and-play), AudioReactive ON (D15, Generic I2S SD 10 WS 12 SCK 11,
+sync off), factory presets: 1 Scrolling Text, 2 Apollo Blue, 3 Sound Bars,
+4 Apollo Dog. PixelForge + Pixel Paint on board. ver 16.0.1, release
+Apollo_M-1, product Apollo M-1. Single panel runs 43 fps with ~154K free
+heap.
 
-Verification method (Phase C, per TASK.md "not by reading source"): unpacked the
-LittleFS image out of M-1_full_install.bin and read cfg.json (type 65, pin
-[64,64,1,1,1], mpc 1, 64x64, maxpwr 0, name Apollo M-1); confirmed identity strings
-present in firmware.bin and "Apollo LED Matrix" absent; GIF decoder confirmed
-present in the binary (three wiki example pages depend on it). Build: SUCCESS,
-zero macro-redefinition warnings, 1,250,144 bytes = 39.7 percent of the 3 MB OTA
-slot. Partition table byte-identical to shipped WLED-MM units.
+Panel chains (new, D10): up to FOUR panels per unit, verified on glass in
+both 1x4 (256x64) and 2x2 (128x128) arrangements - solid fills, 2D effects,
+scrolling text across all seams, and GIF playback. Customer recipe (wiki
+rewrite apollo/wiki-rewrites/multiple-panels.md): bus pins
+[64,64,4,rows,cols], 2D config = ONE canvas-sized panel, reboot after
+changes; 2x2 bottom row mounts rotated 180 with the controller into the
+bottom-right panel. Four panels is the hard ceiling (DMA framebuffer DRAM,
+refresh physics, power); bigger walls = multiple synced M-1s.
 
-OTA from WLED-MM: the WLED_MM_HUB75_MIGRATION shim rewrites old type-101/103 bus
-entries to the 16.x layout on first read, so upgraded customers keep a working
-display and their settings. Full-erase install restores all factory defaults.
+Performance envelope at 16384 px, measured and documented: ~30 fps text and
+most content, ~17 fps heavy 2D, ~18 fps typical pixel-art GIFs, ~8 fps
+worst-case full-frame GIFs. The "MM hit 60 fps" question was answered with a
+full code trace (MM's write-through pixel pipeline vs upstream 16.x's
+per-pixel compositor); two portable "fixes" (-O2 build flags, 4-bit panel
+depth) were tested on hardware and rejected with measurements. True parity
+is post-launch engineering (UPSTREAM_FINDINGS.md).
 
-## What the adversarial verification changed (FACT_CHALLENGES.md)
+OTA from WLED-MM: the WLED_MM_HUB75_MIGRATION shim rewrites old type-101/103
+bus entries on first read; hardware-proven in the first live session. NOTE:
+OTA does not touch the filesystem, so existing units get firmware fixes but
+not the dog/presets - those arrive via full install.
 
-- FACT 1 (half scan) and FACT 3 (M-1 = upstream MOONHUB board) survived attack,
-  with byte-identical pinout confirmed again from pristine v16.0.1.
-- FACT 2: code correct, prose imprecise. Pristine upstream first boot creates ZERO
-  buses (dead display), not a wrong-sized one; and chain survives sanitization
-  (only the two 64s were mangled). Migration notes amended.
-- FACT 4: the upstream ABL fear is DISPROVEN. Upstream ABL is structurally
-  digital-bus-only (isDigital() gates every loop; BusHub75Matrix carries no
-  milliamp state). The planned second upstream PR is cancelled: nothing to patch.
-  maxpwr=0 stays as defense-in-depth and to keep the UI checkbox reading off.
-- DEFAULT_LED_COUNT was silently ineffective all along (unguarded #define in
-  const.h beats any -D). Replaced with the guarded PIXEL_COUNTS. Found by reading
-  the full build log rather than trusting exit codes.
+## The contamination check (Justin's Tier-1 ship gate): PASS, and it earned it
 
-## Justin's decisions: applied or queued
+2026-07-13, on the demo unit: full chip erase, flash M-1_full_install.bin,
+virgin first boot. Verified: animated dog appears with zero configuration,
+customer AP flow works end-to-end (WiFi provisioned from a phone), exact
+single-panel factory defaults, all four presets cycle (including
+AudioReactive Sound Bars), tool pages serve, zero residue from the chain
+sessions, zero panics, 43 fps / 154K heap matching the pre-chain baseline.
 
-- D1 AP password wled1234: APPLIED (and logged: OTA-upgraded units keep their old
-  open-AP config; only full-erase units get the password).
-- D2 unique names: already implemented, 6 MAC hex chars, confirmed.
-- D3 AudioReactive enabled-by-default: OPEN as instructed; QA item D9 collects the
-  measurements (rev4 no-mic CPU/heap/refresh/current) that produce the
-  recommendation.
-- D4 server description Apollo M-1: APPLIED (env + factory cfg.json + artifact
-  re-verified).
-- D5 PRs prepared, not opened: one PR stands (hub75-first-boot-defaults, single
-  commit, pushed to the fork; description in apollo/UPSTREAM_PR.md); the ABL PR
-  is cancelled per FACT 4.
-- D14 (new): boot visual proposal for you: keep Solid orange 128 (option a,
-  recommended, zero risk) or ship a preset with a gentle 2D effect (option b).
-  Decide after seeing option (a) on hardware in QA D4.
+The check's FIRST run caught a genuine shipping blocker: the -O2 speed
+flags (adopted from WLED-MM for fps parity) crash-looped the virgin boot
+800+ times - while every OTA boot onto existing config all night had been
+flawless. Bisected on hardware, fixed by dropping the flags (they had
+measured zero LED benefit), re-flashed, re-verified. Lesson, now written
+into QA_CHECKLIST.md: OTA-boot testing can never substitute for the
+virgin-boot gate.
 
-## Wiki triage (WIKI_TRIAGE.md, the real definition of done)
+## Justin's decisions ledger (DECISIONS.md)
 
-13 pages, one agent per page. Scorecard: matrix-settings lands 11 of 13 steps in
-FIXED AS DEFAULT; the two leftovers are the flash itself and the rev6 microphone
-enable, both of which belong to other pages. Getting-started drops 8 steps.
-FAQ drops 6 (including the WizMote "special firmware" answer: ESP-NOW ships in the
-standard upstream build). Rewrites ready in apollo/wiki-rewrites/ for
-matrix-settings, microphone-addon, and a new panel-fault troubleshooting page
-containing the fault decoder.
-
-Genuine findings out of the triage:
-- The published pinout page's table appears to be for the wrong product (header
-  says "LED-1 PCB") and lists mic pins SD 16 / WS 6 / SCK 7, contradicting both
-  the firmware and the matrix-settings page (SD 10 / WS 12 / SCK 11). Needs a
-  wiki fix regardless of this migration.
-- Three example pages depend on GIF playback: decoder confirmed present in the
-  16.0.1 artifact; visual QA still required (gamma).
-- The reflash page's install path is WLED-only and references a Discord CDN
-  binary and a third-party flasher; it should point at the installer, and the
-  ESPHome option must stay visible (QA item added).
+D1 AP password: superseded by D16 (open setup hotspot, join-and-play).
+D2 unique names: applied. D3 AudioReactive: closed by D15, defaults ON.
+D4 Apollo M-1 identity: applied. D5 one upstream PR stands, ABL PR
+cancelled (FACT 4). D14 solid welcome color: superseded by D19.
+D16 open AP, D17 factory presets + image tools, D18 PixelForge-only,
+D19 animated dog first boot: all applied and hardware-verified.
 
 ## Hardware-verified versus build-verified
 
-HARDWARE-VERIFIED (live session 2026-07-12, Justin's mic-equipped demo unit,
-results and captures in QA_CHECKLIST.md and baseline/live/):
-- D0/D1: 16 MB dump taken and integrity-proven before any write; unit state
-  diffed (wiki-configured type 103; release "mdev_release" bug confirmed live).
-- D2 OTA from shipping WLED-MM: PASS. Filesystem mounted, WiFi/settings/presets/
-  GIFs survived, migration shim produced type 65 pin [64,64,1,1,1]. The
-  pre-existing fictional 4-panel matrix was dropped by upstream's bounds check
-  (already broken on MM; corrected via API).
-- D3 factory install: PASS, 13 of 13 acceptance rows over HTTP on a zero-config
-  boot; unique mDNS hostname and AP name matched the MAC-derived prediction.
-- D4 visible light: PASS. Full 64x64 lit within seconds, no configuration.
-- D9 rev6 half: PASS. AudioReactive works with zero touches (GEQ reacts to
-  claps); sync off.
-- Two OTA cycles total (MM to 16.0.1, then 16.0.1 to 16.0.1 carrying the live
-  decisions below).
-- Live decisions taken by Justin during the session: factory welcome color is
-  Apollo blue 0x4379AA (D14), AudioReactive defaults ON (D15/D3), both shipped
-  and verified on the unit.
-- New support-relevant finding: 16.x rejects cross-subnet OTA by default
-  (otaSameSubnet); WLED-MM did not. Documented for the wiki.
+HARDWARE-VERIFIED (both live campaigns; results in QA_CHECKLIST.md,
+BENCH_SESSION_D10.md, baseline/live/):
+- D0/D1 dump + diff, D2 OTA from shipping MM, D3 factory install (twice -
+  the second time as the contamination check on the final artifact),
+  D4 visible light, D8 WiFi under load (256x64: 0% loss, 9.7 ms avg),
+  D9 rev6 half, D10 four-panel chain in BOTH arrangements on glass.
+- Six firmware fixes, each reproduced then re-verified fixed on hardware.
+- GIF playback on single panel, 1x4, and 2x2; PixelForge/Pixel Paint pages
+  serving on all configs.
 
 STILL PENDING ON HARDWARE (parts or instruments needed): filesystem-erase
-resilience via the 10 s button (exercises the compile-default path), current
-draw at full white (D5), ghosting (D6), driver chip identification (D7), WiFi
-under load (D8), rev4 no-mic measurements (D9 second half), 4-panel chain
-(D10), Home Assistant discovery click-through (D11), dump-restore rollback
+resilience via the 10 s button, current draw at full white (D5), ghosting
+(D6), driver chip identification (D7), rev4 no-mic measurements (D9 second
+half), Home Assistant discovery click-through (D11), dump-restore rollback
 drill (D12).
 
 ## For Justin
 
-1. Run QA_CHECKLIST.md with a unit on serial and M1_ALLOW_FLASH=1. D0 first.
-2. After D2-D4 pass: open the upstream PR from
-   ApolloAutomation/WLED-M1:hub75-first-boot-defaults (apollo/UPSTREAM_PR.md).
-3. Installer: apply apollo/installer-fixup.patch to the feat/m1-wled-entry branch
-   (corrects the fork name a prior session wrote), set up hosting for
-   apollo/installer/manifest.json + M-1_full_install.bin, then flip the URLs.
-4. Wiki, when firmware ships: replace matrix-settings and microphone pages with
-   apollo/wiki-rewrites/, add the panel-faults page, fix the wrong-product pinout
-   table, update the FAQ per WIKI_TRIAGE (AP name "Apollo M-1-xxxxxx", WizMote,
-   reflash path), and rename Pixel Magic references to Pixelforge on the
-   introduction and example pages.
-5. EUPL-1.2: ApolloAutomation/WLED-M1 is public, LICENSE intact, all changes
-   public. Put the source link wherever binaries are distributed.
-6. Old clones: /Users/justinapollo/Code/ApolloAutomation/WLED (retired, has the
-   original branches, push-blocked to upstream) can be archived or deleted once
-   you confirm the pushed branches; WLED-MM-M1 stays as the rollback archive
-   (ROLLBACK.md).
+1. Ship gates are green: artifacts in apollo/out/ are final at 32cda73d
+   (also copied to ~/Downloads with sha256 sums). Pick the tester-bundle
+   number (well past b6) and distribute.
+2. Publish the wiki rewrites (apollo/wiki-rewrites/): matrix-settings,
+   microphone-addon, panel-faults, and the NEW multiple-panels page (1x4 +
+   2x2 recipes, size limits, GIF how-to). Also the older triage items:
+   wrong-product pinout table, FAQ WizMote answer, PixelForge naming.
+3. Installer: apply apollo/installer-fixup.patch to feat/m1-wled-entry, host
+   manifest + M-1_full_install.bin, flip the URLs. This becomes the customer
+   flash path (ESP Web Tools); until then, esptool erase-flash + write_flash
+   0x0 (commands in the multiple-panels/reflash docs and PROGRESS.md).
+4. Open the upstream PR (apollo/UPSTREAM_PR.md) and file the findings
+   (apollo/UPSTREAM_FINDINGS.md: 8 WLED items, 2 of them remote-crash class
+   and already fixed in this fork, + 3 HUB75-lib observations).
+5. Remaining QA when parts allow: D5/D6/D7, D9 rev4, D11, D12, FS-reset
+   button (QA_CHECKLIST.md).
+6. EUPL-1.2: fork is public, LICENSE intact; put the source link wherever
+   binaries are distributed.
+7. Old clones: WLED (retired) can be archived; WLED-MM-M1 stays as rollback
+   archive AND as the performance oracle for the post-launch fps work.
