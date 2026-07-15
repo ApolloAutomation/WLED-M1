@@ -140,3 +140,69 @@ hosting), so the b7 gate re-run is superseded by a b8 gate after the redesign.
   USB-Serial-JTAG wedged state; needs a physical unplug/replug of the
   USB-C (or unit power cycle). NOTHING was written to the unit's flash;
   the dump had not started (chunk 0 never read).
+
+## QR scan matrix results (2026-07-15 afternoon, Justin on glass, lit room)
+Unit: test unit 2f5e50, flashed b7 full install this session (write --erase-all,
+hash verified, virgin boot clean). Test loop deployed by uploading a modified
+presets.json (preset 9 = test playlist) + reboot; every reset then lands back
+in the loop. LESSON: the JSON psave API does NOT save an inline playlist
+object; it snapshots the currently showing state (two rounds were lost to
+stale tour frames before switching to the file-upload approach).
+
+Round 1 (all bri 90, 25s frames): invM card / stdM card / std full-field /
+b7 3px control -> results overtaken by the psave bug, rerun as round 2.
+Round 2 (bri 220 vs 90): ONLY the inverted 2px card at bri 220 scanned, and
+intermittently; BOTH standard-polarity (lit background) frames failed at
+both brightnesses. Photo evidence: no refresh banding at 220; LED dots
+sharply resolved with bloom; a "lit background" on P2.5 is really a dot
+grid with black gaps (~16 percent fill), which the binarizer reads as
+noise. THE RESEARCH PREDICTION (standard polarity wins) IS REFUTED ON
+DISCRETE-LED GLASS; the brightness prediction is CONFIRMED (90 -> 220 was
+the difference between never and sometimes).
+Round 3 (all inverted, all bri 220): dim-text ECC-Q card = once out of
+multiple tries; 3px full-panel (bezel quiet zone) = never; amber modules =
+never; original 2px card = once out of multiple. Conclusions: quiet zone
+dominates module size (3px edge-to-edge loses to 2px with on-panel border);
+text dimming and ECC Q do not rescue it; amber loses luminance for nothing.
+Distance test (~5 ft): both surviving cards scan but STILL INTERMITTENT.
+
+VERDICT: on bare P2.5 glass in a lit room, a 64px QR is intermittent at
+best in every software configuration. Best-achieved: inverted 2px modules,
+on-panel dark quiet zone, bri 220. The physics (dot fill factor) is the
+binding constraint; a diffuser front would likely fix it (product/hardware
+lane, not firmware).
+
+## OPEN DECISION for next session (D24 pending)
+Ship card, two options:
+A. Keep the QR as best-effort: cardB2_invM at bri 220 ("1 JOIN WIFI /
+   APOLLO M-1 / QR / 2 SCAN OR 4.3.2.1"). QR works sometimes (dark rooms,
+   patient users); the text address is the reliable path.
+B. Drop the QR: large-text card only ("1 JOIN WIFI: APOLLO M-1 /
+   2 OPEN BROWSER: 4.3.2.1"). No false affordance, nothing to fail.
+RECOMMENDATION on the evidence: B, or A with the QR visually de-emphasized;
+an intermittent QR invites the exact thumb-twiddling the tester reported.
+Justin approved: one gate only, on b8, after this decision. Justin picked
+the cardB layout + step numbering + "scan or url" wording (his messages).
+
+## Where everything stands at session pause (2026-07-15 ~16:00)
+- Test unit 2f5e50: b7 + MUTATED presets (preset 9 = QR test loop r3,
+  presets 11-23 = test cards, bri 220). Fine for more QR testing; MUST be
+  re-flashed for the b8 gate (it will be anyway).
+- Demo unit 2f5f7c: old firmware, NEVER enumerated on USB today (suspect
+  charge-only cable or no power; its panel state unconfirmed). Pending:
+  reflash to b8 (Justin), D11 HA discovery (HA has ONE wled entry, "The
+  Belle Permanent Lights" at 192.168.20.30, setup_retry; M-1 never added),
+  D12 dump-restore drill (dump exists: baseline/live/m1_factory_16mb.bin).
+- Desk deliverables DONE: apollo/UPSTREAM_PRS_READY.md (verified),
+  apollo/RELEASE_DRAFT.md (publish approved once b8 gated),
+  installer patch applied + pushed (24b94ee), captive tester reply in this
+  file, OnePlus 9-ish on b7 confirmed as the vendor-probe popup case.
+- NEXT SESSION: 1) Justin picks card A/B; 2) build final setup.gif +
+  presets.json (variants staged: presets_optA/optB pattern in scratchpad is
+  reproducible from apollo/bench/gen_setup_card.py + this file); 3) rebuild
+  artifacts = bundle b8; 4) virgin-boot gate + full D13 AP walkthrough
+  (capture the freeze-thaw raw evidence this time); 5) sha256 + versioned
+  filenames to Downloads; 6) publish GitHub release m1-b8 (approved);
+  7) demo unit: D12 restore drill, flash b8, provision, D11 HA click-
+  through; 8) remaining QA: D3 FS-reset button, D5 current, D6 ghosting,
+  D7 driver id; 9) open the three upstream PRs (human, texts ready).

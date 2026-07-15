@@ -160,7 +160,7 @@ def card_B2(ecc, polarity, fname):
         render_qr(px, m, 2, 11, 14, False)
     else:
         render_qr(px, m, 2, (W - 42) // 2, 14, True)
-    draw_mixed(px, [("2 ", WHITE), ("SCAN", AMBER), ("  ", WHITE), ("4.3.2.1", WHITE)], F5, 58)
+    draw_mixed(px, [("2 ", WHITE), ("SCAN", AMBER), (" OR ", WHITE), ("4.3.2.1", SKY)], F5, 58)
     im.save(fname)
 
 def qr_std_full(fname):
@@ -179,3 +179,24 @@ if __name__ == "__main__":
     for n in ["cardB2_invM", "cardB2_invQ", "cardB2_stdM", "qr_std_full"]:
         Image.open(f"{OUT}/{n}.gif").convert("RGB").resize((256, 256), Image.NEAREST).save(f"{OUT}/view_{n}.png")
     print("cardB2 set done")
+
+# --- cardB3 (round 3): dimmed text to protect the quiet zone + module color arms ---
+def dim(c, f=0.4):
+    return tuple(int(v * f) for v in c)
+
+def card_B3(ecc, module_color, fname):
+    """cardB2 layout, instruction text at 40% so it stops eating the QR quiet
+    zone, QR modules in a chosen color (white or amber tested on glass)."""
+    im = Image.new("RGB", (W, H), BLACK)
+    px = im.load()
+    draw_mixed(px, [("1 ", dim(WHITE)), ("JOIN WIFI", dim(AMBER))], F5, 0)
+    draw_text(px, "APOLLO M-1", F5, 6, dim(SKY))
+    m = build_matrix(ecc)
+    for my in range(21):
+        for mx in range(21):
+            color = module_color if m[my][mx] else BLACK
+            for dy in range(2):
+                for dx in range(2):
+                    px[11 + mx*2 + dx, 14 + my*2 + dy] = color
+    draw_mixed(px, [("2 ", dim(WHITE)), ("SCAN", dim(AMBER)), (" OR ", dim(WHITE)), ("4.3.2.1", dim(SKY))], F5, 58)
+    im.save(fname)

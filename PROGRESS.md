@@ -115,3 +115,21 @@ a factory-fresh unit while every OTA boot worked).
    (dynarray post-link script suspicion).
 
 ## Bundle b7 (2026-07-15, commit c10ac303): first named bundle since b6; carries all D10 + AP session fixes, the first-boot tour, and the freeze-thaw fix. Distributed to Justin with sha256 sums.
+
+## Post-b7 session (2026-07-15 afternoon, BENCH_SESSION_POSTB7.md)
+Tester feedback drove a first-boot redesign: ONE static setup card (FS-only,
+preset 9 swap, zero firmware delta). QR scannability investigated on glass
+across 3 rounds + web research: inverted 2px + on-panel quiet zone + bri 220
+is the best possible on bare P2.5 and still intermittent in lit rooms (dot
+fill factor is the physical limit; research's standard-polarity prediction
+refuted on glass, brightness prediction confirmed). OPEN: ship card with
+best-effort QR vs text-only (D24 pending, recommendation text-only or
+de-emphasized QR). Business tail: three upstream PR texts verified and
+finalized (apollo/UPSTREAM_PRS_READY.md), GitHub release drafted
+(apollo/RELEASE_DRAFT.md, publish approved once b8 gates pass, hosting =
+dual-publish because release assets still have no CORS), installer fixup
+applied and pushed. Old-Android captive popup explained (vendor probe
+paths hit the 302 catch-all; OnePlus 9-ish on b7 confirms; no action).
+Test unit 2f5e50 runs b7 + QR-test presets; demo unit has a USB
+power/cable mystery pending. b8 waits on the D24 card decision, then the
+single virgin + AP walkthrough gate (Justin approved gating once on b8).

@@ -273,3 +273,23 @@ Self-corrects to the dog boot preset once provisioned. Dog animation
 stays the D19-approved blink/ears/sniff (lick attempts rejected).
 Help-wiki QR frame was built and CUT (URL too long for a scannable 64px
 code; revisit only with a short redirect).
+
+## Post-b7 session decisions (2026-07-15)
+
+### D24. PENDING: first-boot setup becomes ONE static card (tester feedback)
+Agreed direction (Justin, this session): single static page instead of the
+D23 playlist tour; layout = two-line header "1 JOIN WIFI / APOLLO M-1",
+QR, bottom line "2 SCAN OR 4.3.2.1" (step numbering and wording his);
+implementation FS-only (preset 9 swap, FACTORY_SIGNPOST hook untouched).
+OPEN HALF: keep the QR (best-effort; glass-proven intermittent at best in
+lit rooms even at the optimum: inverted, 2px modules, on-panel quiet zone,
+bri 220) or drop it for a large-text card. Evidence and recommendation in
+BENCH_SESSION_POSTB7.md. Decide before b8.
+
+### D25. Release distribution: GitHub releases + same-origin flasher hosting
+Justin approved replacing the Google Drive link with a GitHub release on
+ApolloAutomation/WLED-M1 (tag convention m1-b<N>), publish AFTER the b8
+gates. Because GitHub release assets send no CORS headers, the ESP Web
+Tools manifest + bins must be hosted same-origin with the installer page
+(GitHub Pages); release assets serve human downloads only. Draft + staged
+commands: apollo/RELEASE_DRAFT.md.
