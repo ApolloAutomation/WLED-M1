@@ -1,11 +1,22 @@
 # SUMMARY: Apollo M-1 migration to upstream WLED (through the D10 bench sessions)
 
-Updated 2026-07-14. Canonical repo: ApolloAutomation/WLED-M1, branch
-m1-wled-update, pushed through 32cda73d. Two live hardware campaigns are now
-complete: the first live session (2026-07-12, OTA + factory-install QA) and
-the D10 bench sessions (2026-07-12/13, panel chains + ship-readiness; full
-narrative in BENCH_SESSION_D10.md). The firmware is SHIP-READY: the
-contamination check passed on the exact artifact in apollo/out/.
+Updated 2026-07-15. Canonical repo: ApolloAutomation/WLED-M1, branch
+m1-wled-update. THREE live hardware campaigns are complete: the first live
+session (2026-07-12, OTA + factory-install QA), the D10 bench sessions
+(2026-07-12/13, panel chains; BENCH_SESSION_D10.md), and the AP-mode
+first-run session (2026-07-14/15, BENCH_SESSION_AP.md).
+
+CORRECTION TO THE EARLIER SHIP-READY CLAIM: the 2026-07-13 contamination
+check tested AP mode only as a provisioning step, never as a destination.
+Justin's real first-run walk found the gap; D20 made AP a first-class
+mode; a dedicated session root-caused every symptom (device bugs fixed:
+offline Pixel Paint, crippled AP radio, modem sleep, static short text,
+one-bar Sound Bars; client-side causes proven: Android cellular routing,
+captive mini-browser, app file-chooser MIME bug) and added the
+connectivity-probe answers (D22) plus the on-panel setup tour (D23).
+A permanent AP walkthrough gate now lives in QA_CHECKLIST.md. SHIP-READY
+is re-assertable only after the fresh-flash gate + AP walkthrough pass on
+the final artifact.
 
 ## The audit numbers first (TASK.md asked for before and after)
 

@@ -51,3 +51,34 @@ Firmware surface: +171/-16 vs base (was +168/-14): wled.cpp +1, FX.cpp 2 lines.
 REMAINING: Justin's final phone walkthrough on the fixed artifact; docs (QA
 gate, D20/D21, SUMMARY correction, wiki no-wifi page, app bug doc, upstream
 PR texts).
+
+## FINAL STATE (2026-07-15, tour approved "thats great")
+### First-boot signpost tour (D23) - APPROVED ON GLASS after 10 iterations
+Frames (preset 9 playlist, applied at boot only while WiFi unconfigured,
+FACTORY_SIGNPOST_PRESET in const.h + conditional in beginStrip):
+  dog 4s -> STEP 1 "JOIN / APOLLO M-1 / WIFI / HOTSPOT" 9s
+  -> STEP 2 "SCAN / QR CODE" 7s -> inverted QR (HTTP://4.3.2.1, v1 ECC-M,
+  3px modules, bri 90) 12s -> "NO CAMERA? / OPEN / BROWSER / GO TO /
+  4.3.2.1" 8s. Cards share fixed anchors (header y1, divider y14, body
+  y17), amber/sky/white on navy, colorblind-safe. Assets: setup1-3.gif,
+  qr.gif, apollo_dog.gif (approved blink/ears/sniff, NO lick - tongue
+  experiments failed twice, art has no room).
+### Iteration lessons (for future panel-card work)
+- Per-card vertical centering makes headers jump between frames: anchor.
+- Standard black-on-white QR scans poorly on LED (dot texture): INVERT
+  (bright-on-black), 3px modules, bezel as quiet zone, dim to ~90 bri,
+  scan from arm's length. ECC M + uppercase-alnum payload.
+- Long URLs cannot fit scannable on 64px (72-char wiki URL = v4 = 66px):
+  wiki-help QR CUT by Justin; if ever revisited, needs a short redirect
+  (wiki.apolloautomation.com/m1 -> v2 25x25).
+- Tiny-font Q reads as O; custom glyphs read as icons; the answer was
+  plain text and letting people read (Justin's call).
+### Still open for the NEXT session (after fresh-flash test)
+1. FRESH-FLASH GATE: erase + flash apollo/out/M-1_full_install.bin
+   (rebuilt at HEAD) + full AP walkthrough script + Justin's phone.
+2. Docs written this session: QA gate, D20-D23, SUMMARY correction,
+   wiki no-wifi page, WLED_APP_BUG upgrade, upstream findings 9-10.
+3. Upstream PRs prepared not opened: scroll-force (FX.cpp), AP modem
+   sleep (wled.cpp), connectivity-probe answers (wled_server.cpp,
+   discuss upstream appetite first - it changes captive UX).
+4. Business tail unchanged (bundle number, hosting, installer, PR open).

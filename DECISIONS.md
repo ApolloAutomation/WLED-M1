@@ -221,3 +221,55 @@ mostly-idle loop), factory preset 4 "Apollo Dog" (Image effect), and cfg
 def={ps:4,on:true,bri:128}. Replaces the D14 solid-color welcome: same
 "fixed content until the user configures" pattern, and it demonstrates GIF
 playback out of the box. Supersedes D14.
+
+## AP-mode session decisions (2026-07-14/15)
+
+### D20. BINDING (Justin): AP mode is a first-class operating mode
+A customer must get FULL control (UI, presets, effects, PixelForge, Pixel
+Paint, GIF upload, segments) with the M-1 never connected to any WiFi. A
+matrix on a shelf with no network is a legitimate product and the default
+out-of-box state. Consequence: the permanent AP walkthrough gate in
+QA_CHECKLIST.md, and the SUMMARY ship-ready correction (the contamination
+check had tested AP only as a provisioning step, not a destination).
+
+### D21. AP fixes package (all verified over the hotspot on hardware)
+- Pixel Paint offline: shipped module loaded iro.js/omggif.js from
+  cdn.jsdelivr.net (worked on WiFi, died on AP, violated nothing-leaves-
+  home). Rewritten to the on-device /iro.js + /omggif.js (identical
+  versions). FS-only.
+- AP radio: factory cfg wifi.txpwr=78 (19.5dBm; LOLIN_WIFI_FIX had capped
+  the S3 at 8.5dBm), and initAP now calls WiFi.setSleep(!noWifiSleep)
+  (+1 line; factory-fresh units kept modem power-save in AP mode).
+- Scrolling Text force-scroll: check3 also scrolls fitting text (2 lines,
+  FX.cpp); forced direction is right-to-left (Justin caught the reverse-
+  branch direction); PixelForge preview updated to match. Factory preset
+  1 ships o3=true so APOLLO M-1 (56px) scrolls on 64px.
+- Presets normalized (audit findings): Sound Bars c1 0->255 (was ONE bar
+  instead of 16 bands), explicit n everywhere, carryover sliders cleared.
+- GIF-via-Android-app: confirmed at app source level (DeviceWebview.kt
+  discards accept types -> octet-stream picker filter). Not fixable
+  device-side. apollo/WLED_APP_BUG.md finalized; browsers work.
+- Segment-name trap root-caused (dog preset names seg0 apollo_dog.gif;
+  manual effect switch keeps the name; Scrolling Text then scrolls the
+  filename). Presets normalized to minimize; residual is upstream UI
+  behavior, documented.
+
+### D22. ANSWERED live (Justin): answer OS connectivity probes over AP
+captivePortal() returns 204 for generate_204/gen_204 and Success for
+hotspot-detect/connecttest. Phones treat the hotspot as usable: browser
+reaches 4.3.2.1 WITH MOBILE DATA ON (verified: Chrome failed before, works
+after; other apps keep working via cellular). Cost, accepted deliberately:
+the captive "sign in" auto-popup no longer appears (it only opened the
+crippled mini-browser anyway). Discovery gap closed by D23.
+
+### D23. ANSWERED live (Justin, 10 iterations): first-boot signpost tour
+While WiFi is unconfigured, boot applies preset 9 playlist: dog 4s,
+STEP 1 "JOIN APOLLO M-1 WIFI HOTSPOT" 9s, STEP 2 "SCAN QR CODE" 7s,
+inverted QR (HTTP://4.3.2.1) 12s, "NO CAMERA? OPEN BROWSER GO TO 4.3.2.1"
+8s. Fixed-anchor card layout, amber/sky/white on navy (colorblind-safe).
+Firmware: FACTORY_SIGNPOST_PRESET define + one conditional in beginStrip
+(uses WLED_WIFI_CONFIGURED directly; showWelcomePage is set too late).
+Self-corrects to the dog boot preset once provisioned. Dog animation
+stays the D19-approved blink/ears/sniff (lick attempts rejected).
+Help-wiki QR frame was built and CUT (URL too long for a scannable 64px
+code; revisit only with a short redirect).

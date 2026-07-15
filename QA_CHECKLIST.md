@@ -250,3 +250,29 @@ RESULT 2026-07-12: PASS.
       on 16.0.1 (PC browser and Android Firefox verified).
 - [ ] The installer still offers the ESPHome firmware path for the M-1 wherever it
       is published today; the WLED entry must not hide it. PENDING
+
+## D13. AP-mode customer walkthrough (PERMANENT GATE - added after the AP
+## first-run failure; run on EVERY release candidate, after the
+## contamination check, on the factory-fresh unit it leaves behind)
+Run with a real phone, MOBILE DATA ON, no WiFi network configured on the
+unit. This is the D20 acceptance: AP mode is a first-class destination.
+- [ ] Power on. Within ~60s the panel cycles the signpost tour: dog,
+      STEP 1 (join hotspot), STEP 2 (scan QR), QR code, NO CAMERA? card.
+- [ ] Phone joins "Apollo M-1-xxxxxx" (open). Accept any "no internet -
+      stay connected?" prompt. NO captive popup should appear (D22).
+- [ ] Scan the QR off the panel with the camera app: browser opens
+      http://4.3.2.1 (with mobile data still ON).
+- [ ] Welcome page loads; full UI reachable (skip or /?sliders).
+- [ ] Change a preset from the UI; panel follows.
+- [ ] Scrolling Text preset: "APOLLO M-1" scrolls right-to-left (fits-
+      force-scroll o3, D21).
+- [ ] Sound Bars preset: full 16-band spectrum reacts to sound.
+- [ ] http://4.3.2.1/pixelpaint.htm loads AND draws (offline iro/omggif,
+      D21) - pixels appear on the panel.
+- [ ] http://4.3.2.1/pixelforge.htm loads; upload a GIF from the phone;
+      it plays on the panel.
+- [ ] Nothing greyed out, no silent failures, no internet ever involved.
+- [ ] Then provision WiFi; reboot; tour is GONE, dog boots (D23 self-
+      correction); all of the above still works over the LAN.
+2026-07-14/15 session: ALL ROWS VERIFIED by Justin on hardware (phone,
+data on) except the final full pass which runs on the fresh-flash gate.
