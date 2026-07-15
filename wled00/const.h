@@ -457,6 +457,10 @@ static_assert(WLED_MAX_BUSSES <= 32, "WLED_MAX_BUSSES exceeds hard limit");
 #define SEG_CAPABILITY_W       0x02
 #define SEG_CAPABILITY_CCT     0x04
 
+#ifndef FACTORY_SIGNPOST_PRESET
+#define FACTORY_SIGNPOST_PRESET 9 // preset applied at boot while WiFi is unconfigured (setup signpost); no-op if the preset does not exist
+#endif
+
 // WLED Error modes
 #define ERR_NONE         0  // All good :)
 #define ERR_DENIED       1  // Permission denied

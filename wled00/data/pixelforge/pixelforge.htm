@@ -1379,7 +1379,9 @@ function draw() {
 	let fzs = [8, 12, 14, 20, 28][Math.floor(c2/52)] || 8; // Font sizes 1-5
 	let rot = -(Math.round((c3)/7.5)-2) * Math.PI/2; // -2 to 2 maps to 180 to -180
 	let t = (Date.now() * (0.02 + (sx / 255) * 0.1)) % (100 + txt.length * fzs);
-	let x = getId('o3').checked ? (t - (txt.length * fzs)) : 100 - t;
+	// reverse only applies to overflowing text; fitting text with the box checked force-scrolls right-to-left (matches the FX)
+	let rev = getId('o3').checked && (txt.length * fzs) > 100;
+	let x = rev ? (t - (txt.length * fzs)) : 100 - t;
 	let y = 25 + (ix - 128) / 5;
 
 	// draw char-by-char just like the FX
