@@ -626,9 +626,10 @@ void WLED::beginStrip()
   else briLast = briS; // go to startup brightness (set in UI) when turning on (can be overruled by a preset)
   colorUpdated(CALL_MODE_INIT); // set bootup brightness immediately, do not send notification (brightness is also set for preset if used, useful for swipe etc.)
 
-  if (showWelcomePage && bootPreset != FACTORY_SIGNPOST_PRESET) {
+  if (!WLED_WIFI_CONFIGURED && bootPreset != FACTORY_SIGNPOST_PRESET) {
     // WiFi not configured yet: show the setup signpost tour (logo / AP address / QR code)
-    // instead of the regular boot preset; self-corrects to bootPreset once provisioned
+    // instead of the regular boot preset; self-corrects to bootPreset once provisioned.
+    // (cannot use showWelcomePage: it is computed after beginStrip() in setup())
     applyPreset(FACTORY_SIGNPOST_PRESET, CALL_MODE_INIT);
   }
   else if (bootPreset > 0) {
