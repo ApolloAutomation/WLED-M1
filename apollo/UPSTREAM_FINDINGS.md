@@ -96,3 +96,32 @@ configuration (FX_2Dfcn.cpp, FX_fcn.cpp).
 - On ESP32-S3 the driver cannot be deleted/re-created at runtime (DMA
   teardown crashes); WLED's bus cleanup already works around it with
   ERR_REBOOT_NEEDED. Documenting this in the lib would help downstreams.
+
+## Additions from the AP-mode session (2026-07-14/15)
+
+## 9. AP mode never disables WiFi modem sleep on unconfigured units
+WiFi.setSleep(!noWifiSleep) is only called inside the WLED_WIFI_CONFIGURED
+branch of initConnection(); a factory-fresh unit serving its setup AP keeps
+the Arduino default power-save, a classic source of softAP latency/loss.
+One-line fix in initAP() after setTxPower (in fork; PR-ready).
+
+## 10. Scrolling Text: fitting text cannot scroll horizontally
+mode_2Dscrollingtext centers-and-holds when totalTextWidth <= cols; check3
+(Reverse) is dead code in that branch. A customer typing a short word sees
+a static display. Fork change (2 lines, PR-ready): check3 also forces
+horizontal scrolling for fitting text (standard right-to-left direction;
+reverse still applies to overflowing text). PixelForge's text preview also
+hardcoded left-to-right for any o3 - fixed to mirror the effect.
+
+## 11. For discussion rather than a patch: captive portal vs modern phones
+The AP session documented (with phone-side evidence) how the stock captive
+implementation interacts with Android: the 302-on-probe marks the network
+captive, the auto-popup opens Android's crippled mini-browser (no file
+chooser), and typed URLs in real browsers route over cellular because the
+WiFi never validates - 4.3.2.1 being a real routable Level3 address makes
+this fail hard. The fork answers generate_204/hotspot-detect/connecttest
+probes as if online (204/Success), which makes real browsers work with
+mobile data on at the cost of the auto-popup; an on-panel QR closes the
+discovery gap. Also noted: core 2.0.18 DNSServer answers AAAA/HTTPS(65)
+queries with malformed A records, and the welcome page's /json/net
+triggers all-channel STA scans that pull the softAP radio off-channel.

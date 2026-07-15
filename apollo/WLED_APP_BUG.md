@@ -33,3 +33,22 @@ Android users of any WLED device.
 
 Documented workaround everywhere on our side (wiki, tester README): on
 phones, use a mobile browser at http://device-ip/pixelforge.htm.
+
+## UPDATE 2026-07-15: root cause confirmed at app source level
+
+Repo Moustachauve/WLED-Android (current official app), release v7.0.1.
+DeviceWebview.kt onShowFileChooser() discards the page's accept types:
+getMimeType() maps only the literal strings ".json" and ".css"; everything
+else (image/*, .gif, .bin) falls through to "application/octet-stream",
+which FileUploadContract passes as the ACTION_GET_CONTENT type - so the
+Android documents picker greys out every image. Affects every WLED device
+and every file input in the app (PixelForge uploads AND manual OTA .bin
+updates). The commented-out line above the mapping shows accept
+passthrough was once intended. Suggested fix for the issue thread: use
+fileChooserParams.createIntent(), or type="*/*" plus EXTRA_MIME_TYPES
+derived from acceptTypes (~5 lines). Tracked as open issue #141
+(https://github.com/Moustachauve/WLED-Android/issues/141), stalled since
+2026-03-23 after a maintainer question. Verified no device-side
+workaround exists: the picker never consults the server.
+Customer guidance: use any mobile/desktop browser (PixelForge works there,
+including over the M-1's own hotspot).
