@@ -125,3 +125,13 @@ mobile data on at the cost of the auto-popup; an on-panel QR closes the
 discovery gap. Also noted: core 2.0.18 DNSServer answers AAAA/HTTPS(65)
 queries with malformed A records, and the welcome page's /json/net
 triggers all-channel STA scans that pull the softAP radio off-channel.
+
+## 12. Frozen segments silently ignore effect changes (live-paint trap)
+The per-pixel JSON API ("i" arrays - used by Pixel Paint and similar
+tools) sets seg.freeze=true by design. Selecting a new effect afterwards
+calls setMode() but leaves freeze set, so the effect never runs and the
+panel keeps the frozen canvas - a black screen if the user cleared their
+drawing. Nothing in the main UI hints at the frozen state. Fork fix
+(json.cpp, PR-ready): an effect change clears freeze unless the same
+message explicitly sets frz. Repro'd live; PixelForge only escapes the
+trap because its GIF player sends frz:false explicitly.

@@ -82,3 +82,20 @@ FACTORY_SIGNPOST_PRESET in const.h + conditional in beginStrip):
    sleep (wled.cpp), connectivity-probe answers (wled_server.cpp,
    discuss upstream appetite first - it changes captive UX).
 4. Business tail unchanged (bundle number, hosting, installer, PR open).
+
+## POST-GATE FINDING (2026-07-15): Pixel Paint freeze-trap, fixed
+Justin: after Pixel Paint + clear + backing out, effects show a BLACK
+screen until PixelForge plays a gif. Root cause (source + live repro):
+per-pixel "i" writes force seg.freeze=true (json.cpp) so effects cannot
+repaint the drawing; the UI's effect picker changes fx but never thaws;
+frozen segments skip their effect function -> the cleared black canvas
+persists. PixelForge worked because imgPlay sends frz:false explicitly.
+FIX (json.cpp, +2 lines net): an fx change now clears freeze unless the
+same message carries an explicit frz key (parsed earlier, so explicit
+frz still wins). Verified live: paint->frz true, clear->frz true,
+fx pick->fx applied AND frz false. Upstream PR candidate (findings #12).
+ANOMALY LOGGED, unresolved, observed once: the first production boot on
+the fresh flash returned odd HTTP codes (413 with success:true bodies,
+400s) and dropped some JSON POST effects cross-subnet; a reflash+reboot
+cleared it; dbg-build debug dump captured a request in state 100. Watch
+for recurrence before chasing.

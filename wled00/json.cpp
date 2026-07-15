@@ -288,7 +288,10 @@ static bool deserializeSegment(JsonObject elem, byte it, byte presetId = 0)
   byte fx = seg.mode;
   if (getVal(elem["fx"], fx, 0, strip.getModeCount())) {
     if (!presetId && currentPlaylist>=0) unloadPlaylist();
-    if (fx != seg.mode) seg.setMode(fx, elem[F("fxdef")]); // use transition (WARNING: may change map1D2D causing geometry change)
+    if (fx != seg.mode) {
+      seg.setMode(fx, elem[F("fxdef")]); // use transition (WARNING: may change map1D2D causing geometry change)
+      if (elem["frz"].isNull() && seg.freeze) seg.freeze = false; // changing the effect thaws a frozen segment (live pixel drawing freezes it; picking an effect means "run it" - otherwise the panel stays on the frozen canvas)
+    }
   }
 
   getVal(elem["sx"], seg.speed);
