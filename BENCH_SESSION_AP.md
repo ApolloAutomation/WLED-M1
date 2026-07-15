@@ -32,3 +32,22 @@ Justin's report + binding D20 (AP = first-class destination) in the session brie
 - Then: scrolling-text fits fix, presets normalization, app-upload item.
 - Desk analysis workflow wf_56e91209-04d running (AP server source, scroll
   text design, presets audit, Android app research).
+
+## VERDICTS (all reproduced with evidence; fixes applied + verified over AP)
+| Symptom | Verdict | Root cause | Fix location |
+|---|---|---|---|
+| 4.3.2.1 unreachable in Chrome/Firefox | REPRODUCED (Justin #2), NOT device-side | Android keeps cellular as default net for a no-internet AP; 4.3.2.1 is a real Level3 internet IP; captive mini-browser binds to WiFi (hence "basic control worked") | Wiki: mobile data OFF (Justin #4 "Works!") |
+| Pixel Paint dead over AP | REPRODUCED (Justin #8/#9) - DEVICE-SIDE BUG | shipped pixelpaint.htm.gz loaded iro.js+omggif.js from cdn.jsdelivr.net; no internet on AP = tool never initializes (works on WiFi = CDN reachable). Violates nothing-leaves-home on its own | FS: rewrote to on-device /iro.js + /omggif.js (identical iro 5.5.2); verified 200 over AP, 0 CDN refs |
+| PixelForge/GIF upload over AP | NOT REPRODUCED as device bug: works (Mac battery; Justin #7 in real browser, data off) | original failure was the captive mini-browser (no file chooser) + cellular routing | Wiki (real browser + data off); captive-window limitation documented |
+| Weak/laggy AP | CONFIRMED device-side (source) | LOLIN_WIFI_FIX caps S3 TX at 8.5dBm; initAP never disables modem sleep on factory-fresh units | FS: cfg wifi.txpwr=78 (19.5dBm); FW: +1 line initAP setSleep. Post-fix: 0% loss, ~5ms avg |
+| Scrolling text static when fits | REPRODUCED (Justin #6) + arithmetic (APOLLO M-1 = 56px on 64px) | upstream design: horizontal scroll only when totalTextWidth > cols; check3 dead when fits | FW: 2 lines - check3 forces scroll; preset 1 ships o3=true. Upstream PR candidate |
+| "Dog gif creates its own segment" | ROOT-CAUSED, not a segment | segment NAME persistence: dog preset names seg0 "apollo_dog.gif" (Image filename); manual effect switch keeps the name -> Scrolling Text scrolls the filename; UI titles segment by name | FS: presets normalized (explicit n everywhere); residual preset->manual trap documented; UI-level fix noted as upstream candidate |
+| Sound Bars preset (found by audit) | LATENT DEFECT | saved c1=0 -> GEQ renders ONE bar, not 16 | FS: c1=255,c2=64,c3=0 |
+| GIF via WLED Android app | CONFIRMED CLIENT-SIDE at app source level | DeviceWebview.kt getMimeType() discards accept types -> picker filtered to application/octet-stream -> all images greyed; ships in v7.0.1; issue #141 open | apollo/WLED_APP_BUG.md upgraded; wiki: use any browser |
+Post-fix virgin gate: erase + flash final artifact, AP up, 0 panics, all routes
+200 over AP incl. offline pixelpaint chain, JSON POSTs 200 (Content-Type
+header required - earlier 400s were the probe's own missing header).
+Firmware surface: +171/-16 vs base (was +168/-14): wled.cpp +1, FX.cpp 2 lines.
+REMAINING: Justin's final phone walkthrough on the fixed artifact; docs (QA
+gate, D20/D21, SUMMARY correction, wiki no-wifi page, app bug doc, upstream
+PR texts).

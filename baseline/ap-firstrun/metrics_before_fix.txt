@@ -1,0 +1,26 @@
+ip=4.3.2.4
+== rssi ==
+              Signal / Noise: -53 dBm / -93 dBm
+              Transmit Rate: 0
+== ping 60x0.2s ==
+--- 4.3.2.1 ping statistics ---
+60 packets transmitted, 60 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 2.340/3.659/19.146/2.264 ms
+== pixelforge.htm x5 download ==
+t_total=0.039691 size=11041 code=200
+t_total=0.019797 size=11041 code=200
+t_total=0.028773 size=11041 code=200
+t_total=0.026381 size=11041 code=200
+t_total=0.021095 size=11041 code=200
+== json/info x10 latency ==
+0.027361
+0.015242
+0.014936
+0.029172
+0.020030
+0.014872
+0.031749
+0.015546
+0.019017
+0.106142
+home restored

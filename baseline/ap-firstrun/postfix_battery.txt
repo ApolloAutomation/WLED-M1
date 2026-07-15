@@ -1,0 +1,24 @@
+ip=4.3.2.2
+[root] 200 1540
+[root-sliders] 200 39701
+[pixelpaint] 200 11451
+[iro] 200 9960
+[omggif] 200 2560
+[pixelforge] 200 11041
+[presets] 200 4532
+[info] 200 1523
+cdn refs in served pixelpaint: 0
+pixelpaint-style POST /json -> 400
+apply preset 1 -> 400
+apply preset 2 -> 400
+apply preset 3 -> 400
+apply preset 4 -> 400
+final state: ps 4 fx 53 n 'apollo_dog.gif' o3 False
+== metrics (txpwr 19.5dBm + no modem sleep) ==
+60 packets transmitted, 60 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 2.362/11.353/207.075/29.751 ms
+t=0.230683
+t=0.165459
+t=0.027678
+t=0.029302
+t=0.022394

@@ -1,0 +1,9 @@
+ip=4.3.2.2
+paint POST with content-type -> 200
+preset 1 -> 200
+preset 3 -> 200
+preset 4 -> 200
+state after preset cycle (expect ps 4 dog): ps 4 fx 53 n 'apollo_dog.gif' o3 False c1 0
+== second ping sample ==
+60 packets transmitted, 60 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 1.831/4.955/40.833/6.638 ms
