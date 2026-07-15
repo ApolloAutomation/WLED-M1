@@ -325,6 +325,20 @@ static bool captivePortal(AsyncWebServerRequest *request)
   if (!apActive) return false; //only serve captive in AP mode
   if (!request->hasHeader(F("Host"))) return false;
 
+  // answer OS connectivity probes as if the AP had internet: phones then validate the
+  // network and route browser traffic here even with mobile data on (otherwise Android
+  // keeps cellular as default and http://4.3.2.1 never reaches the device). Costs the
+  // captive "sign in" popup; setup is documented as join-then-browse (DECISIONS D22).
+  String urlP = request->url();
+  if (urlP.indexOf(F("generate_204")) >= 0 || urlP.indexOf(F("gen_204")) >= 0) {
+    request->send(204);
+    return true;
+  }
+  if (urlP.indexOf(F("hotspot-detect")) >= 0 || urlP.indexOf(F("connecttest")) >= 0) {
+    request->send(200, FPSTR(CONTENT_TYPE_HTML), F("<HTML><HEAD><TITLE>Success</TITLE></HEAD><BODY>Success</BODY></HTML>"));
+    return true;
+  }
+
   String hostH = request->getHeader(F("Host"))->value();
   if (!isIp(hostH) && hostH.indexOf(F("wled.me")) < 0 && hostH.indexOf(cmDNS) < 0 && hostH.indexOf(':') < 0) {
     DEBUG_PRINTLN(F("Captive portal"));

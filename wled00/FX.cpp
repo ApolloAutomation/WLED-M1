@@ -6511,7 +6511,7 @@ void mode_2Dscrollingtext(void) {
   // scroll step (AUX0 is current scrolling offset)
   if (SEGENV.step < strip.now) {
     if (totalTextWidth > cols || SEGMENT.check3) { // check3: reverse, and force scrolling even when the text fits
-      if (SEGMENT.check3) { // reverse direction
+      if (SEGMENT.check3 && totalTextWidth > cols) { // reverse direction (forced-scroll of fitting text always reads right-to-left)
         if (SEGENV.aux0 == 0) SEGENV.aux0 = totalTextWidth + cols - 1;
         else --SEGENV.aux0;
       } else {
