@@ -113,3 +113,5 @@ a factory-fresh unit while every OTA boot worked).
    BENCH_SESSION_D10.md): GIF/effects fps parity with MM = 16.x compositor
    fast path or softhack007 HUB75 lib swap; -O2 virgin-boot crash root cause
    (dynarray post-link script suspicion).
+
+## Bundle b7 (2026-07-15, commit c10ac303): first named bundle since b6; carries all D10 + AP session fixes, the first-boot tour, and the freeze-thaw fix. Distributed to Justin with sha256 sums.
