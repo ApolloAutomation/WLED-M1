@@ -105,3 +105,14 @@ for recurrence before chasing.
 ## (audit finding: shipped c1=0 = one bar) is confirmed on hardware.
 ## Audio pipeline healthy end-to-end; the earlier "AR not working" report
 ## is attributed to the frozen-segment trap, fixed same session.
+
+## Captive-popup feedback question, closed (2026-07-15)
+Full research in apollo/CAPTIVE_PORTAL_RESEARCH.md (sourced, 3 tracks).
+One-line verdict: on stock Android the popup and working browser access
+are mutually exclusive because dismissing captivity requires an HTTPS
+probe with a valid Google certificate that no offline device can present;
+the one-tap "connect anyway" flow we ship is the floor. iPhone exception:
+Apple probes are plain HTTP, so an iOS-only two-phase popup (CNA sheet,
+then Success after Done) is feasible and was OFFERED; consistency chosen
+for now, both platforms use the scan-the-panel flow. Revisit only if
+customer feedback demands it.
