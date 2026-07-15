@@ -1,0 +1,22 @@
+== joining Apollo M-1-6d0a40 ==
+mac ip=4.3.2.2 gateway=
+PROBE [root-4321] http://4.3.2.1/ -> 200 1540 
+PROBE [root-gw] http://4.3.2.1/ -> 200 1540 
+PROBE [index] http://4.3.2.1/index.htm -> 404 873 
+PROBE [json-info] http://4.3.2.1/json/info -> 200 1524 
+PROBE [json-state] http://4.3.2.1/json/state -> 200 601 
+PROBE [json-cfg] http://4.3.2.1/json/cfg -> 200 2592 
+PROBE [presets] http://4.3.2.1/presets.json -> 200 4560 
+PROBE [cfg-raw] http://4.3.2.1/cfg.json -> 200 370 
+PROBE [pixelforge] http://4.3.2.1/pixelforge.htm -> 200 11041 
+PROBE [pixelpaint] http://4.3.2.1/pixelpaint.htm -> 200 11506 
+PROBE [edit] http://4.3.2.1/edit -> 200 4143 
+PROBE [404-test] http://4.3.2.1/nonexistent-xyz -> 404 873 
+PROBE [captive-host] http://4.3.2.1/ -> 302 0 http://4.3.2.1/
+PROBE [http-api] http://4.3.2.1/win&T=2 -> 200 275 
+== DNS test ==
+resolve example.com FAILED: [Errno 8] nodename nor servname provided, or not known
+PROBE [upload-gif] /upload -> 200
+PROBE [readback-gif] /aptest.gif -> 200 7378
+== rejoining JT 5G ==
+home network restored

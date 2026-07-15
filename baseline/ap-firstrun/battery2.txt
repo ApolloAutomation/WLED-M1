@@ -1,0 +1,33 @@
+ip=4.3.2.2
+== DHCP packet ==
+op = BOOTREPLY
+htype = 1
+flags = 0x8000
+hlen = 6
+hops = 0
+xid = 0x4895d935
+secs = 0
+ciaddr = 0.0.0.0
+yiaddr = 4.3.2.2
+siaddr = 0.0.0.0
+giaddr = 0.0.0.0
+chaddr = 72:df:97:73:80:15
+sname = 
+file = 
+options:
+Options count is 11
+dhcp_message_type (uint8): ACK 0x5
+subnet_mask (ip): 255.255.255.0
+lease_time (uint32): 0x1c20
+server_identifier (ip): 4.3.2.1
+router (ip_mult): {4.3.2.1}
+domain_name_server (ip_mult): {4.3.2.1}
+broadcast_address (ip): 4.3.2.255
+interface_mtu (uint16): 0x5dc
+perform_router_discovery (bool): FALSE
+vendor_specific (opaque): 
+0000  01 04 00 00 00 02                                 ......          
+
+end (none): 
+== index shell ==
+shell assets: []
