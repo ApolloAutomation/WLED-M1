@@ -105,3 +105,38 @@ hosting), so the b7 gate re-run is superseded by a b8 gate after the redesign.
    which bundle that unit ran.
 6. Go/no-go on publishing the GitHub release once b8 exists (commands are
    staged, nothing published).
+
+## Paste-ready tester reply: captive popup question (verified against source)
+> Correct, and it is deliberate: WLED normally answers the phone's "is there
+> internet here?" checks with a redirect, which is what makes the sign-in
+> popup appear. We changed that on purpose. The popup only opens a crippled
+> mini-browser that cannot upload files, and worse, while the network looks
+> "captive" Android keeps routing the real browser over mobile data, so
+> http://4.3.2.1 never loads unless you turn data off. Instead we answer
+> those checks with "all good", so the phone treats the hotspot as a working
+> network and the normal browser reaches 4.3.2.1 with mobile data still on.
+> The tradeoff is no automatic popup, which is why the panel itself shows
+> the join-then-browse instructions and the QR code on first boot.
+>
+> The older Android popping the control window is not a bug and needs no
+> fix. We only answer the standard check URLs (the generate_204 family,
+> Apple, Windows). Older or non-Google devices, Amazon Fire tablets
+> especially, check a different URL, and anything we do not recognize still
+> gets the classic redirect, so those devices show the old-style popup. On
+> those devices that is harmless and actually convenient: the popup lands
+> straight on the control page.
+>
+> Two things would help us confirm: (1) the make, model, and OS version of
+> the older device, and (2) whether that unit was on the b7 bundle when you
+> tested. If the unit had an older bundle, every phone would get the popup,
+> so no popup on your modern phones in the same session already suggests
+> the bundle was current.
+
+## Hardware log addendum (14:00)
+- One-shot dump of unit 2f5e50 FAILED to start: esptool cannot connect
+  ("No serial data received") though the USB JTAG device still enumerates
+  and the same tool read the MAC 15 minutes earlier. The bench logger's
+  clean-reset dance now also returns zero bytes. Diagnosis: the S3
+  USB-Serial-JTAG wedged state; needs a physical unplug/replug of the
+  USB-C (or unit power cycle). NOTHING was written to the unit's flash;
+  the dump had not started (chunk 0 never read).

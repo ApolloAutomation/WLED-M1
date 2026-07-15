@@ -1,7 +1,0 @@
-Could not find network Apollo M-1-6d0a40.
-ip=192.168.1.137
-0 initial: 
-1 after paint: 
-2 after clear: 
-3 after UI effect pick: 
-4 after frz:false: 
