@@ -120,3 +120,62 @@ card_L2(qc.ERROR_CORRECT_M, f"{OUT}/cardB_invM.gif")
 for n in ["cardA_invM", "cardA_invQ", "cardA_stdM", "cardB_invM"]:
     Image.open(f"{OUT}/{n}.gif").convert("RGB").resize((256, 256), Image.NEAREST).save(f"{OUT}/view_{n}.png")
 print("done")
+
+# --- cardB2: Justin's pick (two-line header) with step numbers (2026-07-15) ---
+# "1 JOIN WIFI / APOLLO M-1" then QR, then "2 SCAN  4.3.2.1".
+F5.update({
+    'S': ["011", "100", "010", "001", "110"],
+    'C': ["011", "100", "100", "100", "011"],
+    'R': ["110", "101", "110", "101", "101"],
+    '2': ["110", "001", "010", "100", "111"],
+    '3': ["110", "001", "010", "001", "110"],
+    '4': ["101", "101", "111", "001", "001"],
+    '.': ["0", "0", "0", "0", "1"],
+})
+
+def draw_mixed(px, parts, font, y):
+    """parts = [(text, color), ...] rendered as one centered line."""
+    s = "".join(t for t, _ in parts)
+    x = (W - text_width(s, font)) // 2
+    for t, col in parts:
+        for ch in t:
+            g = font[ch]
+            for ry, row in enumerate(g):
+                for rx, bit in enumerate(row):
+                    if bit == '1':
+                        px[x + rx, y + ry] = col
+            x += len(g[0]) + 1
+
+def card_B2(ecc, polarity, fname):
+    """polarity: 'inv' (light modules on black) or 'std' (dark modules on lit box)."""
+    im = Image.new("RGB", (W, H), BLACK)
+    px = im.load()
+    draw_mixed(px, [("1 ", WHITE), ("JOIN WIFI", AMBER)], F5, 0)
+    draw_text(px, "APOLLO M-1", F5, 6, SKY)
+    m = build_matrix(ecc)
+    if polarity == 'std':
+        for y in range(12, 58):
+            for x in range(9, 55):
+                px[x, y] = WHITE
+        render_qr(px, m, 2, 11, 14, False)
+    else:
+        render_qr(px, m, 2, (W - 42) // 2, 14, True)
+    draw_mixed(px, [("2 ", WHITE), ("SCAN", AMBER), ("  ", WHITE), ("4.3.2.1", WHITE)], F5, 58)
+    im.save(fname)
+
+def qr_std_full(fname):
+    """Diagnostic arm: standard polarity, full lit field, 4-module quiet, no text."""
+    im = Image.new("RGB", (W, H), WHITE)
+    px = im.load()
+    m = build_matrix(qc.ERROR_CORRECT_Q)
+    render_qr(px, m, 2, 11, 11, False)
+    im.save(fname)
+
+if __name__ == "__main__":
+    card_B2(qc.ERROR_CORRECT_M, 'inv', f"{OUT}/cardB2_invM.gif")
+    card_B2(qc.ERROR_CORRECT_Q, 'inv', f"{OUT}/cardB2_invQ.gif")
+    card_B2(qc.ERROR_CORRECT_M, 'std', f"{OUT}/cardB2_stdM.gif")
+    qr_std_full(f"{OUT}/qr_std_full.gif")
+    for n in ["cardB2_invM", "cardB2_invQ", "cardB2_stdM", "qr_std_full"]:
+        Image.open(f"{OUT}/{n}.gif").convert("RGB").resize((256, 256), Image.NEAREST).save(f"{OUT}/view_{n}.png")
+    print("cardB2 set done")
