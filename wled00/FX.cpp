@@ -6497,7 +6497,7 @@ void mode_2Dscrollingtext(void) {
   // y-offset calculation
   int yoffset = map(SEGMENT.intensity, 0, 255, -rows / 2, rows / 2);
 
-  if (totalTextWidth <= cols) {
+  if (totalTextWidth <= cols && !SEGMENT.check3) { // check3 also forces horizontal scroll for text that fits
     // if text fits matrix width, scroll vertically
     int speed = map(SEGMENT.speed, 0, 255, 5000, 1000);
     int frac = strip.now % speed + 1;
@@ -6510,7 +6510,7 @@ void mode_2Dscrollingtext(void) {
 
   // scroll step (AUX0 is current scrolling offset)
   if (SEGENV.step < strip.now) {
-    if (totalTextWidth > cols) {
+    if (totalTextWidth > cols || SEGMENT.check3) { // check3: reverse, and force scrolling even when the text fits
       if (SEGMENT.check3) { // reverse direction
         if (SEGENV.aux0 == 0) SEGENV.aux0 = totalTextWidth + cols - 1;
         else --SEGENV.aux0;

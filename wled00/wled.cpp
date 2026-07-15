@@ -657,6 +657,7 @@ void WLED::initAP(bool resetAP)
   #ifdef ARDUINO_ARCH_ESP32
   DEBUG_PRINT(F("access point maxTxPower set to ")); DEBUG_PRINTLN(txPower);
   WiFi.setTxPower(wifi_power_t(txPower));
+  WiFi.setSleep(!noWifiSleep); // otherwise a factory-fresh unit keeps default modem power-save in AP mode (setSleep is only ever called on the configured-STA path) - softAP lag/loss
   #endif
 
   if (!apActive) // start captive portal if AP active
