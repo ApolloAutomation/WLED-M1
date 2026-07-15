@@ -1,8 +1,32 @@
 # Apollo M-1 migration - PROGRESS
 
-Last update: 2026-07-14, after the D10 bench sessions (2026-07-12/13) and the
-contamination check. Read SUMMARY.md first. This file is the resume ledger for
-a fresh session. The bench narrative lives in BENCH_SESSION_D10.md.
+Last update: 2026-07-15, after the AP-mode first-run session (D20-D23,
+BENCH_SESSION_AP.md) and its post-gate fixes. Read SUMMARY.md first. This
+file is the resume ledger for a fresh session. Bench narratives:
+BENCH_SESSION_D10.md (chains), BENCH_SESSION_AP.md (AP mode + first-run).
+
+## AP session outcome (2026-07-14/15) - see BENCH_SESSION_AP.md for detail
+- D20: AP mode is a first-class operating mode (binding, Justin). Permanent
+  AP walkthrough gate added to QA_CHECKLIST.md.
+- Fixed on hardware, all verified over the hotspot: offline Pixel Paint
+  (CDN->on-device libs), AP radio power (txpwr 78) + modem sleep (initAP,
+  +1 line), Scrolling Text force-scroll (check3, 2 lines) with right-to-left
+  direction, presets normalized (Sound Bars ONE-bar defect -> 16 bands,
+  glass-verified), frozen-segment thaw on effect change (json.cpp, the
+  pixel-paint black-screen trap), D22 connectivity-probe answers (works
+  with mobile data ON), D23 first-boot signpost tour (dog / STEP 1 join
+  hotspot / STEP 2 scan next QR code / inverted QR / NO CAMERA? fallback),
+  10 tour iterations approved on glass.
+- Client-side causes proven (not device bugs): Android cellular routing
+  around no-internet APs, captive mini-browser limitations, WLED Android
+  app file-chooser MIME bug (source-level proof, apollo/WLED_APP_BUG.md).
+- Firmware code surface vs v16.0.1 now ~180/-16 lines across 12 files
+  (was 168/-14); upstream findings ledger at 12 items
+  (apollo/UPSTREAM_FINDINGS.md); three PR-ready patches (AP sleep,
+  force-scroll, freeze-thaw) prepared, unopened.
+- Test unit (6d0a40) left factory-fresh with the final tour running.
+- Bench tooling preserved: apollo/bench/ (serial logger with clean-reset
+  attach, AP probe template).
 
 ## Canonical locations
 - THIS repo: /Users/justinapollo/Code/ApolloAutomation/WLED-M1 = clone of

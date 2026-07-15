@@ -123,9 +123,11 @@ drill (D12).
 
 ## For Justin
 
-1. Ship gates are green: artifacts in apollo/out/ are final at 32cda73d
-   (also copied to ~/Downloads with sha256 sums). Pick the tester-bundle
-   number (well past b6) and distribute.
+1. Artifacts in apollo/out/ are final at the AP-session HEAD (dog tour,
+   all fixes; also copied to ~/Downloads with sha256 sums). Pick the
+   tester-bundle number (well past b6) and distribute. The AP walkthrough
+   gate (QA_CHECKLIST) is the standing re-certification ritual for any
+   future artifact.
 2. Publish the wiki rewrites (apollo/wiki-rewrites/): matrix-settings,
    microphone-addon, panel-faults, and the NEW multiple-panels page (1x4 +
    2x2 recipes, size limits, GIF how-to). Also the older triage items:
