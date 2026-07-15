@@ -99,3 +99,9 @@ the fresh flash returned odd HTTP codes (413 with success:true bodies,
 400s) and dropped some JSON POST effects cross-subnet; a reflash+reboot
 cleared it; dbg-build debug dump captured a request in state 100. Watch
 for recurrence before chasing.
+
+## Sound Bars glass verification (2026-07-15): "multiple bars corresponding
+## to type of sound. it looked great." - the 16-band GEQ preset fix
+## (audit finding: shipped c1=0 = one bar) is confirmed on hardware.
+## Audio pipeline healthy end-to-end; the earlier "AR not working" report
+## is attributed to the frozen-segment trap, fixed same session.
