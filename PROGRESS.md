@@ -152,3 +152,7 @@ setup card (cardB9, 21px one-LED-per-module QR, bri 220), D26 clean AP SSID
 "Apollo M-1", dog-once boot playlist, Setup preset in the customer list.
 full_install sha256 68cbf264..., ota d51c5cae... Distributed to Downloads
 with versioned filenames + m1_b8_sha256.txt. SHIP-READY RE-ASSERTED.
+RELEASED: https://github.com/ApolloAutomation/WLED-M1/releases/tag/m1-b8
+(both artifacts attached, marked latest; the stable link
+releases/latest/download/M-1_full_install.bin verified HTTP 200; replaces
+the Google Drive distribution per tester ask + D25).
