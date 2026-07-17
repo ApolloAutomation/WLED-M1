@@ -299,3 +299,15 @@ gates. Because GitHub release assets send no CORS headers, the ESP Web
 Tools manifest + bins must be hosted same-origin with the installer page
 (GitHub Pages); release assets serve human downloads only. Draft + staged
 commands: apollo/RELEASE_DRAFT.md.
+
+### D26. ANSWERED (Justin, 2026-07-16): AP SSID is plain "Apollo M-1", no MAC suffix
+"Want it to be clean and not confusing." Removed -D WLED_AP_SSID_UNIQUE
+from [env:apollo_m1] (platformio.ini one-line change, flag removed; the
+suffix macro in wled.h is upstream and untouched). Card and SSID now match
+character for character. TRADEOFF FLAGGED AND ACCEPTED: two unconfigured
+M-1s in radio range broadcast identical SSIDs and cannot be told apart
+until provisioned (the suffix existed for this, A2). mDNS hostname keeps
+its unique suffix (apollo-led-matrix-xxxxxx); only the hotspot name
+changed. FIRMWARE change: b8 app no longer byte-identical to b7, virgin
+boot + battery re-run before the walkthrough; the SSID fix reaches
+existing units via OTA, unlike the FS card.
