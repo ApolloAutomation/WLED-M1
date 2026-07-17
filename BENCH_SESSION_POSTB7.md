@@ -251,3 +251,20 @@ the cardB layout + step numbering + "scan or url" wording (his messages).
 5. Remaining QA: D3 FS-reset button, D5 current draw, D6 ghosting, D7
    driver id. Tester thread replies ready in this file. Upstream PRs
    ready in apollo/UPSTREAM_PRS_READY.md (humans open).
+
+## Unit roster correction + AR report resolution (2026-07-16 evening)
+- Justin: AR effects "not working" on the gate unit. RESOLVED, not a bug:
+  unit 2f5e50 is a REV 6 UPDATED BOARD WITH NO MICROPHONE ADDON FITTED
+  (Justin, visual check). AR idles flat without audio input by design;
+  audio code untouched b7->b8; Sound Bars reactivity remains glass-proven
+  on the mic-equipped unit (2026-07-15). Rev4/no-mic customer experience
+  note: factory preset 3 shows idle bars until a mic is fitted (D17
+  flagged-and-accepted; mic-addon wiki page covers it; FAQ line suggested).
+- D9 no-mic half: this unit has run force-enabled AR through the entire
+  b8 gate with zero crashes and normal panel behavior; formal CPU/heap
+  A/B (AR on vs off) deferred until after the walkthrough to preserve the
+  factory-fresh gate state. Rev6-sans-addon stands in for the no-mic
+  condition (rev4 board still ideal for exactness).
+- Unit roster: 6d0a40 test #1 (mic-equipped, ran the b7 tour),
+  2f5f7c demo (mic-equipped, USB enumeration mystery unresolved),
+  2f5e50 test #2 (rev6 updated, NO mic addon, current gate unit).
