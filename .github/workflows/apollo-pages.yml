@@ -1,0 +1,37 @@
+name: Deploy Apollo M-1 installer Pages
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: apollo-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Stage manifest and firmware
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir _site
+          cp apollo/installer/manifest.json _site/manifest.json
+          gh release download --repo "$GITHUB_REPOSITORY" \
+            --pattern 'M-1_full_install.bin' --dir _site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
