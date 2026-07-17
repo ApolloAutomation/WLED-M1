@@ -1,0 +1,22 @@
+=== b8 gate battery Thu Jul 16 21:54:01 EDT 2026 ===
+joined Apollo M-1-2f5e50 ip=4.3.2.2
+PROBE [root] http://4.3.2.1/ -> 200 1540
+PROBE [info] http://4.3.2.1/json/info -> 200 1519
+PROBE [state] http://4.3.2.1/json/state -> 200 594
+PROBE [cfg] http://4.3.2.1/json/cfg -> 200 2592
+PROBE [presets] http://4.3.2.1/presets.json -> 200 5774
+PROBE [setup-gif] http://4.3.2.1/setup.gif -> 200 619
+PROBE [dog-gif] http://4.3.2.1/apollo_dog.gif -> 200 19029
+PROBE [pixelforge] http://4.3.2.1/pixelforge.htm -> 200 11049
+PROBE [pixelpaint] http://4.3.2.1/pixelpaint.htm -> 200 11451
+PROBE [iro-offline] http://4.3.2.1/iro.js -> 200 9960
+PROBE [omggif-offline] http://4.3.2.1/omggif.js -> 200 2560
+PROBE [edit] http://4.3.2.1/edit -> 200 4143
+PROBE [android-probe] http://4.3.2.1/generate_204 -> 204 0
+PROBE [apple-probe] http://4.3.2.1/hotspot-detect.html -> 200 68
+presets.json BYTE-IDENTICAL to factory file
+PROBE [upload] -> 200, readback -> 200 1627
+FREEZE-THAW: before=False after-paint=True after-fx-change=False 9 (want False True 'False 9')
+restored preset 9 (first boot playlist)
+=== battery done Thu Jul 16 21:54:14 EDT 2026 ===
+REJOIN FAILED
