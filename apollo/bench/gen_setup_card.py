@@ -200,3 +200,88 @@ def card_B3(ecc, module_color, fname):
                     px[11 + mx*2 + dx, 14 + my*2 + dy] = color
     draw_mixed(px, [("2 ", dim(WHITE)), ("SCAN", dim(AMBER)), (" OR ", dim(WHITE)), ("4.3.2.1", dim(SKY))], F5, 58)
     im.save(fname)
+
+# --- cardB4 (FINAL, 2026-07-16): Justin's wording "or go to 4.3.2.1" ---
+# One-line top (1 JOIN APOLLO M-1), glass-proven QR geometry (inverted 2px,
+# ECC Q, 3px top / 2px bottom dark gaps, dim text), two bottom rows.
+F5.update({
+    'G': ["0110", "1000", "1011", "1001", "0110"],
+    'T': ["111", "010", "010", "010", "010"],
+})
+
+def card_B4(fname):
+    im = Image.new("RGB", (W, H), BLACK)
+    px = im.load()
+    draw_mixed(px, [("1 ", dim(WHITE)), ("JOIN", dim(AMBER)), (" ", dim(WHITE)), ("APOLLO M-1", dim(SKY))], F5, 0)
+    m = build_matrix(qc.ERROR_CORRECT_Q)
+    for my in range(21):
+        for mx in range(21):
+            color = WHITE if m[my][mx] else BLACK
+            for dy in range(2):
+                for dx in range(2):
+                    px[11 + mx*2 + dx, 8 + my*2 + dy] = color
+    draw_mixed(px, [("2 ", dim(WHITE)), ("SCAN", dim(AMBER)), (" OR", dim(WHITE))], F5, 52)
+    draw_mixed(px, [("GO TO ", dim(AMBER)), ("4.3.2.1", dim(SKY))], F5, 58)
+    im.save(fname)
+
+# --- cardB5 (2026-07-16): Justin's step copy, thin word-spaces to fit ---
+F5['~'] = ["0"]  # thin space (1px + spacing)
+F5['E'] = ["111", "100", "110", "100", "111"]
+
+def card_B5(fname):
+    """1 JOIN APOLLO WIFI / QR / 2 SCAN OR / GO TO 4.3.2.1 (all dim but QR)."""
+    im = Image.new("RGB", (W, H), BLACK)
+    px = im.load()
+    draw_mixed(px, [("1~", dim(WHITE)), ("JOIN~", dim(AMBER)), ("APOLLO~WIFI", dim(SKY))], F5, 0)
+    m = build_matrix(qc.ERROR_CORRECT_Q)
+    for my in range(21):
+        for mx in range(21):
+            color = WHITE if m[my][mx] else BLACK
+            for dy in range(2):
+                for dx in range(2):
+                    px[11 + mx*2 + dx, 8 + my*2 + dy] = color
+    draw_mixed(px, [("2 ", dim(WHITE)), ("SCAN", dim(AMBER)), (" OR", dim(WHITE))], F5, 52)
+    draw_mixed(px, [("GO TO ", dim(AMBER)), ("4.3.2.1", dim(SKY))], F5, 58)
+    im.save(fname)
+
+# --- cardB6 (2026-07-16): 1px-module QR proven reliable on glass -> full copy
+# STEP 1 / JOIN APOLLO WIFI / QR 21px huge quiet zone / STEP 2 SCAN /
+# OR GO TO / 4.3.2.1 (big font). QR full white; text dim 0.4 (proven).
+def card_B6(fname):
+    im = Image.new("RGB", (W, H), BLACK)
+    px = im.load()
+    draw_mixed(px, [("STEP ", dim(AMBER)), ("1", dim(WHITE))], F5, 0)
+    draw_mixed(px, [("JOIN APOLLO WIFI", dim(SKY))], F5, 6)
+    m = build_matrix(qc.ERROR_CORRECT_Q)
+    for my in range(21):
+        for mx in range(21):
+            if m[my][mx]:
+                px[21 + mx, 17 + my] = WHITE
+    draw_mixed(px, [("STEP ", dim(AMBER)), ("2", dim(WHITE)), (" SCAN", dim(AMBER))], F5, 44)
+    draw_mixed(px, [("OR GO TO", dim(WHITE))], F5, 50)
+    draw_text(px, "4.3.2.1", F7, 56, dim(SKY, 0.55))
+    im.save(fname)
+
+# --- cardB7 (2026-07-16): Justin's revised copy, small address font ---
+F5.update({
+    'H': ["101", "101", "111", "101", "101"],
+    'B': ["110", "101", "110", "101", "110"],
+})
+
+def card_B7(fname):
+    """STEP 1 / JOIN APOLLO / WIFI HOTSPOT / QR 21px / STEP 2 SCAN OR /
+    OPEN BROWSER TO / 4.3.2.1 (small font). 4px vertical quiet zones."""
+    im = Image.new("RGB", (W, H), BLACK)
+    px = im.load()
+    draw_mixed(px, [("STEP ", dim(AMBER)), ("1", dim(WHITE))], F5, 0)
+    draw_mixed(px, [("JOIN APOLLO", dim(SKY))], F5, 6)
+    draw_mixed(px, [("WIFI HOTSPOT", dim(SKY))], F5, 12)
+    m = build_matrix(qc.ERROR_CORRECT_Q)
+    for my in range(21):
+        for mx in range(21):
+            if m[my][mx]:
+                px[21 + mx, 21 + my] = WHITE
+    draw_mixed(px, [("STEP ", dim(AMBER)), ("2", dim(WHITE)), (" SCAN OR", dim(AMBER))], F5, 46)
+    draw_mixed(px, [("OPEN BROWSER TO", dim(WHITE))], F5, 52)
+    draw_mixed(px, [("4.3.2.1", dim(SKY, 0.55))], F5, 58)
+    im.save(fname)

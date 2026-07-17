@@ -256,19 +256,26 @@ RESULT 2026-07-12: PASS.
 ## contamination check, on the factory-fresh unit it leaves behind)
 Run with a real phone, MOBILE DATA ON, no WiFi network configured on the
 unit. This is the D20 acceptance: AP mode is a first-class destination.
-- [ ] Power on. Within ~60s the panel cycles the signpost tour: dog,
-      STEP 1 (join hotspot), STEP 2 (scan QR), QR code, NO CAMERA? card.
+- [ ] Power on. Within ~60s the panel shows the dog for 4s, then the
+      STATIC setup card (D24): STEP 1 JOIN APOLLO WIFI HOTSPOT / 21px QR /
+      STEP 2 SCAN OR OPEN BROWSER TO 4.3.2.1, at brightness 220, holding
+      indefinitely. NO cycling, no page turns.
+- [ ] Reset or power-cycle: dog then card return (boot preset 9 playlist
+      self-heals; customer preset list shows 5 "Setup" to recall the card).
 - [ ] Phone joins "Apollo M-1-xxxxxx" (open). Accept any "no internet -
       stay connected?" prompt. NO captive popup should appear (D22).
-- [ ] Scan the QR off the panel with the camera app: browser opens
-      http://4.3.2.1 (with mobile data still ON).
+- [ ] Scan the QR off the panel with the camera app in NORMAL ROOM LIGHT:
+      browser opens http://4.3.2.1 (with mobile data still ON).
 - [ ] Welcome page loads; full UI reachable (skip or /?sliders).
 - [ ] Change a preset from the UI; panel follows.
 - [ ] Scrolling Text preset: "APOLLO M-1" scrolls right-to-left (fits-
       force-scroll o3, D21).
 - [ ] Sound Bars preset: full 16-band spectrum reacts to sound.
 - [ ] http://4.3.2.1/pixelpaint.htm loads AND draws (offline iro/omggif,
-      D21) - pixels appear on the panel.
+      D21) - pixels appear on the panel. THEN the freeze-thaw evidence
+      capture: clear the drawing, pick any effect in the UI, effect must
+      run (not a black hold); capture frz states via /json before/after
+      to baseline/ (replaces the blank repro file removed post-b7).
 - [ ] http://4.3.2.1/pixelforge.htm loads; upload a GIF from the phone;
       it plays on the panel.
 - [ ] Nothing greyed out, no silent failures, no internet ever involved.
