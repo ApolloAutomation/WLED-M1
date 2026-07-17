@@ -285,3 +285,40 @@ def card_B7(fname):
     draw_mixed(px, [("OPEN BROWSER TO", dim(WHITE))], F5, 52)
     draw_mixed(px, [("4.3.2.1", dim(SKY, 0.55))], F5, 58)
     im.save(fname)
+
+# --- cardB8 (2026-07-16): order-of-operations revision - QR moves BELOW the
+# steps so nobody scans before joining; SSID shown as APOLLO M-1; THEN SCAN.
+def card_B8(fname):
+    im = Image.new("RGB", (W, H), BLACK)
+    px = im.load()
+    draw_mixed(px, [("STEP ", dim(AMBER)), ("1", dim(WHITE))], F5, 0)
+    draw_mixed(px, [("JOIN APOLLO M-1", dim(SKY))], F5, 6)
+    draw_mixed(px, [("WIFI HOTSPOT", dim(SKY))], F5, 12)
+    draw_mixed(px, [("STEP ", dim(AMBER)), ("2", dim(WHITE)), (" THEN SCAN", dim(AMBER))], F5, 18)
+    draw_mixed(px, [("OR OPEN BROWSER", dim(WHITE))], F5, 24)
+    draw_mixed(px, [("TO ", dim(WHITE)), ("4.3.2.1", dim(SKY, 0.55))], F5, 30)
+    m = build_matrix(qc.ERROR_CORRECT_Q)
+    for my in range(21):
+        for mx in range(21):
+            if m[my][mx]:
+                px[21 + mx, 40 + my] = WHITE
+    im.save(fname)
+
+# --- cardB9 (2026-07-16): STEP 2 / SCAN QR BELOW / OR GO TO 4.3.2.1 ---
+F5['Q'] = ["0110", "1001", "1001", "1010", "0101"]
+
+def card_B9(fname):
+    im = Image.new("RGB", (W, H), BLACK)
+    px = im.load()
+    draw_mixed(px, [("STEP ", dim(AMBER)), ("1", dim(WHITE))], F5, 0)
+    draw_mixed(px, [("JOIN APOLLO M-1", dim(SKY))], F5, 6)
+    draw_mixed(px, [("WIFI HOTSPOT", dim(SKY))], F5, 12)
+    draw_mixed(px, [("STEP ", dim(AMBER)), ("2", dim(WHITE))], F5, 18)
+    draw_mixed(px, [("SCAN QR BELOW", dim(AMBER))], F5, 24)
+    draw_mixed(px, [("OR GO TO ", dim(WHITE)), ("4.3.2.1", dim(SKY, 0.55))], F5, 30)
+    m = build_matrix(qc.ERROR_CORRECT_Q)
+    for my in range(21):
+        for mx in range(21):
+            if m[my][mx]:
+                px[21 + mx, 40 + my] = WHITE
+    im.save(fname)

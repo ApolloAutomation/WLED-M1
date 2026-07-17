@@ -206,3 +206,48 @@ the cardB layout + step numbering + "scan or url" wording (his messages).
   7) demo unit: D12 restore drill, flash b8, provision, D11 HA click-
   through; 8) remaining QA: D3 FS-reset button, D5 current, D6 ghosting,
   D7 driver id; 9) open the three upstream PRs (human, texts ready).
+
+## Day 2 (2026-07-16): D24 CLOSED on glass, bundle b8 built (UNGATED)
+- Morning retest: the round-3 dim-text card scanned RELIABLY (conditions
+  matter; yesterday's "intermittent" was the same asset). Justin picked
+  the QR card path.
+- BREAKTHROUGH, prediction refuted by test: a 21x21px QR at ONE LED PER
+  MODULE (inverted, ECC Q, 4-module quiet zones, bri 220) scans RELIABLY
+  on glass. The 2px-minimum assumption was wrong; the huge quiet zone and
+  reduced lit area beat module size. This freed the layout for full copy.
+- Card iterations on glass: B4 (one-line top), B5 (thin spaces), B6 (1px
+  QR + STEP wording), B7 (hotspot copy, small address), B8 (QR moved BELOW
+  the steps, order-of-operations), B9 (STEP 2 / SCAN QR BELOW / OR GO TO
+  4.3.2.1) = APPROVED SHIP CARD ("Looks great"). All in
+  apollo/bench/gen_setup_card.py; scan-verified at each geometry change.
+- Factory FS finalized: presets 1-4 unchanged, 5 = Setup card (bri 220),
+  9 = First Boot playlist (dog once 4s -> holds 5). setup1-3.gif and
+  qr.gif removed, setup.gif = cardB9. Pre-flight workflow verdict on the
+  presets file: CLEAN, every behavior source-proven (playlist.cpp repeat
+  and end paths, Image effect filename convention, bri handoff 128->220).
+- Stale-doc fixes shipped: wiki no-wifi page rewritten for the card,
+  apollo/README.md factory-FS description corrected, QA D13 wording, D24
+  flipped to ANSWERED (HOTSPOT wording kept by Justin over tester
+  feedback, flagged and accepted).
+- BUNDLE b8 BUILT, NOT GATED YET: M-1_full_install.bin sha256
+  0b92d55af50bca103a4aaa9d3afd4e2b54041d60cd0f09fe24cec211dc8733a3
+  (b7 app byte-identical + new FS; M-1_ota.bin unchanged from b7
+  6853ce51...). Artifacts in apollo/out/ ONLY; deliberately NOT copied to
+  Downloads until the gates pass, so ungated bins cannot be distributed
+  by accident. OTA note: existing units will NOT receive the new card via
+  OTA (filesystem only ships in the full install).
+
+## NEXT SESSION, first actions (everything staged)
+1. Virgin-boot gate: full erase + flash apollo/out/M-1_full_install.bin
+   on the test unit (2f5e50, on USB); watch dog 4s -> cardB9 hold.
+2. D13 AP walkthrough with Justin's phone (checklist in QA_CHECKLIST.md,
+   now includes the freeze-thaw raw evidence capture rows).
+3. On PASS: bundle b8 versioned filenames + sha256 to ~/Downloads, update
+   QA_CHECKLIST results, then publish GitHub release m1-b8 (Justin
+   pre-approved post-gate publish; commands in apollo/RELEASE_DRAFT.md,
+   fill real sha256, target the b8 commit).
+4. Then: demo unit 2f5f7c (never enumerated on USB; check cable/power),
+   D12 restore drill + flash b8 + provision + D11 HA discovery.
+5. Remaining QA: D3 FS-reset button, D5 current draw, D6 ghosting, D7
+   driver id. Tester thread replies ready in this file. Upstream PRs
+   ready in apollo/UPSTREAM_PRS_READY.md (humans open).

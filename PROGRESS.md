@@ -133,3 +133,11 @@ paths hit the 302 catch-all; OnePlus 9-ish on b7 confirms; no action).
 Test unit 2f5e50 runs b7 + QR-test presets; demo unit has a USB
 power/cable mystery pending. b8 waits on the D24 card decision, then the
 single virgin + AP walkthrough gate (Justin approved gating once on b8).
+
+## Bundle b8 built 2026-07-16, GATES PENDING (see BENCH_SESSION_POSTB7.md day 2)
+D24 closed on glass: single static setup card (cardB9: steps on top, 21px
+1-LED-per-module QR below, bri 220, scan-verified reliable by Justin).
+FS-only change: b8 app = b7 app byte-identical. full_install sha256
+0b92d55a...; artifacts in apollo/out/ only, NOT distributed until the
+virgin-boot + D13 walkthrough gates pass. Release publish pre-approved
+for after the gates (apollo/RELEASE_DRAFT.md).

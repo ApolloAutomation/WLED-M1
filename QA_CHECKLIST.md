@@ -279,7 +279,7 @@ unit. This is the D20 acceptance: AP mode is a first-class destination.
 - [ ] http://4.3.2.1/pixelforge.htm loads; upload a GIF from the phone;
       it plays on the panel.
 - [ ] Nothing greyed out, no silent failures, no internet ever involved.
-- [ ] Then provision WiFi; reboot; tour is GONE, dog boots (D23 self-
-      correction); all of the above still works over the LAN.
+- [ ] Then provision WiFi; reboot; setup card is GONE, dog boots (D24
+      self-correction); all of the above still works over the LAN.
 2026-07-14/15 session: ALL ROWS VERIFIED by Justin on hardware (phone,
 data on) except the final full pass which runs on the fresh-flash gate.

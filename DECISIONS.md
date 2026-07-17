@@ -276,15 +276,21 @@ code; revisit only with a short redirect).
 
 ## Post-b7 session decisions (2026-07-15)
 
-### D24. PENDING: first-boot setup becomes ONE static card (tester feedback)
-Agreed direction (Justin, this session): single static page instead of the
-D23 playlist tour; layout = two-line header "1 JOIN WIFI / APOLLO M-1",
-QR, bottom line "2 SCAN OR 4.3.2.1" (step numbering and wording his);
-implementation FS-only (preset 9 swap, FACTORY_SIGNPOST hook untouched).
-OPEN HALF: keep the QR (best-effort; glass-proven intermittent at best in
-lit rooms even at the optimum: inverted, 2px modules, on-panel quiet zone,
-bri 220) or drop it for a large-text card. Evidence and recommendation in
-BENCH_SESSION_POSTB7.md. Decide before b8.
+### D24. ANSWERED (Justin, 2026-07-16, on glass): one static setup card WITH QR
+Ships in b8. Boot while WiFi unconfigured: dog once for 4 s (playlist
+repeat 1), then the static setup card holds forever (preset 9 end -> 5).
+Card (setup.gif, generator card_B9): STEP 1 / JOIN APOLLO M-1 /
+WIFI HOTSPOT / STEP 2 / SCAN QR BELOW / OR GO TO 4.3.2.1, QR at the
+BOTTOM so nobody scans before joining (Justin's order-of-operations call).
+QR: 21x21 px, ONE LED per module, inverted, ECC Q, 4-module quiet zones,
+card brightness 220. The 1-LED-per-module code scans RELIABLY on glass at
+bri 220 with the large quiet zone (Justin, iPhone + Android, lit room);
+the earlier 2px-minimum prediction was refuted by test. Customers keep
+preset 5 "Setup" to recall the card. Iterations B2-B9 in
+apollo/bench/gen_setup_card.py; evidence in BENCH_SESSION_POSTB7.md.
+Wording note: "HOTSPOT" kept by Justin's explicit choice despite tester
+feedback that the word confuses newcomers (flagged, accepted). Supersedes
+D23 (the 5-frame tour).
 
 ### D25. Release distribution: GitHub releases + same-origin flasher hosting
 Justin approved replacing the Google Drive link with a GitHub release on
