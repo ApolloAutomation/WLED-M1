@@ -141,3 +141,14 @@ FS-only change: b8 app = b7 app byte-identical. full_install sha256
 0b92d55a...; artifacts in apollo/out/ only, NOT distributed until the
 virgin-boot + D13 walkthrough gates pass. Release publish pre-approved
 for after the gates (apollo/RELEASE_DRAFT.md).
+
+## Bundle b8 (2026-07-16, commit f654b57b): GATED AND SHIP-READY
+Full pass: virgin boot (full erase, zero panics), Mac AP battery (routes,
+byte-identical factory presets, offline pixelpaint, captive probes, upload,
+freeze-thaw raw evidence), and Justin's complete D13 phone walkthrough on
+unit 2f5e50 (rev6, no mic; Sound Bars applies-idle as expected, reactivity
+inherited from the 2026-07-15 mic-unit verification). Contents: D24 static
+setup card (cardB9, 21px one-LED-per-module QR, bri 220), D26 clean AP SSID
+"Apollo M-1", dog-once boot playlist, Setup preset in the customer list.
+full_install sha256 68cbf264..., ota d51c5cae... Distributed to Downloads
+with versioned filenames + m1_b8_sha256.txt. SHIP-READY RE-ASSERTED.

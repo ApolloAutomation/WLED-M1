@@ -15,8 +15,9 @@ one-bar Sound Bars; client-side causes proven: Android cellular routing,
 captive mini-browser, app file-chooser MIME bug) and added the
 connectivity-probe answers (D22) plus the on-panel setup tour (D23).
 A permanent AP walkthrough gate now lives in QA_CHECKLIST.md. SHIP-READY
-is re-assertable only after the fresh-flash gate + AP walkthrough pass on
-the final artifact.
+was RE-ASSERTED 2026-07-16 for bundle b8 (commit f654b57b): fresh-flash
+gate + full AP walkthrough passed on the final artifact, which ships the
+D24 static setup card and the D26 clean AP SSID.
 
 ## The audit numbers first (TASK.md asked for before and after)
 

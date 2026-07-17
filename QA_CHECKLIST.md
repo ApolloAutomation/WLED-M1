@@ -283,3 +283,15 @@ unit. This is the D20 acceptance: AP mode is a first-class destination.
       self-correction); all of the above still works over the LAN.
 2026-07-14/15 session: ALL ROWS VERIFIED by Justin on hardware (phone,
 data on) except the final full pass which runs on the fresh-flash gate.
+2026-07-16 b8 GATE: FULL PASS on the final artifact (full_install sha256
+68cbf264..., app f654b57b, unit 2f5e50 rev6-no-mic, virgin boot after
+full erase). Panel: dog 4s then the D24 static setup card at bri 220,
+reset returns to it. Clean SSID "Apollo M-1" joined (D26). Mac battery:
+all routes 200, factory presets byte-identical on-device, offline
+pixelpaint libs, captive probes 204/Success, upload round-trip, and the
+freeze-thaw raw evidence captured live (frz False -> paint True -> fx
+change False; baseline/b8-gate/). Justin's phone walkthrough: ALL ROWS
+PASS ("everything looks great"), with Sound Bars verified as
+applies-cleanly-idle on this no-mic unit (reactivity row inherited from
+the 2026-07-15 glass verification on the mic-equipped unit; audio code
+untouched b7->b8). SHIP-READY RE-ASSERTED for bundle b8.
