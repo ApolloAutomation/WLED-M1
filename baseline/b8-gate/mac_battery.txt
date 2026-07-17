@@ -1,9 +1,9 @@
-=== b8 gate battery Thu Jul 16 21:54:01 EDT 2026 ===
-joined Apollo M-1-2f5e50 ip=4.3.2.2
+=== b8 gate battery Thu Jul 16 22:03:42 EDT 2026 ===
+joined Apollo M-1 ip=4.3.2.2
 PROBE [root] http://4.3.2.1/ -> 200 1540
 PROBE [info] http://4.3.2.1/json/info -> 200 1519
 PROBE [state] http://4.3.2.1/json/state -> 200 594
-PROBE [cfg] http://4.3.2.1/json/cfg -> 200 2592
+PROBE [cfg] http://4.3.2.1/json/cfg -> 200 2585
 PROBE [presets] http://4.3.2.1/presets.json -> 200 5774
 PROBE [setup-gif] http://4.3.2.1/setup.gif -> 200 619
 PROBE [dog-gif] http://4.3.2.1/apollo_dog.gif -> 200 19029
@@ -18,5 +18,5 @@ presets.json BYTE-IDENTICAL to factory file
 PROBE [upload] -> 200, readback -> 200 1627
 FREEZE-THAW: before=False after-paint=True after-fx-change=False 9 (want False True 'False 9')
 restored preset 9 (first boot playlist)
-=== battery done Thu Jul 16 21:54:14 EDT 2026 ===
+=== battery done Thu Jul 16 22:03:54 EDT 2026 ===
 REJOIN FAILED
