@@ -359,3 +359,20 @@ for the findings ledger if visible.
 - Fault decoder additions earned on glass: single bright vertical edge
   column = wrong clkphase; rotated panel dark with downstream panels dead =
   ribbon in OUT header.
+
+## Seam line: CLOSED as panel-batch silicon behavior (2026-07-17 night)
+Final lever tested: I2S clock 4MHz (guarded hook WLED_HUB75_I2S_SPEED added
+to bus_manager; lib default is already 8MHz, its slowest enum: the "HZ_10M"
+enum value is literally 8000000 in this lib version). Result: line
+UNCHANGED, and notably zero flicker at 4MHz. COMPLETE ELIMINATION RECORD:
+brightness 40-220, aggregate load, latch_blanking 3, clock phase (both
+edges), clock speed 8->4MHz: all no effect. The line is intrinsic to this
+ICN2037BP batch's last-scan-address behavior when both seam rows carry
+data. DECISION (Justin): replace panels. Sourcing guidance: ask the vendor
+for the driver IC per batch; ICN2037BP = this artifact on 2x2 seams;
+support colleague's line-free batch IC still to be identified.
+Rig restored to stock b8 app (OTA d51c5cae, verified), dog full canvas.
+Both tuning hooks (latch blanking, i2s speed) kept in bus_manager: inert
+without build flags, documented for future batch triage. wled00 delta now
++188/-16 vs base (two guarded hooks added this session, zero effect on
+shipping builds).

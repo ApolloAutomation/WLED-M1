@@ -822,6 +822,9 @@ BusHub75Matrix::BusHub75Matrix(const BusConfig &bc) : Bus(bc.type, bc.start, bc.
 #ifdef WLED_HUB75_LATCH_BLANKING
   mxconfig.latch_blanking = WLED_HUB75_LATCH_BLANKING; // build-flag tuning hook: anti-ghosting on multi-panel chains (seam scan-row artifact, BENCH_SESSION_POSTB7.md)
 #endif
+#ifdef WLED_HUB75_I2S_SPEED
+  mxconfig.i2sspeed = (HUB75_I2S_CFG::clk_speed) WLED_HUB75_I2S_SPEED; // build-flag tuning hook: raw Hz, for driver-IC batches sensitive to clock rate (lib default 8MHz)
+#endif
   // mxconfig.i2sspeed = HUB75_I2S_CFG::HZ_10M;  // experimental - 5MHZ should be enugh, but colours looks slightly better at 10MHz
   // mxconfig.min_refresh_rate = 90;
   // mxconfig.min_refresh_rate = 120;
