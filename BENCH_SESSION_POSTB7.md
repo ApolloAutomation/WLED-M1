@@ -326,3 +326,36 @@ for the findings ledger if visible.
 - Library off-by-one (odd-row getCoords, DMA x 1..128) remains UNVERIFIED
   on glass: look for a 1px bottom-row shift / stale first column of chain
   panel 1 during future chain work. virtual_sim.py committed.
+
+## 2x2 seam-line hunt part 2 + mapping closure (2026-07-17 evening)
+- Corner probe (post OUT/IN fix) finally verified: ALL FOUR quadrants correct
+  (red TL, green TR, blue BL, white BR, outer corners). Justin's arrangement
+  (controller into TOP-RIGHT, top row upright, bottom row rotated 180) is
+  THE correct recipe for the shipped mapper. TWO doc corrections landed:
+  (1) the wiki 2x2 serpentine was INVERTED (said controller bottom-right);
+  fixed with a glass-verified note. (2) virtual_sim.py chain numbering was
+  backwards (first panel from controller = HIGHEST DMA columns, end of the
+  shift chain); corrected, sim now matches glass exactly.
+- Driver IC identified (D7 partial): ICN2037BP on Justin's 2x2 batch.
+  Support colleague's 2x2 shows NO seam line on identical firmware =
+  panel-batch variance. His chip marking still wanted for the sourcing table.
+- Seam line elimination trail: brightness-independent (visible at bri 40),
+  load-independent (thin band at quarter current shows it), latch_blanking=3
+  no effect (guarded hook added to bus_manager, inert without build flag),
+  clock PHASE no effect (and wrong phase adds a distinctive one-column
+  vertical edge artifact: reverted; that artifact documented for the fault
+  decoder). Line requires BOTH seam-adjacent rows lit (= both panels' last
+  scan address carrying data). Remaining lever: I2S clock speed (ICN2037
+  documented sensitivity). Status: PARKED pending Justin's call; cosmetic,
+  batch-specific, single-panel product unaffected.
+- FIRMWARE QUIRK FOUND (upstream findings candidate): the HUB75 "Reversed"
+  (clkphase) checkbox does NOT persist through LED-settings save or JSON
+  cfg POST: BusHub75Matrix consumes bc.reversed for mxconfig.clkphase but
+  never stores it in the Bus base (ctor passes only type/start/autoWhite),
+  so every save re-serializes rev=false from the live bus. Workaround that
+  works: edit cfg.json on the FS via /upload + reboot. Also: /json/cfg
+  LIVE view reports rev=false even when the file (and active clkphase) is
+  true: cosmetic but misleading.
+- Fault decoder additions earned on glass: single bright vertical edge
+  column = wrong clkphase; rotated panel dark with downstream panels dead =
+  ribbon in OUT header.

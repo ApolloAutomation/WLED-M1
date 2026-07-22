@@ -819,6 +819,9 @@ BusHub75Matrix::BusHub75Matrix(const BusConfig &bc) : Bus(bc.type, bc.start, bc.
   // Other possible shiftreg drivers: HUB75_I2S_CFG::FM6126A, HUB75_I2S_CFG::ICN2038S, HUB75_I2S_CFG::MBI5124, HUB75_I2S_CFG::DP3246
 
   // mxconfig.latch_blanking = 3;
+#ifdef WLED_HUB75_LATCH_BLANKING
+  mxconfig.latch_blanking = WLED_HUB75_LATCH_BLANKING; // build-flag tuning hook: anti-ghosting on multi-panel chains (seam scan-row artifact, BENCH_SESSION_POSTB7.md)
+#endif
   // mxconfig.i2sspeed = HUB75_I2S_CFG::HZ_10M;  // experimental - 5MHZ should be enugh, but colours looks slightly better at 10MHz
   // mxconfig.min_refresh_rate = 90;
   // mxconfig.min_refresh_rate = 120;

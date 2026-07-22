@@ -21,7 +21,10 @@ def get_coords(vx, vy):             # rotation 0, CHAIN_TOP_RIGHT_DOWN
     return x, y
 
 def chain_panel(dma_x):
-    return dma_x // PW + 1          # 1-indexed position from the controller
+    # GLASS-CORRECTED 2026-07-17: the first panel from the controller sits at
+    # the END of the shift chain = HIGHEST DMA columns. Verified with a
+    # four-color corner probe on the 2x2 rig (BENCH_SESSION_POSTB7.md).
+    return (DMARESX - 1 - dma_x) // PW + 1  # 1-indexed position from the controller
 
 quads = {"canvas TOP-LEFT": (16, 16), "canvas TOP-RIGHT": (112, 16),
          "canvas BOT-LEFT": (16, 112), "canvas BOT-RIGHT": (112, 112)}

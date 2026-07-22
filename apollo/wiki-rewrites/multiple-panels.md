@@ -85,15 +85,19 @@ count is identical; only the arrangement and two settings change.
 The chain order does not change - the same cables stay in the same ports. Take
 the row and stack it:
 
-- **Top row, mounted upright**: the 3rd panel from the controller goes top-left,
-  the 4th (last) panel goes top-right.
+- **Top row, mounted upright**: the 1st panel (the one cabled to the
+  controller) goes top-right, the 2nd goes top-left.
 - **Bottom row, each rotated 180 degrees in place** (spin it like a steering
-  wheel - do not flip it face-to-back): the 2nd panel goes bottom-left, the 1st
-  panel (the one cabled to the controller) goes bottom-right.
+  wheel - do not flip it face-to-back): the 3rd panel goes bottom-left, the
+  4th (last) panel goes bottom-right.
 
-The cable path ends up as a serpentine: controller into the bottom-right panel,
-along the bottom row, up, then along the top row. The bottom panels are upside
-down on purpose - the firmware knows and draws them correctly.
+The cable path ends up as a serpentine: controller into the top-right panel,
+along the top row, down, then along the bottom row. The bottom panels are
+upside down on purpose - the firmware knows and draws them correctly. When a
+rotated panel is in your hands, double-check the ribbon goes into its IN
+header: rotating the panel swaps where IN and OUT sit.
+(Corrected 2026-07-17: verified on glass with a four-color corner probe; the
+earlier draft had the serpentine direction inverted.)
 
 ### Settings (two steps, one reboot each)
 
