@@ -268,3 +268,34 @@ the cardB layout + step numbering + "scan or url" wording (his messages).
 - Unit roster: 6d0a40 test #1 (mic-equipped, ran the b7 tour),
   2f5f7c demo (mic-equipped, USB enumeration mystery unresolved),
   2f5e50 test #2 (rev6 updated, NO mic addon, current gate unit).
+
+## 2x2 grid session (2026-07-16 late): mapping PROVEN, arrangement vindicated
+Justin stacked four panels 2x2 (128x128) per a rearrangement diagram from an
+earlier planning session; panel showed top half only, banded. Software side
+AUDITED CLEAN over LAN (bus [64,64,4,2,2] type 65, one 128x128 2D panel,
+no ledmap, 27fps, healthy heap). Quadrant color test painted the canvas;
+glass showed canvas-TL red on the TL panel and canvas-TR green on the TR
+panel (both BANDED), bottom row fully dark.
+Rebuilt the lost D10 virtual-mapping simulator from the vendored library
+source and COMMITTED it (apollo/bench/virtual_sim.py). Proven mapping for
+CHAIN_TOP_RIGHT_DOWN as configured by bus_manager (rows=2, cols=2):
+  chain 1 (first from controller) = canvas BOTTOM-RIGHT, rotated 180
+  chain 2 = canvas BOTTOM-LEFT, rotated 180
+  chain 3 = canvas TOP-LEFT, upright
+  chain 4 = canvas TOP-RIGHT, upright
+This matches the wiki recipe AND Justin's diagram given his cabling
+(controller enters at the YELLOW panel). The observed correct content on
+chain 3/4 CONFIRMS the arrangement is right; the assistant's earlier
+"inverse arrangement" call assumed controller-at-green and was WRONG.
+VERDICT: chain panels 1-2 are dark while demonstrably passing data, and
+the lit pair shows banding = POWER STARVATION signature (bottom row LED
+supply loose/insufficient; whole-rig-on-USB suspected). Wiki rule stands:
+four panels need a real 5V supply (12A+ for bright content), never USB.
+Justin is swapping cables/power. Verification: the four-color quadrant
+test is left running; success = solid red TL, green TR, blue BL, amber BR,
+no bands.
+LIB WART (log for upstream findings): legacy getCoords odd-row branch has
+an off-by-one (DMA x 1..128 instead of 0..127): bottom row shifts one
+column and its first column lands on the next panel; 16320/16384 unique
+cells in sim. Cosmetic 1px seam; check on glass once powered; candidate
+for the findings ledger if visible.
