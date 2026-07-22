@@ -150,8 +150,18 @@ RESULT 2026-07-12: PASS.
       load would show here. PENDING
 
 ## D6. Ghosting
-- [ ] Full white at 255: look for ghosting/smearing. If present, add
-      -D WLED_HUB75_MAX_BRIGHTNESS=239 (upstream-documented fix) and rebuild. PENDING
+- [ ] Full white at 255 on the SINGLE-panel product: look for ghosting/smearing.
+      If present, add -D WLED_HUB75_MAX_BRIGHTNESS=239 (upstream-documented fix)
+      and rebuild. STILL PENDING for the shipping single-panel config.
+- [x] FIRST DATA POINT 2026-07-17, 4-panel 2x2 chain (128x128, unit 2f5e50,
+      b8): faint RED line on the scan-boundary row at the panel seam plus red
+      trailing fringes on bright content edges, visible at bri >= 100 on white
+      and on GIF content, GONE on all-black (classic parasitic ghosting;
+      red shows first due to lowest LED forward voltage). Chains load the
+      address lines 4x, so ghosting appears earlier than single panel (which
+      has never shown it in any session). Mitigations: cap rig brightness, or
+      a future build with WLED_HUB75_MAX_BRIGHTNESS=239 (firmware change =
+      full gates; NOT taken for b8).
 
 ## D7. Driver chip
 - [ ] If the panel is dark or colors look pastel with everything else correct:

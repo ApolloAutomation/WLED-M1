@@ -40,6 +40,15 @@ scrolling text, and Pixel Paint content all span the four panels continuously.
 
 ### If the picture looks wrong
 
+- **Some panels stay dark and the lit ones look interleaved or banded**: one of
+  the rotated panels has its ribbon in the OUT header instead of IN. On a
+  180-degree rotated panel the two headers swap places; the chain silently ends
+  (or scrambles) at that panel. Follow the arrows printed on the panel back:
+  data always enters at IN.
+- **A faint red line at the seam between panel rows, or red fringes trailing
+  bright content**: ghosting. Four chained panels load the drive lines harder
+  than one, so it appears at lower brightness than on a single panel. It is
+  harmless; lower the global brightness a step if it bothers you.
 - **Content repeats on every panel, or thin lines break into short dashes**: the
   2D Configuration lists four separate panels. Change it to one 256x64 panel and
   reboot.

@@ -299,3 +299,30 @@ an off-by-one (DMA x 1..128 instead of 0..127): bottom row shifts one
 column and its first column lands on the next panel; 16320/16384 unique
 cells in sim. Cosmetic 1px seam; check on glass once powered; candidate
 for the findings ledger if visible.
+
+## 2x2 rig resolution (2026-07-17): OUT-header trap + ghosting data point
+- ROOT CAUSE of the dark bottom row: the rotated bottom-right panel had its
+  ribbon plugged into the OUT header (180-degree rotation swaps the header
+  positions). The chain died there; the impossible-looking content on the
+  earlier photos (top-row quadrants "correct" under controller-at-green) is
+  explained by the backwards-connected panel feeding signals into output
+  buffers: garbage topology, not a mapper bug. With the ribbon moved to IN,
+  ALL FOUR panels display correctly: the shipped VirtualMatrixPanel mapping
+  (sim: chain 1 = canvas bottom-right rotated 180, 2 = bottom-left rotated,
+  3 = top-left upright, 4 = top-right upright) is CONFIRMED WORKING on
+  glass with controller at GREEN top-right... which per the sim means the
+  physically displayed arrangement matches the recipe serpentine. Wiki
+  multiple-panels page gained the IN/OUT troubleshooting bullet (first-line
+  diagnostic) and a chain-ghosting note.
+- GHOSTING (D6 first data point): faint red scan-boundary line at the row
+  seam + red fringes on bright edges, bri >= 100, gone on black. Classic
+  parasitic ghosting, amplified by 4-panel address-line loading. QA D6
+  updated; single-panel product unaffected in all sessions to date.
+  Mitigation options recorded (brightness cap now, MAX_BRIGHTNESS=239
+  build later if desired: full gates).
+- Bench technique gold: the corner-probe + auto-reapply watcher pattern
+  (probe_reapply.sh in scratchpad; pattern documented here): paint low-power
+  diagnostics that survive the operator's power cycles via a LAN watcher.
+- Library off-by-one (odd-row getCoords, DMA x 1..128) remains UNVERIFIED
+  on glass: look for a 1px bottom-row shift / stale first column of chain
+  panel 1 during future chain work. virtual_sim.py committed.
