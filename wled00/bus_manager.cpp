@@ -825,6 +825,9 @@ BusHub75Matrix::BusHub75Matrix(const BusConfig &bc) : Bus(bc.type, bc.start, bc.
 #ifdef WLED_HUB75_I2S_SPEED
   mxconfig.i2sspeed = (HUB75_I2S_CFG::clk_speed) WLED_HUB75_I2S_SPEED; // build-flag tuning hook: raw Hz, for driver-IC batches sensitive to clock rate (lib default 8MHz)
 #endif
+#ifdef WLED_HUB75_DRIVER_ICN2038S
+  mxconfig.driver = HUB75_I2S_CFG::ICN2038S; // build-flag tuning hook: send FM6124-family init registers (gain + output enable) for ICN203x-family panel batches
+#endif
   // mxconfig.i2sspeed = HUB75_I2S_CFG::HZ_10M;  // experimental - 5MHZ should be enugh, but colours looks slightly better at 10MHz
   // mxconfig.min_refresh_rate = 90;
   // mxconfig.min_refresh_rate = 120;

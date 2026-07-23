@@ -376,3 +376,32 @@ Both tuning hooks (latch blanking, i2s speed) kept in bus_manager: inert
 without build flags, documented for future batch triage. wled00 delta now
 +188/-16 vs base (two guarded hooks added this session, zero effect on
 shipping builds).
+
+## New 2x2 rig (2026-07-22): controller 6d0a44 + new panel set; tuning map final
+- New controller (6d0a44, production sibling of 6d0a40) + four NEW panels,
+  configured 2x2 by Justin, stock b8: the red seam line PERSISTS (band test).
+  Support colleague's rig: IDENTICAL arrangement (confirmed), NO line
+  (video-verified band test). Geometry theory dead. Controllers exonerated
+  (two different units/likely revs both show it). Panel chip marking of the
+  NEW set still pending: if ICN2037BP again, both Justin sets = one silicon
+  batch and sourcing is the answer (spec FM6126A/ICN2038S-class next order).
+- ICN2038S driver-init test (fm6124init gain registers): line "maybe
+  slightly fainter" = inconclusive, not retained.
+- FLICKER TUNING TRIANGLE, mapped on glass (16384 px chain, this lib):
+  * stock 8MHz: mild flicker, FULL depth, snappy AR, ~27-43 fps: KEEPER.
+  * 4MHz: flicker eliminated, fps up on light content, BUT visible gradient
+    banding AND AudioReactive effects "very slow and laggy" (depth-reduction
+    regression, reconfirming the D10 do-not-port-depth-table lesson).
+    Rejected.
+  * 15MHz: HARD flicker on this hardware. Rejected immediately.
+  No free lunch: the depth/refresh/bandwidth triangle on this driver offers
+  no all-win point; stock is the best compromise. WLED_HUB75_I2S_SPEED and
+  WLED_HUB75_LATCH_BLANKING and WLED_HUB75_DRIVER_ICN2038S hooks remain in
+  bus_manager (inert, documented) for future batches.
+- Rig state: stock b8 (OTA d51c5cae verified), dog full canvas, 2x2 config
+  correct. Red line stands as the known blemish pending chip data.
+- Ops note: mid-saga the .192 rig went dark because Justin swapped in the
+  new controller; the "Apollo M-1" AP on the air was the NEW unprovisioned
+  unit (my AP rescue joined it and read "no saved networks": correct, not
+  corruption). Unit roster: 6d0a44 = new 2x2 rig controller (has mic per AR
+  testing), provisioned, was at 192.168.1.118 (router rotates leases).
