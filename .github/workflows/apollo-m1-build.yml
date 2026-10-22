@@ -1,0 +1,48 @@
+name: Apollo M-1 build
+
+# Builds the apollo_m1 env (the firmware Apollo ships) for every change to the product
+# branch and every pull request into it. Upstream's WLED CI does not build this env.
+# No secrets are used and the token is read-only. The ELF and map are kept for 90 days.
+on:
+  push:
+    branches: [m1-wled-update, main]
+  pull_request:
+    branches: [m1-wled-update, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: apollo-m1-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - run: npm ci
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+      - name: Build apollo_m1
+        run: pio run -e apollo_m1
+      - name: Resolved libraries
+        run: pio pkg list -e apollo_m1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apollo_m1-${{ github.sha }}
+          retention-days: 90
+          path: |
+            .pio/build/apollo_m1/firmware.bin
+            .pio/build/apollo_m1/firmware.elf
+            .pio/build/apollo_m1/firmware.map
+            .pio/build/apollo_m1/bootloader.bin
+            .pio/build/apollo_m1/partitions.bin
