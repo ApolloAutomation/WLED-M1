@@ -137,9 +137,10 @@ drill (D12).
    manifest + M-1_full_install.bin, flip the URLs. This becomes the customer
    flash path (ESP Web Tools); until then, esptool erase-flash + write_flash
    0x0 (commands in the multiple-panels/reflash docs and PROGRESS.md).
-4. Open the upstream PR (apollo/UPSTREAM_PR.md) and file the findings
-   (apollo/UPSTREAM_FINDINGS.md: 8 WLED items, 2 of them remote-crash class
-   and already fixed in this fork, + 3 HUB75-lib observations).
+4. CANCELLED 2026-10-22: the upstream PR and findings filing. Nothing goes to
+   upstream WLED (see CLAUDE.md). apollo/UPSTREAM_FINDINGS.md stays as internal
+   notes (8 WLED items, 2 of them remote-crash class and already fixed in this
+   fork, + 3 HUB75-lib observations).
 5. Remaining QA when parts allow: D5/D6/D7, D9 rev4, D11, D12, FS-reset
    button (QA_CHECKLIST.md).
 6. EUPL-1.2: fork is public, LICENSE intact; put the source link wherever
