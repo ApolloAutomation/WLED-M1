@@ -1,6 +1,6 @@
 #!/bin/bash
 # Self-contained AP probe: join hotspot, enumerate routes, rejoin home WiFi. NO internet during run.
-HOME_SSID="JT 5G"
+HOME_SSID="${HOME_SSID:?set HOME_SSID to the WiFi network to rejoin after the probe}"
 AP_SSID="Apollo M-1-6d0a40"
 OUT=/Users/justinapollo/Code/ApolloAutomation/WLED-M1/baseline/ap-firstrun
 LOG="$OUT/route_battery.txt"
