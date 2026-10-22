@@ -14,7 +14,7 @@ The Apollo rules below take precedence over anything inherited from upstream.
 - The upstream PR drafts in apollo/UPSTREAM_*.md and the upstream PR plans in older session
   notes were WITHDRAWN on 2026-10-22. Do not act on them.
 - AGENTS.md says pull requests target upstream's `main`. Here, pull requests target this
-  repository's `main`.
+  repository's product branch (see Branches below).
 - Local clones keep upstream as a fetch-only remote named `wled` (not `upstream`, which gh
   would prefer over origin) with its push URL disabled, and fetch upstream tags into
   `refs/remotes/wled-tags/` so `git push --tags` can never publish them.
@@ -22,17 +22,21 @@ The Apollo rules below take precedence over anything inherited from upstream.
 ## Taking upstream changes
 
 - Merge an upstream release tag (for example v16.0.2) on a sync branch, then open a PR into
-  `main`. Never merge upstream `main` (17.0.0-dev on ESP-IDF 5; a 17.x move is its own port
-  project).
+  the product branch. Never merge upstream `main` (17.0.0-dev on ESP-IDF 5; a 17.x move is
+  its own port project).
 - Never rebase or force-push published branches. Never run `git push --tags`; push only the
   new `m1-bN` tag.
 
 ## Branches
 
-- `main`: the M-1 product (since 2026-10-22). Changes go through a pull request.
-- `m1-wled-update`: the former product branch, frozen read-only so old links still resolve.
-- `archive/main-upstream-snapshot-2026-07`: the previous `main` (an upstream 17.0.0-dev
-  snapshot plus the installer workflow), kept for reference.
+- `m1-wled-update`: the M-1 product branch today (WLED v16.0.1 + M-1 work, tag m1-b8).
+  Deletion and force-push are blocked.
+- `main`: still the 2026-07 upstream 17.0.0-dev snapshot plus the install-page workflow.
+  Do not build or branch from it. It is due to become the product branch (pointed at
+  m1-wled-update's history), which needs an org owner to switch the default branch for
+  the move; until then the install page deploys from it unchanged.
+- `archive/main-upstream-snapshot-2026-07`: a copy of the current `main`, kept for when
+  `main` moves.
 
 ## Shipping: keep the install page and the flash script working
 
