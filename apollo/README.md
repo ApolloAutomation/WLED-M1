@@ -1,7 +1,7 @@
 # Apollo M-1 build and release files
 
 This directory holds everything Apollo-specific that is not part of the WLED source
-tree itself.
+tree itself. Rules for branches, upstream WLED and releases: CLAUDE.md in the repo root.
 
 ## Contents
 - fs/cfg.json - known-good factory configuration. Mirrors the compile-time defaults of

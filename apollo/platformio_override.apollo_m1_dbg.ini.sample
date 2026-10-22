@@ -1,0 +1,14 @@
+; Bench-only debug variant of the M-1 build. To use it, copy this file to
+; platformio_override.ini in the repository root (that name is gitignored) and run
+;   pio run -e apollo_m1_dbg
+; Same app as apollo_m1, but the Serial console runs on the native USB port and
+; WLED_DEBUG is on, so DEBUGBUS output is visible. Never ship this build.
+; Note: build_unflags replaces rather than merges, so it repeats apollo_m1's unflags.
+[env:apollo_m1_dbg]
+extends = env:apollo_m1
+build_unflags = ${common.build_unflags}
+  -D WLED_RELEASE_NAME=\"ESP32-S3_16MB_opi_HUB75\"
+  -D ARDUINO_USB_CDC_ON_BOOT=0
+build_flags = ${env:apollo_m1.build_flags}
+  -D ARDUINO_USB_CDC_ON_BOOT=1
+  -D WLED_DEBUG

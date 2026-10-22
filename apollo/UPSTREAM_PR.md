@@ -1,3 +1,7 @@
+> **WITHDRAWN 2026-10-22.** Apollo never pushes to, opens pull requests or issues
+> against, or comments on upstream WLED. This file is kept as internal engineering
+> notes only. Do not act on it. See CLAUDE.md.
+
 # Upstream PR draft (prepared, NOT opened)
 
 Branch: hub75-first-boot-defaults (single commit 42c58077 off upstream main c7d41a8e,

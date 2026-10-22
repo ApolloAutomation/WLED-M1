@@ -1,3 +1,7 @@
+> **WITHDRAWN 2026-10-22 as an upstream submission.** Apollo never pushes to, opens
+> pull requests or issues against, or comments on upstream WLED. The findings stay
+> here as internal engineering notes. See CLAUDE.md.
+
 # Upstream findings from the D10 four-panel chain sessions (2026-07-12)
 
 Everything below was found while bringing a 4x 64x64 HUB75 chain (256x64,

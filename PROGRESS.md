@@ -30,9 +30,12 @@ BENCH_SESSION_D10.md (chains), BENCH_SESSION_AP.md (AP mode + first-run).
 
 ## Canonical locations
 - THIS repo: /Users/justinapollo/Code/ApolloAutomation/WLED-M1 = clone of
-  ApolloAutomation/WLED-M1 (public GitHub fork of wled/WLED). Branch m1-wled-update
-  = all work, PUSHED through 32cda73d. Branch hub75-first-boot-defaults = prepared
-  upstream PR, single commit, PUSHED. Never push to main. Never force push.
+  ApolloAutomation/WLED-M1 (public GitHub fork of wled/WLED). UPDATED 2026-10-22:
+  `main` is now the M-1 product branch (it took over m1-wled-update's history);
+  m1-wled-update is frozen read-only; the old main is kept as
+  archive/main-upstream-snapshot-2026-07; hub75-first-boot-defaults was deleted
+  (upstream PRs withdrawn). Changes reach main through PRs. Never force push.
+  Nothing goes to upstream WLED. See CLAUDE.md.
 - Old clone /Users/justinapollo/Code/ApolloAutomation/WLED: retired source of the
   recovered work (branches apollo/m1, hub75-first-boot-defaults; its linked
   worktree ../WLED-upstream-pr belongs to it). Read-only; upstream push disabled in
