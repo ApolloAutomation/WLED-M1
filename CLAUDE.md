@@ -55,5 +55,9 @@ The Apollo rules below take precedence over anything inherited from upstream.
   consumers first.
 - Each shipped release is archived (binaries, source bundle, libraries, toolchain, debug
   symbols) in the company Google Drive under Apollo Firmware Vault/M-1/<tag>.
-- Build with env `apollo_m1`. Firmware changes need the virgin-boot gate and the
-  QA_CHECKLIST.md D13 AP walkthrough before release.
+- Build with env `apollo_m1` (its libraries are pinned in platformio.ini; keep them pinned).
+  Firmware changes need the virgin-boot gate, the QA_CHECKLIST.md D13 AP walkthrough and an
+  OTA gate before release.
+- Releases follow apollo/RELEASE_CHECKLIST.md: push the m1-bN tag first, then
+  `gh release create --verify-tag` (without it gh tags the default branch). Release
+  immutability is on, and m1-* tags cannot be moved or deleted.
