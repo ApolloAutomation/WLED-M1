@@ -29,14 +29,14 @@ The Apollo rules below take precedence over anything inherited from upstream.
 
 ## Branches
 
-- `m1-wled-update`: the M-1 product branch today (WLED v16.0.1 + M-1 work, tag m1-b8).
-  Deletion and force-push are blocked.
-- `main`: still the 2026-07 upstream 17.0.0-dev snapshot plus the install-page workflow.
-  Do not build or branch from it. It is due to become the product branch (pointed at
-  m1-wled-update's history), which needs an org owner to switch the default branch for
-  the move; until then the install page deploys from it unchanged.
-- `archive/main-upstream-snapshot-2026-07`: a copy of the current `main`, kept for when
-  `main` moves.
+- `main`: the M-1 product branch (since 2026-10-22: WLED v16.0.1 + M-1 work, tag m1-b8)
+  and the default branch. Changes go through pull requests; deletion and force-push are
+  blocked. The install page deploys from it.
+- `m1-wled-update`: the former product branch, frozen read-only at 30e8a0ed (the commit
+  `main` took over) so old links and docs that name it still resolve. Do not use it.
+- `archive/main-upstream-snapshot-2026-07` and `archive/main-before-product-2026-10-22`:
+  the previous `main` (an upstream 17.0.0-dev snapshot plus the install-page workflow),
+  frozen and kept for reference.
 
 ## Shipping: keep the install page and the flash script working
 
