@@ -424,6 +424,7 @@ class BusHub75Matrix : public Bus {
     void show() override;
     void setBrightness(uint8_t b) override;
     size_t getPins(uint8_t* pinArray = nullptr) const override;
+    uint8_t getColorOrder() const override { return _colorOrder; } // so cfg.json and the settings page keep the HUB75 order
     void deallocatePins();
     void cleanup();
 
@@ -440,6 +441,7 @@ class BusHub75Matrix : public Bus {
     unsigned _panelWidth = 0;
     uint8_t _rows = 1; // panels per row
     uint8_t _cols = 1; // panels per column
+    uint8_t _colorOrder = COL_ORDER_RGB; // normalised HUB75 color order: 1..5 as WLED, 6 = GRB (see bus_manager.cpp)
     bool _isVirtual = false; // note: this is not strictly needed but there are padding bytes here anyway
     bool _isQuadScan = false;
     CRGB *_ledBuffer = nullptr; // note: using uint32_t buffer is only 2% faster and not worth the extra RAM
