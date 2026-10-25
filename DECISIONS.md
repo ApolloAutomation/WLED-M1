@@ -333,7 +333,9 @@ an owner who already set a launch preset other than 4 gets it at once.
 Also fixes a wiped filesystem (factory reset) and a WLED-MM upgrade without
 preset 9, which now run their launch preset (0 = plain Apollo blue) instead
 of applying a missing preset 9.
-TRADEOFF, NEEDS PRODUCT SIGN-OFF: saving LED & Hardware without WiFi for
+TRADEOFF, ACCEPTED (Justin, 2026-10-25; the narrower "only when the launch
+preset number changes" was rejected because an owner could then never pick
+the dog, already the factory value, from that page): saving LED & Hardware without WiFi for
 ANY reason (for example the HUB75 color order from PR #8) counts as choosing
 the launch preset shown there, so the boot signpost stops. The card stays
 available on demand as preset 5 "Setup". There is no UI way back to the
