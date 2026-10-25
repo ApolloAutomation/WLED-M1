@@ -13,8 +13,9 @@ tree itself. Rules for branches, upstream WLED and releases: CLAUDE.md in the re
 - fs/presets.json - the factory presets: 1 Scrolling Text, 2 Apollo Blue, 3 Sound
   Bars, 4 Apollo Dog, 5 Setup (the first-boot setup card at brightness 220), and
   9 First Boot (a playlist that plays the dog once for 4 s, then holds the Setup
-  card; applied automatically at boot while WiFi is unconfigured, see
-  FACTORY_SIGNPOST_PRESET). Historical note: units shipped on WLED-MM carried no
+  card; applied at boot while WiFi is unconfigured and the owner has not chosen a
+  launch preset, see FACTORY_SIGNPOST_PRESET in [env:apollo_m1] and DECISIONS D27).
+  Historical note: units shipped on WLED-MM carried no
   presets; these first shipped with the 16.0.1 migration.
 - fs/apollo_dog.gif - the animated first-boot dog (D19).
 - fs/setup.gif - the static setup card (D24): join instructions, QR code, and the
