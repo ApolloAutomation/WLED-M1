@@ -237,6 +237,9 @@ void savePreset(byte index, const char* pname, JsonObject sObj)
 
   const char *bootPS = PSTR("bootps");
   if (!sObj[FPSTR(bootPS)].isNull()) {
+    #ifdef FACTORY_SIGNPOST_PRESET
+    if ((sObj[FPSTR(bootPS)] | bootPreset) != bootPreset) bootPresetChosen = true; // a newly ticked "Apply at boot" stops the setup signpost; re-saving the pre-ticked boot preset does not
+    #endif
     bootPreset = sObj[FPSTR(bootPS)] | bootPreset;
     sObj.remove(FPSTR(bootPS));
     configNeedsWrite = true;

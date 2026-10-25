@@ -374,6 +374,9 @@ void handleSettingsSet(AsyncWebServerRequest *request, byte subPage)
     turnOnAtBoot = request->hasArg(F("BO"));
     t = request->arg(F("BP")).toInt();
     if (t <= 250) bootPreset = t;
+    #ifdef FACTORY_SIGNPOST_PRESET
+    if (!WLED_WIFI_CONFIGURED) bootPresetChosen = true; // saving LED & Hardware without WiFi confirms "Apply preset N at boot": the setup signpost stops
+    #endif
     gammaCorrectBri = request->hasArg(F("GB"));
     gammaCorrectCol = request->hasArg(F("GC"));
     gammaCorrectVal = request->arg(F("GV")).toFloat();

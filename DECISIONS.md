@@ -311,3 +311,33 @@ its unique suffix (apollo-led-matrix-xxxxxx); only the hotspot name
 changed. FIRMWARE change: b8 app no longer byte-identical to b7, virgin
 boot + battery re-run before the walkthrough; the SSID fix reaches
 existing units via OTA, unlike the FS card.
+
+### D27. b9 (2026-10-25): a no-WiFi owner's launch preset wins over the setup signpost
+BUG in b8 (reported by Justin): with no WiFi configured, beginStrip() applied
+preset 9 (dog, then setup card) instead of ANY launch preset, so an AP-only
+owner's launch preset was saved and shown in the UI but never ran at boot.
+That contradicts D20 (full control with no network). No earlier decision or
+QA row covered it; the D13 gate never set a launch preset on an AP-only unit.
+FIX: the signpost plays only while WiFi is unconfigured AND the launch
+preset is still the factory one (cfg.json def.ps 4) AND the owner has not
+chosen one AND presets.json has a named preset 9. "Chosen" is a new
+persisted flag (cfg def.psc). It is set when Config > LED & Hardware is
+saved while no WiFi is configured (the "Apply preset N at boot" field under
+Power up), or when "Apply at boot" is ticked on a DIFFERENT preset in the
+preset editor (that box is pre-ticked on the current launch preset, so just
+re-saving the dog preset does not count). Choosing the dog itself therefore
+works through LED & Hardware. Compiled in only by [env:apollo_m1]
+(-D FACTORY_SIGNPOST_PRESET=9 -D FACTORY_BOOT_PRESET=4); other envs of the
+fork boot like upstream. No apollo/fs change, so it reaches b8 units by OTA:
+an owner who already set a launch preset other than 4 gets it at once.
+Also fixes a wiped filesystem (factory reset) and a WLED-MM upgrade without
+preset 9, which now run their launch preset (0 = plain Apollo blue) instead
+of applying a missing preset 9.
+TRADEOFF, ACCEPTED (Justin, 2026-10-25; the narrower "only when the launch
+preset number changes" was rejected because an owner could then never pick
+the dog, already the factory value, from that page): saving LED & Hardware without WiFi for
+ANY reason (for example the HUB75 color order from PR #8) counts as choosing
+the launch preset shown there, so the boot signpost stops. The card stays
+available on demand as preset 5 "Setup". There is no UI way back to the
+signpost short of a full install; do not tell owners to use launch preset
+9 for it, because 9 keeps showing the hotspot card after WiFi is set up.

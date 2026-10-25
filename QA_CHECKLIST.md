@@ -270,9 +270,10 @@ unit. This is the D20 acceptance: AP mode is a first-class destination.
       STATIC setup card (D24): STEP 1 JOIN APOLLO WIFI HOTSPOT / 21px QR /
       STEP 2 SCAN OR OPEN BROWSER TO 4.3.2.1, at brightness 220, holding
       indefinitely. NO cycling, no page turns.
-- [ ] Reset or power-cycle: dog then card return (boot preset 9 playlist
-      self-heals; customer preset list shows 5 "Setup" to recall the card).
-- [ ] Phone joins "Apollo M-1-xxxxxx" (open). Accept any "no internet -
+- [ ] Reset or power-cycle, no launch preset saved: dog then card return
+      (boot preset 9 playlist self-heals; customer preset list shows 5
+      "Setup" to recall the card).
+- [ ] Phone joins "Apollo M-1" (open). Accept any "no internet -
       stay connected?" prompt. NO captive popup should appear (D22).
 - [ ] Scan the QR off the panel with the camera app in NORMAL ROOM LIGHT:
       browser opens http://4.3.2.1 (with mobile data still ON).
@@ -305,3 +306,23 @@ PASS ("everything looks great"), with Sound Bars verified as
 applies-cleanly-idle on this no-mic unit (reactivity row inherited from
 the 2026-07-15 glass verification on the mic-equipped unit; audio code
 untouched b7->b8). SHIP-READY RE-ASSERTED for bundle b8.
+
+## D27. Launch preset without WiFi (b9+; run on a SECOND factory-fresh unit,
+## never on the D13 unit: these steps mark the launch preset as chosen, which
+## cannot be undone from the UI and would break D13's final provision row)
+Phone on the "Apollo M-1" hotspot, 4.3.2.1, no WiFi ever configured.
+- [ ] Full install, power-cycle twice without saving any settings: dog then
+      card both times.
+- [ ] Preset editor: open 4 "Apollo Dog" (Apply at boot is pre-ticked),
+      rename it, save; power-cycle: dog then card STILL return.
+- [ ] Config > LED & Hardware > Power up: "Apply preset 3 at boot" > Save;
+      power-cycle: Sound Bars starts, no dog, no card. /json/cfg shows
+      def {"ps":3,"psc":true}.
+- [ ] Same field = 4 > Save; power-cycle: dog only, no card.
+- [ ] Same field = 2 > Save; power-cycle: Apollo Blue preset.
+- [ ] Preset editor: tick "Apply at boot" on 1 "Scrolling Text", save;
+      power-cycle: Scrolling Text plays.
+- [ ] Preset 5 "Setup" from the preset list still shows the card on demand.
+- [ ] OTA path (third unit, or after a full install of b8): on b8 set the
+      LED & Hardware launch preset to 3 (dog then card still show: the b8
+      bug), OTA M-1_ota.bin b9, power-cycle: Sound Bars, no re-save needed.

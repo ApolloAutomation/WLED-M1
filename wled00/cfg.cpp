@@ -590,6 +590,9 @@ bool deserializeConfig(JsonObject doc, bool fromFS) {
 
   JsonObject def = doc["def"];
   CJSON(bootPreset, def["ps"]);
+  #ifdef FACTORY_SIGNPOST_PRESET
+  CJSON(bootPresetChosen, def["psc"]); // absent in the factory cfg.json and on b8 units: not chosen
+  #endif
   CJSON(turnOnAtBoot, def["on"]); // true
   CJSON(briS, def["bri"]); // 128
 
@@ -1127,6 +1130,9 @@ void serializeConfig(JsonObject root) {
 
   JsonObject def = root.createNestedObject("def");
   def["ps"] = bootPreset;
+  #ifdef FACTORY_SIGNPOST_PRESET
+  def["psc"] = bootPresetChosen;
+  #endif
   def["on"] = turnOnAtBoot;
   def["bri"] = briS;
 
